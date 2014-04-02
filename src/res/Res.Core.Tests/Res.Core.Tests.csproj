@@ -50,7 +50,6 @@
     <Compile Include="Storage\CommitModel.cs" />
     <Compile Include="Storage\CreateEventsMetaData.cs" />
     <Compile Include="Storage\EventsInjector.cs" />
-    <Compile Include="Storage\EventStorageException.cs" />
     <Compile Include="Storage\EventStorageInfo.cs" />
     <Compile Include="Storage\EventStorageTestBase.cs" />
     <Compile Include="Storage\InMemoryEventStorageTests.cs" />

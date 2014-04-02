@@ -27,10 +27,6 @@ namespace Res.Core.StorageBuffering
 
         public Task Store(CommitForStorage commit)
         {
-            if (_queue.Count >= 2048)
-            {
-                Console.WriteLine(_queue.Count);
-            }
             if (_queue.Count >= _maxSize)
                 throw new StorageWriterBusyException(_maxSize);
 

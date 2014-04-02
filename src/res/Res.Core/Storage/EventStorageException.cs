@@ -1,6 +1,6 @@
 using System;
 
-namespace Res.Core.Tests.Storage
+namespace Res.Core.Storage
 {
     public class EventStorageException : Exception
     {
