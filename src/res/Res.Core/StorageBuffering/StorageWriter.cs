@@ -44,10 +44,10 @@ namespace Res.Core.StorageBuffering
 
         private void run(CancellationToken token)
         {
+            var list = new List<Entry>(_maxBatchSize);
+
             while (token.IsCancellationRequested == false)
             {
-                var list = new List<Entry>();
-
                 while (list.Count < _maxBatchSize)
                 {
                     Entry entry;
