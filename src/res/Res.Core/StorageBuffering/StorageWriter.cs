@@ -14,6 +14,8 @@ namespace Res.Core.StorageBuffering
         private readonly TimeSpan _maxAgeBeforeDrop;
         private readonly EventStorage _storage;
         private readonly int _maxBatchSize;
+        SpinWait _spinwait = new SpinWait();
+
 
         readonly ConcurrentQueue<Entry> _queue = new ConcurrentQueue<Entry>();
 
@@ -53,11 +55,9 @@ namespace Res.Core.StorageBuffering
                         break;
 
                     if (entry.ShouldDrop())
-                    {
                         entry.Harikiri();
-                    }
-
-                    list.Add(entry);
+                    else
+                        list.Add(entry);
                 }
 
                 if (list.Count > 0)
@@ -65,6 +65,8 @@ namespace Res.Core.StorageBuffering
                     store(list.ToArray());
                     list.Clear();
                 }
+
+                _spinwait.SpinOnce();
             }
         }
 

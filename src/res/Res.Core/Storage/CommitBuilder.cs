@@ -26,8 +26,7 @@ namespace Res.Core.Storage
 
             public ExpectingAnotherEventOrCommit Event(EventForStorage e)
             {
-                _instance._entries[_commit] = new List<EventForStorage>();
-                _instance._entries[_commit].Add(e);
+                _instance._entries[_commit] = new List<EventForStorage> {e};
                 return new ExpectingAnotherEventOrCommit(_commit, _instance);
             }
         }
