@@ -30,6 +30,15 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Common.Logging">
+      <HintPath>..\packages\Common.Logging.2.2.0\lib\net40\Common.Logging.dll</HintPath>
+    </Reference>
+    <Reference Include="Common.Logging.Core">
+      <HintPath>..\packages\Common.Logging.Core.2.2.0\lib\net40\Common.Logging.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="NetMQ">
+      <HintPath>..\packages\NetMQ.3.3.0.8\lib\net40\NetMQ.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
@@ -56,6 +65,25 @@
     <Compile Include="Storage\FetchEventRequest.cs" />
     <Compile Include="Storage\InMemoryEventStorage.cs" />
     <Compile Include="Storage\SqlEventStorage.cs" />
+    <Compile Include="TcpTransport\CommitAppender.cs" />
+    <Compile Include="TcpTransport\CommitContinuationContext.cs" />
+    <Compile Include="TcpTransport\CommitResultReady.cs" />
+    <Compile Include="TcpTransport\MessageProcessor.cs" />
+    <Compile Include="TcpTransport\NetMQExtensions.cs" />
+    <Compile Include="TcpTransport\Receiver.cs" />
+    <Compile Include="TcpTransport\ResultProcessor.cs" />
+    <Compile Include="TcpTransport\Sink.cs" />
+    <Compile Include="TcpTransport\TaskCompleted.cs" />
+    <Compile Include="TcpTransport\TcpEndpoint.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Res.Protocol\Res.Protocol.csproj">
+      <Project>{8EDFF7F6-FFFA-489D-AEFA-75DFAA58899B}</Project>
+      <Name>Res.Protocol</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -112,7 +112,6 @@ namespace Res.Core.Storage
             using (var connection = new SqlConnection(_connectionString))
             using (var command = new SqlCommand("AppendEvents", connection))
             {
-                var successful = new List<Guid>();
                 var unsuccessful = new List<Guid>();
 
                 command.CommandType = CommandType.StoredProcedure;
