@@ -69,7 +69,6 @@
     <PreDeploy Include="Scripts\CreateDatabase.sql" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="OmniDev.publish.xml" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Schema Objects\dbo\User Defined Types\EventParameter.sql" />
