@@ -84,32 +84,39 @@
 <ul>
 <li>Denotes end of routing frame.</li>
 </ul></li>
-<li>Protocol
+<li><code><strong>Protocol</strong> string </code>
 <ul>
 <li>Client protocol.</li>
 <li>Currently, only "Res01"</li>
 </ul></li>
-<li>Command 
+<li><code><strong>Command</strong> string</code>
 <ul>
 <li>CommitResult ["CR"]</li>
 </ul></li>
-<li>RequestId
+<li><code><strong>RequestId</strong> Guid </code>
 <ul>
 <li>Request correlation id.</li>
 </ul></li>
-<li>Result 
+<li><code><strong>Result</strong> int or empty </code>
 <ul>
 <li>Empty if successful. Error code otherwise. [TODO: Description of error codes.]</li>
 </ul></li>
-<li>Error<br />
+<li><code><strong>Error</strong> string</code>
 <ul>
 <li>Serialised error details | Empty in case of success.</li>
 </ul></li>
-<li>CommitId
+<li><code><strong>CommitId</strong> Guid</code>
 <ul>
 <li>The commit id, if commit is successful.</li>
 </ul></li>
 </ol>
+
+<h3>Error Codes</h3>
+
+<ul>
+<li><code>Empty:</code> Success</li>
+<li><code>0x1:</code> Storage Writer Busy</li>
+</ul>
 
 <h2>Response Ready</h2>
 

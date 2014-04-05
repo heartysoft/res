@@ -46,19 +46,23 @@ Sent back to client after a commit
     - Used for routing the message back.
 2. Empty
     - Denotes end of routing frame.
-3. Protocol
+3. <code>**Protocol** string </code>
     - Client protocol.
     - Currently, only "Res01"
-4. Command 
+4. <code>**Command** string</code>
     - CommitResult ["CR"]
-5. RequestId
+5. <code>**RequestId** Guid </code>
     - Request correlation id.
-6. Result 
+6. <code>**Result** int or empty </code>
     - Empty if successful. Error code otherwise. [TODO: Description of error codes.]
-7. Error  
+7. <code>**Error** string</code>
     - Serialised error details | Empty in case of success.
-8. CommitId
+8. <code>**CommitId** Guid</code>
     - The commit id, if commit is successful.
+
+###Error Codes
+- <code>Empty:</code> Success
+- <code>0x1:</code> Storage Writer Busy
 
 ##Response Ready
 
