@@ -1,6 +1,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Common.Logging;
 using NetMQ;
 using Res.Core.StorageBuffering;
 
@@ -11,6 +12,7 @@ namespace Res.Core.TcpTransport
         private readonly NetMQContext _ctx;
         private readonly Sink _sink;
         private readonly Receiver _receiver;
+        private static readonly ILog Logger = LogManager.GetCurrentClassLogger();
 
         public TcpEndpoint(string endpoint, EventStorageWriter writer)
         {
@@ -25,19 +27,26 @@ namespace Res.Core.TcpTransport
 
         public Task Start(CancellationToken token)
         {
-            return Task.WhenAll(_sink.Start(token), _receiver.Start(token));
+            Logger.Info("[TcpEndpoint] Starting. Shall we begin?");
+            var receiver = _receiver.Start(token);
+            var sink = _sink.Start(token);
+            Logger.Info("[TcpEndpoint] Started. Reporting for duty...");
+            return Task.WhenAll(receiver, sink);
         }
 
         protected virtual void Dispose(bool disposing)
         {
             if (!disposing) return;
 
+            Logger.Info("[TcpEndpoint] Attempting shutdown....");
             _ctx.Dispose();
+            Logger.Info("[TcpEndpoint] Context disposed. Goodbye, world...");
         }
         public void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);
         }
+
     }
 }

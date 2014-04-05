@@ -43,7 +43,6 @@ namespace Res.Core.TcpTransport
             _sink.EnqueResult(ready);    
         }
 
-
         private CommitForStorage getCommit(NetMQMessage message)
         {
             var context = message.Pop().ConvertToString();

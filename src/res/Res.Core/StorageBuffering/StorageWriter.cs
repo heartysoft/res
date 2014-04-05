@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Common.Logging;
 using Res.Core.Storage;
 
 namespace Res.Core.StorageBuffering
@@ -15,6 +16,7 @@ namespace Res.Core.StorageBuffering
         private readonly EventStorage _storage;
         private readonly int _maxBatchSize;
         SpinWait _spinwait = new SpinWait();
+        private static readonly ILog Logger = LogManager.GetCurrentClassLogger();
 
 
         readonly ConcurrentQueue<Entry> _queue = new ConcurrentQueue<Entry>();
@@ -39,6 +41,7 @@ namespace Res.Core.StorageBuffering
 
         public Task Start(CancellationToken token)
         {
+            Logger.Info("[StorageWriter] Starting...I'm spinning around.....");
             return Task.Factory.StartNew(() => run(token), token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
         }
 
@@ -48,26 +51,35 @@ namespace Res.Core.StorageBuffering
 
             while (token.IsCancellationRequested == false)
             {
-                while (list.Count < _maxBatchSize)
+                try
                 {
-                    Entry entry;
-                    if (_queue.TryDequeue(out entry) == false)
-                        break;
+                    while (list.Count < _maxBatchSize)
+                    {
+                        Entry entry;
+                        if (_queue.TryDequeue(out entry) == false)
+                            break;
 
-                    if (entry.ShouldDrop())
-                        entry.Harikiri();
-                    else
-                        list.Add(entry);
+                        if (entry.ShouldDrop())
+                            entry.Harikiri();
+                        else
+                            list.Add(entry);
+                    }
+
+                    if (list.Count > 0)
+                    {
+                        store(list.ToArray());
+                        list.Clear();
+                    }
+
+                    _spinwait.SpinOnce();
                 }
-
-                if (list.Count > 0)
+                catch (Exception e)
                 {
-                    store(list.ToArray());
-                    list.Clear();
+                    Logger.Warn("[StorageWriter] Error in mainloop.", e);
                 }
-
-                _spinwait.SpinOnce();
             }
+
+            Logger.Info("[StorageWriter] Exiting. No more spinning for me today...");
         }
 
         private void store(Entry[] entries)

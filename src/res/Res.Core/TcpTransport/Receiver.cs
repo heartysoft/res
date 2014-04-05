@@ -23,7 +23,7 @@ namespace Res.Core.TcpTransport
 
         public Task Start(CancellationToken token)
         {
-            return Task.Factory.StartNew(()=>run(token), token);
+            return Task.Factory.StartNew(() => run(token), token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
         }
 
         private void run(CancellationToken token)
@@ -39,14 +39,23 @@ namespace Res.Core.TcpTransport
                         mainLoop(socket, token);
                     }
                 }
+                catch (OperationCanceledException)
+                {
+                    Logger.Info("[Receiver] Cancellation signal received...exiting");
+                    break;
+                }
                 catch (TerminatingException)
                 {
-                    Logger.Info("[Receiver]Context terminated...exiting");
+                    Logger.Info("[Receiver] Context terminated...exiting");
+                    break;
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
+                    Logger.Warn("[Receiver] Error from mainloop.", e);
                 }
             }
+
+            Logger.Info("[Receiver] TCP receiver, signing off.");
         }
 
         private void mainLoop(NetMQSocket socket, CancellationToken token)
@@ -62,10 +71,18 @@ namespace Res.Core.TcpTransport
         {
             Logger.InfoFormat("[Receiver] Binding to '{0}'.", _endpoint);
             var socket = _ctx.CreateRouterSocket();
-            socket.Bind(_endpoint);
-            Logger.InfoFormat("[Receiver] Bound to '{0}'.", _endpoint);
-            return socket;
-        }
 
+            try
+            {
+                socket.Bind(_endpoint);
+                Logger.InfoFormat("[Receiver] Bound to '{0}'.", _endpoint);
+                return socket;
+            }
+            catch (Exception)
+            {
+                socket.Dispose();
+                throw;
+            }
+        }
     }
 }

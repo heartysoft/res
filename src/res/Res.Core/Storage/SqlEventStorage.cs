@@ -272,7 +272,7 @@ namespace Res.Core.Storage
 
         public void Verify()
         {
-            this.checkForDatabasePermissions();
+            checkForDatabasePermissions();
         }
 
         private void checkForDatabasePermissions()
