@@ -1,9 +1,12 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.21005.1
+VisualStudioVersion = 12.0.30110.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Res.Core", "Res.Core\Res.Core.csproj", "{0F39083E-B7B7-4777-B7BE-CFCDC0F0F6DC}"
+	ProjectSection(ProjectDependencies) = postProject
+		{8EDFF7F6-FFFA-489D-AEFA-75DFAA58899B} = {8EDFF7F6-FFFA-489D-AEFA-75DFAA58899B}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Res.Core.Tests", "Res.Core.Tests\Res.Core.Tests.csproj", "{20ADF206-A419-4A69-914C-BD6BDF8B23A0}"
 EndProject
