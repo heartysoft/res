@@ -1,0 +1,155 @@
+<h2>1. Append</h2>
+
+<p>Comes from client to router socket.</p>
+
+<h3>Message Format</h3>
+
+<ol>
+<li>[Return Address] : 
+<ul>
+<li>Routing frames. </li>
+<li>An ordered array of frames, as requests may be brokered.</li>
+</ul></li>
+<li>Empty
+<ul>
+<li>Denotes end of routing frames.</li>
+</ul></li>
+<li>Protocol 
+<ul>
+<li>"Res01"</li>
+<li>Request protocol. Currently, onlt Res01 is supported.</li>
+</ul></li>
+<li>Command 
+<ul>
+<li>AppendCommit ["AC"]</li>
+</ul></li>
+<li>RequestId
+<ul>
+<li>Request Identifier. This will be passed back as part of response enabling client to correlate.</li>
+</ul></li>
+<li>Context
+<ul>
+<li>Target context (as the event storage is multi-tennant).</li>
+</ul></li>
+<li>Stream
+<ul>
+<li>Target stream of context</li>
+</ul></li>
+<li>ExpectedVersion
+<ul>
+<li>Expected initial version for the stream in the context.</li>
+<li>If positive, a mismatch will cause a concurrency violation.</li>
+<li>If -1, must be a new stream. [Currently not implemented.]</li>
+<li>If -2, concurrency check will be bypassed. [Currently not implemented].</li>
+</ul></li>
+<li>Event Count
+<ul>
+<li>Number of events.</li>
+</ul></li>
+<li>One per event:
+<ol>
+<li>EventId
+<ul>
+<li>Event Identifier. Guid as byte[].</li>
+</ul></li>
+<li>Timestamp
+<ul>
+<li>Time of the event.</li>
+</ul></li>
+<li>TypeKey
+<ul>
+<li>String representing the type of the event.</li>
+</ul></li>
+<li>Headers
+<ul>
+<li>String representing headers. Upto client to decide how to use this.</li>
+</ul></li>
+<li>Body
+<ul>
+<li>String representing body. Upto client to decide how to use this.</li>
+</ul></li>
+</ol></li>
+</ol>
+
+<h2>CommitResult</h2>
+
+<p>Sent back to client after a commit</p>
+
+<ol>
+<li>[Routing Frames]
+<ul>
+<li>Used for routing the message back.</li>
+</ul></li>
+<li>Empty
+<ul>
+<li>Denotes end of routing frame.</li>
+</ul></li>
+<li>Protocol
+<ul>
+<li>Client protocol.</li>
+<li>Currently, only "Res01"</li>
+</ul></li>
+<li>Command 
+<ul>
+<li>CommitResult ["CR"]</li>
+</ul></li>
+<li>RequestId
+<ul>
+<li>Request correlation id.</li>
+</ul></li>
+<li>Result 
+<ul>
+<li>Empty if successful. Error code otherwise. [TODO: Description of error codes.]</li>
+</ul></li>
+<li>Error<br />
+<ul>
+<li>Serialised error details | Empty in case of success.</li>
+</ul></li>
+<li>CommitId
+<ul>
+<li>The commit id, if commit is successful.</li>
+</ul></li>
+</ol>
+
+<h2>Response Ready</h2>
+
+<p>Internal event for queuing results. Comes from Sink to router socket.</p>
+
+<ol>
+<li>[Address] 
+<ul>
+<li>single frame...comes from internal sink</li>
+</ul></li>
+<li>Protocol
+<ul>
+<li>"Res01"</li>
+</ul></li>
+<li>Command 
+<ul>
+<li>ResponseReady ["RR"]</li>
+</ul></li>
+<li>[Routing frames]
+<ul>
+<li>For sending back to client.</li>
+</ul></li>
+<li>Empty
+<ul>
+<li>Denotes end of routing frames.</li>
+</ul></li>
+<li>RequestId
+<ul>
+<li>Request correlation id.</li>
+</ul></li>
+<li>Result 
+<ul>
+<li>Empty if successful. Error code otherwise. [TODO: Description of error codes.]</li>
+</ul></li>
+<li>Error<br />
+<ul>
+<li>Serialised error details | Empty in case of success.</li>
+</ul></li>
+<li>CommitId
+<ul>
+<li>The commit id, if commit is successful.</li>
+</ul></li>
+</ol>
