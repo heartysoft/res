@@ -12,6 +12,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Res.Core.Tests", "Res.Core.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Res.Protocol", "Res.Protocol\Res.Protocol.csproj", "{8EDFF7F6-FFFA-489D-AEFA-75DFAA58899B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Res", "Res\Res.csproj", "{52F9E30C-916F-44F1-9525-D196421A8201}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{D48E8899-788E-47FD-A011-F1444239A27B}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\packages.config = .nuget\packages.config
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,6 +37,10 @@ Global
 		{8EDFF7F6-FFFA-489D-AEFA-75DFAA58899B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8EDFF7F6-FFFA-489D-AEFA-75DFAA58899B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8EDFF7F6-FFFA-489D-AEFA-75DFAA58899B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{52F9E30C-916F-44F1-9525-D196421A8201}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{52F9E30C-916F-44F1-9525-D196421A8201}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{52F9E30C-916F-44F1-9525-D196421A8201}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{52F9E30C-916F-44F1-9525-D196421A8201}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
