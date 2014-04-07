@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30110.0
+VisualStudioVersion = 12.0.21005.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Res.Core", "Res.Core\Res.Core.csproj", "{0F39083E-B7B7-4777-B7BE-CFCDC0F0F6DC}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -18,6 +18,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{D48E88
 	ProjectSection(SolutionItems) = preProject
 		.nuget\packages.config = .nuget\packages.config
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Res.Client", "Res.Client\Res.Client.csproj", "{3CB0B093-182C-4FBA-AB25-3FD728E402E6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,6 +43,10 @@ Global
 		{52F9E30C-916F-44F1-9525-D196421A8201}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{52F9E30C-916F-44F1-9525-D196421A8201}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{52F9E30C-916F-44F1-9525-D196421A8201}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3CB0B093-182C-4FBA-AB25-3FD728E402E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3CB0B093-182C-4FBA-AB25-3FD728E402E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3CB0B093-182C-4FBA-AB25-3FD728E402E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3CB0B093-182C-4FBA-AB25-3FD728E402E6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
