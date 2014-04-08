@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Common.Logging;
 
 namespace Res.Client.Internal
 {
@@ -8,6 +9,7 @@ namespace Res.Client.Internal
     {
         private readonly Func<ResGateway> _gatewayFactory;
         private readonly MultiWriterSingleReaderBuffer _buffer;
+        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
         public RequestProcessor(Func<ResGateway> gatewayFactory, MultiWriterSingleReaderBuffer buffer)
         {
@@ -15,10 +17,21 @@ namespace Res.Client.Internal
             _buffer = buffer;
         }
 
-        public Task Start(CancellationToken token)
+        readonly object _startLock = new object();
+        private bool _started;
+        public void Start(CancellationToken token)
         {
-            return Task.Factory.StartNew(() => run(token), token, TaskCreationOptions.LongRunning,
-                TaskScheduler.Default);
+            
+            lock (_startLock)
+            {
+                if (!_started)
+                {
+                    Log.Info("[RequestProcessor] Starting up.");
+                    _started = true;
+                    Task.Factory.StartNew(() => run(token), token, TaskCreationOptions.LongRunning,
+                        TaskScheduler.Default);
+                }
+            }
         }
 
         private void run(CancellationToken token)
@@ -29,6 +42,8 @@ namespace Res.Client.Internal
 
             try
             {
+                Log.InfoFormat("[RequestProcessor] Entering mainloop. Thread Id: {0}", Thread.CurrentThread.ManagedThreadId);
+
                 while (token.IsCancellationRequested == false)
                 {
                     bool processed = gateway.ProcessResponse();
@@ -51,10 +66,18 @@ namespace Res.Client.Internal
                     if (!processed)
                         spin.SpinOnce();
                 }
+
+                Log.Info("[RequestProcessor] Existing mainloop.");
+            }
+            catch (Exception e)
+            {
+                Log.Info("[RequestProcessor] Error in mainloop.", e);
             }
             finally
             {
-                gateway.Dispose();
+                Log.Info("[RequestProcessor] Shutting down gateway.");
+                gateway.Shutdown();
+                Log.Info("[RequestProcessor] Gateway shutdown.");
             }
         }
     }

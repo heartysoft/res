@@ -19,6 +19,7 @@ namespace Res.Client.Internal
 
         public SingleThreadedZeroMqGateway(string endpoint, TimeSpan reaperInterval)
         {
+            Log.Info("[STZMG] Starting.");
             _endpoint = endpoint;
             _reaperInterval = reaperInterval;
             _ctx = NetMQContext.Create();
@@ -47,6 +48,7 @@ namespace Res.Client.Internal
 
         void socket_ReceiveReady(object sender, NetMQSocketEventArgs e)
         {
+            Log.Info("[STZMG] Receiving a message.");
             try
             {
                 var msg = e.Socket.ReceiveMessage();
@@ -75,7 +77,7 @@ namespace Res.Client.Internal
             }
             catch (Exception ex)
             {
-                Log.Warn(string.Format("Message dropped. Possibly due to protocol violation.", ex));
+                Log.Warn("[STZMG] Message dropped. Possibly due to protocol violation.", ex);
             }
         }
 
@@ -107,12 +109,15 @@ namespace Res.Client.Internal
         {
             if (_socket != null)
             {
+                Log.InfoFormat("[STZMG] Disposing old socket. Thread Id: {0}", Thread.CurrentThread.ManagedThreadId);
                 _socket.ReceiveReady -= socket_ReceiveReady;
                 _socket.Close();
                 _socket.Dispose();
                 _socket = null;
             }
 
+
+            Log.InfoFormat("[STZMG] Creating new socket. Thread Id: {0}", Thread.CurrentThread.ManagedThreadId);
             var socket = _ctx.CreateDealerSocket();
             var spinner = new SpinWait();
 
@@ -124,8 +129,9 @@ namespace Res.Client.Internal
                     socket.Connect(_endpoint);
                     return socket;
                 }
-                catch
+                catch(Exception e)
                 {
+                    Log.Warn("[STZMG] Error connecting to socket. Retrying...", e);
                     socket.ReceiveReady -= socket_ReceiveReady;
                     socket.Dispose();
                     spinner.SpinOnce();
@@ -133,24 +139,29 @@ namespace Res.Client.Internal
             }
         }
 
-        protected virtual void Dispose(bool disposing)
+        public void Shutdown()
         {
-            if (!disposing)
-                return;
+            Log.InfoFormat("[STZMG] Shutting down. Thread Id: {0}", Thread.CurrentThread.ManagedThreadId);
             if (_socket != null)
             {
+                _socket.ReceiveReady -= socket_ReceiveReady;
                 _socket.Close();
                 _socket.Dispose();
             }
 
-            _ctx.Dispose();
+            Log.Info("[STZMG] Socket closed. Disposing context.");
+            try
+            {
+                _ctx.Dispose();
+            }
+            catch (Exception e)
+            {
+                Log.Info("[STZMG] Error disposing context.", e);
+            }
+
+            Log.Info("[STZMG] Context disposed. Bye.");
         }
 
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
 
         private class InflightEntry
         {

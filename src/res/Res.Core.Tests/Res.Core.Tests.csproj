@@ -30,6 +30,14 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Common.Logging, Version=2.2.0.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Common.Logging.2.2.0\lib\net40\Common.Logging.dll</HintPath>
+    </Reference>
+    <Reference Include="Common.Logging.Core, Version=2.2.0.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Common.Logging.Core.2.2.0\lib\net40\Common.Logging.Core.dll</HintPath>
+    </Reference>
     <Reference Include="FakeItEasy">
       <HintPath>..\packages\FakeItEasy.1.18.0\lib\net40\FakeItEasy.dll</HintPath>
     </Reference>
@@ -47,6 +55,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Class1.cs" />
+    <Compile Include="Client\TcpClientTests.cs" />
     <Compile Include="StorageBuffering\StorageWriterTests.cs" />
     <Compile Include="Storage\CommitModel.cs" />
     <Compile Include="Storage\CreateEventsMetaData.cs" />
@@ -64,6 +73,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Res.Client\Res.Client.csproj">
+      <Project>{3CB0B093-182C-4FBA-AB25-3FD728E402E6}</Project>
+      <Name>Res.Client</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Res.Core\Res.Core.csproj">
       <Project>{0F39083E-B7B7-4777-B7BE-CFCDC0F0F6DC}</Project>
       <Name>Res.Core</Name>

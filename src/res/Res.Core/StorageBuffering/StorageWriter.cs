@@ -31,11 +31,14 @@ namespace Res.Core.StorageBuffering
 
         public Task Store(CommitForStorage commit)
         {
+            Logger.Info("[StorageWriter] Received commit.");
             if (_queue.Count >= _maxSize)
                 throw new StorageWriterBusyException(_maxSize);
 
+            Logger.Info("[StorageWriter] Have capacity, will accept.");
             var entry = new Entry(commit, _maxAgeBeforeDrop);
             _queue.Enqueue(entry);
+            Logger.Info("[StorageWriter] Commit queued.");
             return entry.Task;
         }
 
@@ -48,7 +51,7 @@ namespace Res.Core.StorageBuffering
         private void run(CancellationToken token)
         {
             var list = new List<Entry>(_maxBatchSize);
-
+            
             while (token.IsCancellationRequested == false)
             {
                 try
@@ -84,12 +87,14 @@ namespace Res.Core.StorageBuffering
 
         private void store(Entry[] entries)
         {
+            Logger.Info("[StorageWriter] Writing entries.");
             var commits = entries.ToDictionary(x => x.Commit.CommitId, x => x);
             var commit = new CommitsForStorage(commits.Values.Select(x => x.Commit).ToArray());
 
             try
             {
                 var results = _storage.Store(commit);
+                Logger.Info("[StorageWriter] Entries stored.");
 
                 //these can't fail as they're try operations.
                 foreach (var c in results.SuccessfulCommits)

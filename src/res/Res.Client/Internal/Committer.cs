@@ -24,7 +24,8 @@ namespace Res.Client.Internal
             foreach (var e in req.Events)
             {
                 msg.Append(e.EventId.ToByteArray());
-                msg.Append(e.Timestamp.ToBinary().ToString(CultureInfo.InvariantCulture));
+                var timestamp = e.Timestamp.ToBinary().ToString(CultureInfo.InvariantCulture);
+                msg.Append(timestamp);
                 msg.Append(e.TypeTag);
                 msg.Append(e.Headers);
                 msg.Append(e.Body);

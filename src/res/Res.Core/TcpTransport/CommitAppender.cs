@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using Common.Logging;
 using NetMQ;
 using Res.Core.Storage;
 using Res.Core.StorageBuffering;
@@ -38,6 +39,8 @@ namespace Res.Core.TcpTransport
         private readonly Sink _sink;
         private const string Protocol = ResProtocol.ResClient01; //parsing based on this. Maybe move elsewhere when more protocols are present.
         readonly ErrorResolver _resolver = new ErrorResolver();
+        private static ILog Log = LogManager.GetCurrentClassLogger();
+
         public CommitAppender(EventStorageWriter writer, Sink sink)
         {
             _writer = writer;
@@ -51,19 +54,24 @@ namespace Res.Core.TcpTransport
         /// <param name="message">The message with the return address, protocol and command stripped off.</param>
         public void Append(NetMQFrame[] sender, NetMQMessage message)
         {
+            Log.Info("[CommitAppender] Got a commit to write...");
             var requestId = message.Pop();
             var commit = getCommit(message);
             var task = _writer.Store(commit);
             var commitContinuationContext = new CommitContinuationContext(sender, commit.CommitId, requestId);
             task.ContinueWith(onComplete, commitContinuationContext, TaskContinuationOptions.ExecuteSynchronously);
+            Log.Info("[CommitAppender] Commit queued up...");
         }
 
         private void onComplete(Task commitTask, object state)
         {
+            Log.Info("[CommitAppender] Write completed, sending back response.");
             var c = (CommitContinuationContext)state;
 
             var ready = new CommitResultReady(Protocol, c, _resolver.GetError(commitTask.Exception));
-            _sink.EnqueResult(ready);    
+            Log.Info("[CommitAppender] Here you go, Sink.");
+            _sink.EnqueResult(ready);
+            Log.Info("[CommitAppender] Commit result queued up with Sink.");
         }
 
         private CommitForStorage getCommit(NetMQMessage message)
@@ -78,7 +86,7 @@ namespace Res.Core.TcpTransport
             for (int i = 0; i < eventCount; i++)
             {
                 var eventId = new Guid(message.Pop().ToByteArray());
-                var timestamp = new DateTime(long.Parse(message.Pop().ConvertToString()));
+                var timestamp = DateTime.FromBinary(long.Parse(message.Pop().ConvertToString()));
                 var typeKey = message.Pop().ConvertToString();
                 var headers = message.Pop().ConvertToString();
                 var body = message.Pop().ConvertToString();
@@ -87,6 +95,14 @@ namespace Res.Core.TcpTransport
             }
 
             return new CommitForStorage(context, stream, events);
+        }
+    }
+    public class WhoppeeeExcception : Exception
+    {
+        public WhoppeeeExcception(string tsStr)
+            : base(tsStr)
+        {
+
         }
     }
 }
