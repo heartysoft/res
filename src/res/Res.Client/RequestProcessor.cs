@@ -25,16 +25,32 @@ namespace Res.Client
         {
             var gateway = _gatewayFactory();
 
+            var spin = new SpinWait();
+
             while (token.IsCancellationRequested == false)
             {
-                gateway.ProcessResponse();
+                bool processed = gateway.ProcessResponse();
 
-                MultiWriterSingleReaderBuffer.Entry entry;
-                if (_buffer.TryDequeue(out entry))
+                PendingResRequest pendingResRequest;
+             
+                if (_buffer.TryDequeue(out pendingResRequest))
                 {
-                    
+                    if (pendingResRequest.ShouldDrop())
+                    {
+                        pendingResRequest.Drop();
+                    }
+                    else
+                    {
+                        gateway.SendRequest(pendingResRequest);
+                        processed = true;
+                    }
                 }
+
+                if(!processed)
+                    spin.SpinOnce();
             }
+
+            gateway.Dispose();
         }
     }
 }

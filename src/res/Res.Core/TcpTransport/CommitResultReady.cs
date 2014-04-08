@@ -8,14 +8,14 @@ namespace Res.Core.TcpTransport
     {
         private readonly string _protocol;
         private readonly CommitContinuationContext _context;
-        private readonly string _errorIfPresent;
-        
+        private readonly ErrorEntry _error;
 
-        public CommitResultReady(string protocol, CommitContinuationContext context, string errorIfPresent)
+
+        public CommitResultReady(string protocol, CommitContinuationContext context, ErrorEntry error)
         {
             _protocol = protocol;
             _context = context;
-            _errorIfPresent = errorIfPresent;
+            _error = error;
         }
 
         public void Send(NetMQSocket socket)
@@ -28,11 +28,17 @@ namespace Res.Core.TcpTransport
             msg.AppendEmptyFrame();
             
             msg.Append(_context.RequestId);
-            
-            if(string.IsNullOrWhiteSpace(_errorIfPresent))
+
+            if (_error == null)
+            {
                 msg.AppendEmptyFrame(); //success
+                msg.AppendEmptyFrame();
+            }
             else
-                msg.Append(_errorIfPresent);
+            {
+                msg.Append(_error.ErrorCode);
+                msg.Append(_error.Message);
+            }
 
             msg.Append(_context.CommitId.ToByteArray());
             

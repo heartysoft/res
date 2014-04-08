@@ -20,8 +20,8 @@ namespace Res.Core.TcpTransport
             msg.Append(sender);
             msg.AppendEmptyFrame();
             msg.Append(ResProtocol.ResClient01); //currently only one.
-            msg.Append(ResCommands.CommitResult);
             msg.Append(requestId);
+            msg.Append(ResCommands.CommitResult);
             msg.Append(result);
             msg.Append(commitId);
 

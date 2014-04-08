@@ -7,11 +7,37 @@ using Res.Protocol;
 
 namespace Res.Core.TcpTransport
 {
+
+    public class ErrorEntry
+    {
+        public string ErrorCode { get; private set; }
+        public string Message { get; private set; }
+
+        public ErrorEntry(string errorCode, string message)
+        {
+            ErrorCode = errorCode;
+            Message = message;
+        }
+    }
+
+    public class ErrorResolver
+    {
+        public ErrorEntry GetError(Exception e)
+        {
+            if (e == null)
+                return null;
+
+
+            throw new NotImplementedException();
+        }
+    }
+
     public class CommitAppender
     {
         private readonly EventStorageWriter _writer;
         private readonly Sink _sink;
         private const string Protocol = ResProtocol.ResClient01; //parsing based on this. Maybe move elsewhere when more protocols are present.
+        readonly ErrorResolver _resolver = new ErrorResolver();
         public CommitAppender(EventStorageWriter writer, Sink sink)
         {
             _writer = writer;
@@ -35,11 +61,8 @@ namespace Res.Core.TcpTransport
         private void onComplete(Task commitTask, object state)
         {
             var c = (CommitContinuationContext)state;
-            string error = null;
-            if (commitTask.Exception != null)
-                error = commitTask.Exception.Message;
 
-            var ready = new CommitResultReady(Protocol, c, error);
+            var ready = new CommitResultReady(Protocol, c, _resolver.GetError(commitTask.Exception));
             _sink.EnqueResult(ready);    
         }
 

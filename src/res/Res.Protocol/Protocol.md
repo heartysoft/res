@@ -49,11 +49,11 @@ Sent back to client after a commit
 3. <code>**Protocol** string </code>
     - Client protocol.
     - Currently, only "Res01"
-4. <code>**Command** string</code>
-    - CommitResult ["CR"]
-5. <code>**RequestId** Guid </code>
+4. <code>**RequestId** string </code>
     - Request correlation id.
-6. <code>**Result** int or empty </code>
+5. <code>**Command** string</code>
+    - CommitResult ["CR"]
+6. <code>**Result** string or empty </code>
     - Empty if successful. Error code otherwise. [TODO: Description of error codes.]
 7. <code>**Error** string</code>
     - Serialised error details | Empty in case of success.
