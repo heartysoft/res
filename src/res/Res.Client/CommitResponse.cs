@@ -1,4 +1,5 @@
 ﻿using System;
+using Res.Client.Internal;
 
 namespace Res.Client
 {

@@ -3,7 +3,7 @@ using System.Globalization;
 using NetMQ;
 using Res.Protocol;
 
-namespace Res.Client
+namespace Res.Client.Internal
 {
     public class Committer
     {

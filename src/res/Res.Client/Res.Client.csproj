@@ -48,23 +48,27 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CommitRequest.cs" />
     <Compile Include="CommitResponse.cs" />
-    <Compile Include="Committer.cs" />
-    <Compile Include="ErrorResolver.cs" />
     <Compile Include="EventData.cs" />
-    <Compile Include="MultiWriterSingleReaderBuffer.cs" />
+    <Compile Include="ExpectedVersion.cs" />
+    <Compile Include="Internal\CommitRequest.cs" />
+    <Compile Include="Internal\Committer.cs" />
+    <Compile Include="Internal\ErrorResolver.cs" />
+    <Compile Include="Internal\MultiWriterSingleReaderBuffer.cs" />
+    <Compile Include="Internal\RequestAcceptor.cs" />
+    <Compile Include="Internal\RequestProcessor.cs" />
+    <Compile Include="Internal\RequestTimedOutPendingSendException.cs" />
+    <Compile Include="Internal\ResGateway.cs" />
+    <Compile Include="Internal\ResRequest.cs" />
+    <Compile Include="Internal\ResResponse.cs" />
+    <Compile Include="Internal\ResServerException.cs" />
+    <Compile Include="Internal\SingleThreadedZeroMqGateway.cs" />
+    <Compile Include="Internal\UnsupportedCommandException.cs" />
+    <Compile Include="Internal\UnsupportedProtocolException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RequestAcceptor.cs" />
-    <Compile Include="RequestProcessor.cs" />
-    <Compile Include="RequestTimedOutPendingSendException.cs" />
-    <Compile Include="ResGateway.cs" />
-    <Compile Include="ResRequest.cs" />
-    <Compile Include="ResResponse.cs" />
-    <Compile Include="ResServerException.cs" />
-    <Compile Include="SingleThreadedZeroMqGateway.cs" />
-    <Compile Include="UnsupportedCommandException.cs" />
-    <Compile Include="UnsupportedProtocolException.cs" />
+    <Compile Include="ResClient.cs" />
+    <Compile Include="ResEngine.cs" />
+    <Compile Include="ThreadsafeResClient.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

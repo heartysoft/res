@@ -5,7 +5,7 @@ using Common.Logging;
 using NetMQ;
 using Res.Protocol;
 
-namespace Res.Client
+namespace Res.Client.Internal
 {
     public class SingleThreadedZeroMqGateway : ResGateway
     {

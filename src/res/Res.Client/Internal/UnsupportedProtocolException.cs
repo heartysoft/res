@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Res.Client
+namespace Res.Client.Internal
 {
     public class UnsupportedProtocolException : Exception
     {

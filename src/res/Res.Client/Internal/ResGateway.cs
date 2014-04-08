@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Net.Sockets;
-using System.Runtime.Remoting;
 
-namespace Res.Client
+namespace Res.Client.Internal
 {
     public interface ResGateway : IDisposable
     {

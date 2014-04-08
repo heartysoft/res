@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Res.Client
+namespace Res.Client.Internal
 {
     public class RequestProcessor
     {
@@ -27,30 +27,35 @@ namespace Res.Client
 
             var spin = new SpinWait();
 
-            while (token.IsCancellationRequested == false)
+            try
             {
-                bool processed = gateway.ProcessResponse();
-
-                PendingResRequest pendingResRequest;
-             
-                if (_buffer.TryDequeue(out pendingResRequest))
+                while (token.IsCancellationRequested == false)
                 {
-                    if (pendingResRequest.ShouldDrop())
+                    bool processed = gateway.ProcessResponse();
+
+                    PendingResRequest pendingResRequest;
+
+                    if (_buffer.TryDequeue(out pendingResRequest))
                     {
-                        pendingResRequest.Drop();
+                        if (pendingResRequest.ShouldDrop())
+                        {
+                            pendingResRequest.Drop();
+                        }
+                        else
+                        {
+                            gateway.SendRequest(pendingResRequest);
+                            processed = true;
+                        }
                     }
-                    else
-                    {
-                        gateway.SendRequest(pendingResRequest);
-                        processed = true;
-                    }
+
+                    if (!processed)
+                        spin.SpinOnce();
                 }
-
-                if(!processed)
-                    spin.SpinOnce();
             }
-
-            gateway.Dispose();
+            finally
+            {
+                gateway.Dispose();
+            }
         }
     }
 }

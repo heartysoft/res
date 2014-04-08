@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Res.Client
+namespace Res.Client.Internal
 {
     public class RequestAcceptor
     {

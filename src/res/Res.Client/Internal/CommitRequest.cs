@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Res.Client
+﻿namespace Res.Client.Internal
 {
     public class CommitRequest : ResRequest
     {

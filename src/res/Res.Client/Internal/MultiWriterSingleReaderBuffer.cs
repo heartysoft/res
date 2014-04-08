@@ -3,7 +3,7 @@ using System.Collections.Concurrent;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace Res.Client
+namespace Res.Client.Internal
 {
     public class MultiWriterSingleReaderBuffer
     {
