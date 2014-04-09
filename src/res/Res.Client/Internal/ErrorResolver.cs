@@ -4,7 +4,7 @@ namespace Res.Client.Internal
 {
     public class ErrorResolver
     {
-        public static void RaiseExceptionIfNeeded(string errorCode, string message, Action<Exception> raise)
+        public static void RaiseException(string errorCode, string message, Action<Exception> raise)
         {
             if (string.IsNullOrWhiteSpace(errorCode))
                 return;

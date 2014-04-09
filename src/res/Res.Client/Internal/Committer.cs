@@ -37,15 +37,18 @@ namespace Res.Client.Internal
             {
                 var command = m.Pop().ConvertToString();
 
+                if (command == ResCommands.Error)
+                {
+                    var errorCode = m.Pop().ConvertToString();
+                    var errorDetails = m.Pop().ConvertToString();
+                    ErrorResolver.RaiseException(errorCode, errorDetails, request.SetException);
+                }
+
                 if(command != ResCommands.CommitResult)
-                    throw new UnsupportedCommandException(command);
+                    request.SetException(new UnsupportedCommandException(command));
 
-                var errorCode = m.Pop().ConvertToString();
-                var errorDetails = m.Pop().ConvertToString();
+                
                 var commitId = new Guid(m.Pop().ToByteArray());
-
-                ErrorResolver.RaiseExceptionIfNeeded(errorCode, errorDetails, request.SetException);
-
                 var result = new CommitResponse(commitId);
                 request.SetResult(result);
             };

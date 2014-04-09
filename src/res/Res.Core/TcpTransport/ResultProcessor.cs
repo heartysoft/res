@@ -8,26 +8,9 @@ namespace Res.Core.TcpTransport
         /// <summary>
         /// Returns result to client. Important: The message has the return address, protocol and command frames stripped off before getting here.
         /// </summary>
-        public void CommitResult(NetMQMessage commitMessageFromSink, NetMQSocket respondTo)
+        public void CommitResult(NetMQMessage msgForClient, NetMQSocket respondTo)
         {
-            var sender = commitMessageFromSink.PopUntilEmptyFrame();
-
-            var requestId = commitMessageFromSink.Pop();
-            var errorCode = commitMessageFromSink.Pop();
-            var errorDetails = commitMessageFromSink.Pop();
-            var commitId = commitMessageFromSink.Pop();
-
-            var msg = new NetMQMessage();
-            msg.Append(sender);
-            msg.AppendEmptyFrame();
-            msg.Append(ResProtocol.ResClient01); //currently only one.
-            msg.Append(requestId);
-            msg.Append(ResCommands.CommitResult);
-            msg.Append(errorCode);
-            msg.Append(errorDetails);
-            msg.Append(commitId);
-
-            respondTo.SendMessage(msg);
+            respondTo.SendMessage(msgForClient);
         }
     }
 }

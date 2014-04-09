@@ -60,11 +60,18 @@ namespace Res.Client.Internal
                 var msg = e.Socket.ReceiveMessage();
 
                 //address frames
-                while (true)
+                var count = msg.FrameCount;
+                for(int i=0; i<count; i++)
                 {
                     var f = msg.Pop();
                     if (f.BufferSize == 0)
                         break;
+                }
+
+                if (msg.FrameCount == 0)
+                {
+                    Log.Warn("[STZMG] Received a malformed message with not empty frames (signalling end of routing frames.");
+                    return;
                 }
 
                 var protocol = msg.Pop().ConvertToString();

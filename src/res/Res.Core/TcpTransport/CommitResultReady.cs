@@ -24,25 +24,24 @@ namespace Res.Core.TcpTransport
             var msg = new NetMQMessage();
             msg.AppendEmptyFrame();
             msg.Append(_protocol);
-            msg.Append(ResCommands.CommitResultReady);
+            msg.Append(ResCommands.ResultReady);
 
             msg.Append(_context.Sender);
             msg.AppendEmptyFrame();
-            
+            msg.Append(_protocol);
             msg.Append(_context.RequestId);
 
             if (_error == null)
             {
-                msg.AppendEmptyFrame(); //success
-                msg.AppendEmptyFrame();
+                msg.Append(ResCommands.CommitResult);
+                msg.Append(_context.CommitId.ToByteArray());
             }
             else
             {
+                msg.Append(ResCommands.Error);
                 msg.Append(_error.ErrorCode.ToString(CultureInfo.InvariantCulture));
                 msg.Append(_error.Message);
             }
-
-            msg.Append(_context.CommitId.ToByteArray());
             
             socket.SendMessage(msg); //send back to the receiver, to send back to the client.
         }

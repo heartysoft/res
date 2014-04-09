@@ -39,26 +39,25 @@ Comes from client to router socket.
     5. Body
         - String representing body. Upto client to decide how to use this.
 
-##CommitResult
-Sent back to client after a commit
 
+#Result Format In General
 1. [Routing Frames]
-    - Used for routing the message back.
 2. Empty
-    - Denotes end of routing frame.
+	- Signals end of routing frame
 3. <code>**Protocol** string </code>
     - Client protocol.
     - Currently, only "Res01"
 4. <code>**RequestId** string </code>
     - Request correlation id.
 5. <code>**Command** string</code>
-    - CommitResult ["CR"]
-6. <code>**Result** string or empty </code>
-    - Empty if successful. Error code otherwise. [TODO: Description of error codes.]
-7. <code>**Error** string</code>
-    - Serialised error details | Empty in case of success.
-8. <code>**CommitId** Guid</code>
-    - The commit id, if commit is successful.
+	- Message type from ResCommands representing the response.
+6. [Details]
+
+	- In case of any error, Command will be ResCommands.Error ["ER"], and Details will be two frames:
+		* Error code. An integer code representing the error.
+		* Serialised error message
+	- In case of success, Command will represent the response, and Details will be zero or more frames depending on the command.
+	- The description of each type of response contains only the Command and Details in the following sections, as the header and error formats are the same for all responses.
 
 ###Error Codes
 - <code>Empty:</code> Success
@@ -74,6 +73,17 @@ Sent back to client after a commit
 - <code>9:</code> Storage Reader Timeout
 - <code>10:</code> Storage Reader Busy
 
+
+##CommitResult
+Sent back to client after a commit
+
+1. <code>**Command** string</code>
+    - CommitResult ["CR"]
+2. <code>**CommitId** Guid</code>
+    - The commit id, if commit is successful.
+
+
+#Internal events. May remove if we choose to go in mem queue + polling on socket thread, like we are doing for the client. NOT for external consumption.
 
 ##Response Ready
 

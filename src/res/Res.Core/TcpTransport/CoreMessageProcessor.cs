@@ -35,7 +35,7 @@ namespace Res.Core.TcpTransport
                 case ResCommands.AppendCommit:
                     _appender.Append(sender, message);
                     break;
-                case ResCommands.CommitResultReady:
+                case ResCommands.ResultReady:
                     _resultProcessor.CommitResult(message, socket);
                     break;
                 default:
