@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Threading;
 using Common.Logging;
 using NetMQ;
+using Res.Client.Exceptions;
 using Res.Protocol;
 
 namespace Res.Client.Internal

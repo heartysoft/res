@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Res.Client.Internal
+namespace Res.Client.Exceptions
 {
     public class ResServerException : Exception
     {

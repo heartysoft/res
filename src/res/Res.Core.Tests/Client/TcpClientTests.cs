@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using NUnit.Framework;
 using Res.Client;
+using Res.Client.Exceptions;
 using Res.Core.Storage;
 
 namespace Res.Core.Tests.Client
@@ -87,6 +88,37 @@ namespace Res.Core.Tests.Client
             }, ExpectedVersion.OnlyNew);
 
             Task.WhenAll(commit, commit2).Wait();
+        }
+
+        [Test]
+        public void ConflictingWritesShouldFail()
+        {
+            var client = new ThreadsafeResClient();
+            var stream = Guid.NewGuid().ToString();
+
+            var commit = client.CommitAsync("test-context", stream, new[]
+            {
+                new EventData("test", Guid.NewGuid(), "", "some body", DateTime.Now),
+                new EventData("test1", Guid.NewGuid(), "", "something more", DateTime.Now),
+                new EventData("test", Guid.NewGuid(), "", "a bit more", DateTime.Now) 
+            }, ExpectedVersion.OnlyNew);
+
+            var commit2 = client.CommitAsync("test-context", stream, new[]
+            {
+                new EventData("test", Guid.NewGuid(), "", "some body", DateTime.Now),
+                new EventData("test1", Guid.NewGuid(), "", "something more", DateTime.Now),
+                new EventData("test", Guid.NewGuid(), "", "a bit more", DateTime.Now) 
+            }, ExpectedVersion.OnlyNew);
+
+            try
+            {
+                Task.WaitAll(commit, commit2);
+            }
+            catch (AggregateException e)
+            {
+                Assert.AreEqual(1, e.InnerExceptions.Count);
+                Assert.IsInstanceOf<ConcurrencyException>(e.InnerException);
+            }
         }
 
         [Test]

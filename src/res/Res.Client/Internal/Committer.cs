@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using NetMQ;
+using Res.Client.Exceptions;
 using Res.Protocol;
 
 namespace Res.Client.Internal
@@ -42,6 +43,7 @@ namespace Res.Client.Internal
                     var errorCode = m.Pop().ConvertToString();
                     var errorDetails = m.Pop().ConvertToString();
                     ErrorResolver.RaiseException(errorCode, errorDetails, request.SetException);
+                    return;
                 }
 
                 if(command != ResCommands.CommitResult)

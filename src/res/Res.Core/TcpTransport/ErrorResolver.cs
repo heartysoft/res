@@ -30,6 +30,9 @@ namespace Res.Core.TcpTransport
             if (e == null)
                 return null;
 
+            if (e is AggregateException)
+                e = e.InnerException;
+
             var type = e.GetType();
 
             var entry = Registry[type];

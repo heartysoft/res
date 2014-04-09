@@ -50,6 +50,19 @@
   <ItemGroup>
     <Compile Include="CommitResponse.cs" />
     <Compile Include="EventData.cs" />
+    <Compile Include="Exceptions\ConcurrencyException.cs" />
+    <Compile Include="Exceptions\EventNotFoundException.cs" />
+    <Compile Include="Exceptions\EventStorageException.cs" />
+    <Compile Include="Exceptions\MalformedMessageException.cs" />
+    <Compile Include="Exceptions\ServerBusyException.cs" />
+    <Compile Include="Exceptions\ServerTimeoutException.cs" />
+    <Compile Include="Exceptions\StorageReaderBusyException.cs" />
+    <Compile Include="Exceptions\StorageReaderTimeoutException.cs" />
+    <Compile Include="Exceptions\StorageWriterBusyException.cs" />
+    <Compile Include="Exceptions\StorageWriterTimeoutException.cs" />
+    <Compile Include="Exceptions\UnexpectedServerErrorException.cs" />
+    <Compile Include="Exceptions\UnsupportedCommandException.cs" />
+    <Compile Include="Exceptions\UnsupportedProtocolException.cs" />
     <Compile Include="ExpectedVersion.cs" />
     <Compile Include="Internal\CommitRequest.cs" />
     <Compile Include="Internal\Committer.cs" />
@@ -61,10 +74,8 @@
     <Compile Include="Internal\ResGateway.cs" />
     <Compile Include="Internal\ResRequest.cs" />
     <Compile Include="Internal\ResResponse.cs" />
-    <Compile Include="Internal\ResServerException.cs" />
+    <Compile Include="Exceptions\ResServerException.cs" />
     <Compile Include="Internal\SingleThreadedZeroMqGateway.cs" />
-    <Compile Include="Internal\UnsupportedCommandException.cs" />
-    <Compile Include="Internal\UnsupportedProtocolException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ResClient.cs" />
     <Compile Include="ResEngine.cs" />
