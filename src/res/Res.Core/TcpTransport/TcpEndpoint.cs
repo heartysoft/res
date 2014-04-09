@@ -21,7 +21,7 @@ namespace Res.Core.TcpTransport
             _sink = new Sink(_ctx, endpoint);
             var commitAppender = new CommitAppender(writer, _sink);
             var resultProcessor = new ResultProcessor();
-            var messageProcessor = new MessageProcessor(commitAppender, resultProcessor);
+            var messageProcessor = new CoreMessageProcessor(commitAppender, resultProcessor);
             _receiver = new Receiver(_ctx, endpoint, messageProcessor);
         }
 

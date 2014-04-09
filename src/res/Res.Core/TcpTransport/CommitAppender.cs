@@ -8,34 +8,6 @@ using Res.Protocol;
 
 namespace Res.Core.TcpTransport
 {
-
-    public class ErrorEntry
-    {
-        public string ErrorCode { get; private set; }
-        public string Message { get; private set; }
-
-        public ErrorEntry(string errorCode, string message)
-        {
-            ErrorCode = errorCode;
-            Message = message;
-        }
-    }
-
-    public class ErrorResolver
-    {
-        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
-
-        public ErrorEntry GetError(Exception e)
-        {
-            if (e == null)
-                return null;
-
-            Log.Info("[ErrorResolver] Unresolved exception.", e);
-
-            throw new NotImplementedException();
-        }
-    }
-
     public class CommitAppender
     {
         private readonly EventStorageWriter _writer;

@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using NetMQ;
 using Res.Protocol;
 
@@ -37,7 +38,7 @@ namespace Res.Core.TcpTransport
             }
             else
             {
-                msg.Append(_error.ErrorCode);
+                msg.Append(_error.ErrorCode.ToString(CultureInfo.InvariantCulture));
                 msg.Append(_error.Message);
             }
 

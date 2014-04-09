@@ -11,5 +11,6 @@ namespace Res.Protocol
         public const string AppendCommit = "AC";
         public const string CommitResultReady = "RR";
         public const string CommitResult = "CR";
+        public const string Error = "ER";
     }
 }

@@ -62,7 +62,18 @@ Sent back to client after a commit
 
 ###Error Codes
 - <code>Empty:</code> Success
-- <code>0x1:</code> Storage Writer Busy
+- <code>-1:</code> Unexpected error
+- <code>1:</code> Malformed message
+- <code>2:</code> Unsupported protocol
+- <code>3:</code> Unsupported Command
+- <code>4:</code> Storage Writer Busy
+- <code>5:</code> Storage Writer Timeout
+- <code>6:</code> Concurrency Exception
+- <code>7:</code> Event Storage Exception
+- <code>8:</code> Event Not Found
+- <code>9:</code> Storage Reader Timeout
+- <code>10:</code> Storage Reader Busy
+
 
 ##Response Ready
 
