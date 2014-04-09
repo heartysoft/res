@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Res.Client;
 
 namespace Res.Core.Storage
 {
@@ -23,17 +24,21 @@ namespace Res.Core.Storage
                 var expectedVersion = getExpectedVersion(commit);
                 var versionForCommit = commit.Events.Length > 0 ? commit.Events.Min(x => x.Sequence) : 0;
 
-                if (expectedVersion != versionForCommit)
+                if (expectedVersion != versionForCommit && versionForCommit != ExpectedVersion.Any)
                 {
                     unSuccessful.Add(commit.CommitId);
                     continue;
                 }
 
-                foreach (var e in commit.Events)
+                for (int index = 0; index < commit.Events.Length; index++)
                 {
-                    _events.Add(new EventInStorage(e.EventId, commit.Context, commit.Stream, e.Sequence, e.Timestamp, e.TypeKey, e.Body, e.Headers));
-                }
+                    var e = commit.Events[index];
 
+                    var version = e.Sequence == -1 ? expectedVersion + index : e.Sequence;
+
+                    _events.Add(new EventInStorage(e.EventId, commit.Context, commit.Stream, version, e.Timestamp,
+                        e.TypeKey, e.Body, e.Headers));
+                }
             }
 
             var successful = commits.Commits.Where(x => unSuccessful.Contains(x.CommitId) == false).Select(x => x.CommitId).ToArray();

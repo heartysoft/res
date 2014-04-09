@@ -135,6 +135,7 @@ namespace Res.Core.Tests.StorageBuffering
         }
 
         [Test]
+        //Make sure logging is off for this one....otherwise....SLOW.
         public void should_be_able_to_write_max_commits_in_one_batch()
         {
             var storage = new InMemoryEventStorage();
