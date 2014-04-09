@@ -12,9 +12,8 @@ namespace Res.Client.Internal
             _buffer = buffer;
         }
 
-        public Task<CommitResponse> CommitAsync(string context, string stream, EventData[] events, long expectedVersion)
+        public Task<CommitResponse> CommitAsync(string context, string stream, EventData[] events, long expectedVersion, TimeSpan timeout)
         {
-            var timeout = TimeSpan.FromSeconds(10);
             var commitRequest = new CommitRequest(context, stream, events, expectedVersion);
             var task = _buffer.Enqueue<CommitResponse>(commitRequest, DateTime.Now.Add(timeout));
             return task;

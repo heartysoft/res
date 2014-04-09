@@ -17,28 +17,34 @@ namespace Res.Client.Internal
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
         private DateTime _reapTime;
 
-        public SingleThreadedZeroMqGateway(string endpoint, TimeSpan reaperInterval)
+        public SingleThreadedZeroMqGateway(NetMQContext ctx, string endpoint, TimeSpan reaperInterval)
         {
-            Log.Info("[STZMG] Starting.");
+            Log.InfoFormat("[STZMG] Starting. Thread Id: {0}", Thread.CurrentThread.ManagedThreadId);
+            _ctx = ctx;
             _endpoint = endpoint;
             _reaperInterval = reaperInterval;
-            _ctx = NetMQContext.Create();
             _socket = connect();
             _reapTime = DateTime.Now.Add(reaperInterval);
         }
 
         public bool ProcessResponse()
         {
-            if (!_socket.Poll(TimeSpan.FromSeconds(0)))
-                return false;
+            bool processed = false;
+            while (_socket.Poll(TimeSpan.FromSeconds(0)))
+            {
+                processed = true;
+            }
 
-            return true;
+            KillRequestsThatHaveTimedOut();
+
+            return processed;
         }
 
         public void KillRequestsThatHaveTimedOut()
         {
             if (_reapTime <= DateTime.Now)
             {
+                Log.Info("[STZMG] Reaping dead requests.");
                 _reapTime = DateTime.Now.Add(_reaperInterval);
                 foreach (var callback in _callbacks.Values)
                     if (callback.ShouldDrop())
@@ -48,7 +54,7 @@ namespace Res.Client.Internal
 
         void socket_ReceiveReady(object sender, NetMQSocketEventArgs e)
         {
-            Log.Info("[STZMG] Receiving a message.");
+            Log.InfoFormat("[STZMG] Receiving a message. Thread Id: {0}", Thread.CurrentThread.ManagedThreadId);
             try
             {
                 var msg = e.Socket.ReceiveMessage();
@@ -72,6 +78,9 @@ namespace Res.Client.Internal
                 if(_callbacks.TryRemove(requestId, out callback))
                 {
                     callback.ProcessResult(msg);
+                }
+                else
+                {
                     Log.Warn(string.Format("Request Id {0} callback not found. This could be due to receiving a response after timeout has passed.", requestId));
                 }
             }
@@ -111,28 +120,26 @@ namespace Res.Client.Internal
             {
                 Log.InfoFormat("[STZMG] Disposing old socket. Thread Id: {0}", Thread.CurrentThread.ManagedThreadId);
                 _socket.ReceiveReady -= socket_ReceiveReady;
-                _socket.Close();
                 _socket.Dispose();
                 _socket = null;
             }
 
-
             Log.InfoFormat("[STZMG] Creating new socket. Thread Id: {0}", Thread.CurrentThread.ManagedThreadId);
             var socket = _ctx.CreateDealerSocket();
+            socket.ReceiveReady += socket_ReceiveReady;
+
             var spinner = new SpinWait();
 
             while (true)
             {
                 try
                 {
-                    socket.ReceiveReady += socket_ReceiveReady;
                     socket.Connect(_endpoint);
                     return socket;
                 }
                 catch(Exception e)
                 {
-                    Log.Warn("[STZMG] Error connecting to socket. Retrying...", e);
-                    socket.ReceiveReady -= socket_ReceiveReady;
+                    Log.WarnFormat("[STZMG] Error connecting to socket. Retrying... Thread ID: {0}", e, Thread.CurrentThread.ManagedThreadId);
                     socket.Dispose();
                     spinner.SpinOnce();
                 }
@@ -145,21 +152,11 @@ namespace Res.Client.Internal
             if (_socket != null)
             {
                 _socket.ReceiveReady -= socket_ReceiveReady;
-                _socket.Close();
+                _socket.ReceiveReady -= socket_ReceiveReady;
+                _socket.ReceiveReady -= socket_ReceiveReady;
                 _socket.Dispose();
             }
-
-            Log.Info("[STZMG] Socket closed. Disposing context.");
-            try
-            {
-                _ctx.Dispose();
-            }
-            catch (Exception e)
-            {
-                Log.Info("[STZMG] Error disposing context.", e);
-            }
-
-            Log.Info("[STZMG] Context disposed. Bye.");
+            Log.InfoFormat("[STZMG] Socket disposed. Thread Id: {0}", Thread.CurrentThread.ManagedThreadId);
         }
 
 

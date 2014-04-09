@@ -21,6 +21,7 @@ namespace Res.Core.TcpTransport
         public void Send(NetMQSocket socket)
         {
             var msg = new NetMQMessage();
+            msg.AppendEmptyFrame();
             msg.Append(_protocol);
             msg.Append(ResCommands.CommitResultReady);
 

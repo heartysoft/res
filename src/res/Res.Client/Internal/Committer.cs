@@ -35,14 +35,14 @@ namespace Res.Client.Internal
 
             return m =>
             {
-                var command = msg.Pop().ConvertToString();
+                var command = m.Pop().ConvertToString();
 
                 if(command != ResCommands.CommitResult)
                     throw new UnsupportedCommandException(command);
 
-                var errorCode = msg.Pop().ConvertToString();
-                var errorDetails = msg.Pop().ConvertToString();
-                var commitId = new Guid(msg.Pop().ToByteArray());
+                var errorCode = m.Pop().ConvertToString();
+                var errorDetails = m.Pop().ConvertToString();
+                var commitId = new Guid(m.Pop().ToByteArray());
 
                 ErrorResolver.RaiseExceptionIfNeeded(errorCode, errorDetails, request.SetException);
 

@@ -13,7 +13,8 @@ namespace Res.Core.TcpTransport
             var sender = commitMessageFromSink.PopUntilEmptyFrame();
 
             var requestId = commitMessageFromSink.Pop();
-            var result = commitMessageFromSink.Pop();
+            var errorCode = commitMessageFromSink.Pop();
+            var errorDetails = commitMessageFromSink.Pop();
             var commitId = commitMessageFromSink.Pop();
 
             var msg = new NetMQMessage();
@@ -22,7 +23,8 @@ namespace Res.Core.TcpTransport
             msg.Append(ResProtocol.ResClient01); //currently only one.
             msg.Append(requestId);
             msg.Append(ResCommands.CommitResult);
-            msg.Append(result);
+            msg.Append(errorCode);
+            msg.Append(errorDetails);
             msg.Append(commitId);
 
             respondTo.SendMessage(msg);

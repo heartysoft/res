@@ -82,6 +82,7 @@
     <Compile Include="ResHost.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="App.Example.config" />
     <None Include="App.config" />
     <None Include="Nlog.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

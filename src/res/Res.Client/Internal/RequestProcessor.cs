@@ -50,34 +50,34 @@ namespace Res.Client.Internal
 
                     PendingResRequest pendingResRequest;
 
-                    if (_buffer.TryDequeue(out pendingResRequest))
+                    while (_buffer.TryDequeue(out pendingResRequest))
                     {
                         if (pendingResRequest.ShouldDrop())
                         {
                             pendingResRequest.Drop();
+                            continue;
                         }
-                        else
-                        {
-                            gateway.SendRequest(pendingResRequest);
-                            processed = true;
-                        }
+                        
+                        gateway.SendRequest(pendingResRequest);
+                        processed = true;
+                        break;
                     }
 
                     if (!processed)
                         spin.SpinOnce();
                 }
 
-                Log.Info("[RequestProcessor] Existing mainloop.");
+                Log.InfoFormat("[RequestProcessor] Exiting mainloop. Thread ID: {0}", Thread.CurrentThread.ManagedThreadId);
             }
             catch (Exception e)
             {
-                Log.Info("[RequestProcessor] Error in mainloop.", e);
+                Log.InfoFormat("[RequestProcessor] Error in mainloop. Thread ID: {0}", e, Thread.CurrentThread.ManagedThreadId);
             }
             finally
             {
-                Log.Info("[RequestProcessor] Shutting down gateway.");
+                Log.InfoFormat("[RequestProcessor] Shutting down gateway. Thread ID: {0}", Thread.CurrentThread.ManagedThreadId);
                 gateway.Shutdown();
-                Log.Info("[RequestProcessor] Gateway shutdown.");
+                Log.InfoFormat("[RequestProcessor] Gateway shutdown. Thread ID: {0}", Thread.CurrentThread.ManagedThreadId);
             }
         }
     }

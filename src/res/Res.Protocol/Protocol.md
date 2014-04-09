@@ -70,23 +70,24 @@ Internal event for queuing results. Comes from Sink to router socket.
 
 1. [Address] 
     - single frame...comes from internal sink
-2. Protocol
+2. Empty
+	- Denote end of routing frames
+3. Protocol
     - "Res01"
-3. Command 
+4. Command 
     - ResponseReady ["RR"]
-4. [Routing frames]
+5. [Routing frames]
     - For sending back to client.
-5. Empty
-    - Denotes end of routing frames.
-6. RequestId
+6. Empty
+   - Denotes end of routing frames.
+7. RequestId
     - Request correlation id.
-7. Result 
+8. Result 
     - Empty if successful. Error code otherwise. [TODO: Description of error codes.]
-8. Error  
+9. Error  
     - Serialised error details | Empty in case of success.
-9. CommitId
+10. CommitId
     - The commit id, if commit is successful.
-
 
 
 
