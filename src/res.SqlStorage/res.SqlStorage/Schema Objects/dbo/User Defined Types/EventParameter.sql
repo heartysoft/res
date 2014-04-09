@@ -3,6 +3,7 @@
 	[StreamId] [nvarchar](50) NOT NULL,
 	[ContextName] [nvarchar](50) NOT NULL,
 	[Sequence] [bigint] NULL,
+	[SequenceInCommit] [int],
 	[TimeStamp] [datetime2](3) NULL,
 	[EventType] [nvarchar](500) NULL,
 	[Body] [nvarchar](max) NULL,

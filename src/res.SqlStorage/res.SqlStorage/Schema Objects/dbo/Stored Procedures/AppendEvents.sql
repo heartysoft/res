@@ -18,6 +18,7 @@ BEGIN
 		CommitId uniqueidentifier, 
 		MinSequence bigint, 
 		MaxSequence bigint, 
+		EventCount int,
 		Context nvarchar(50), 
 		Stream nvarchar(50),
 		Timestamp datetime2(4),
@@ -27,8 +28,8 @@ BEGIN
     DECLARE @CommitCount int;
 	Declare @CurrentCommit int;
 
-	Insert Into @Commits (CommitId, Context, Stream, MinSequence, MaxSequence, Timestamp)
-	SELECT CommitId, ContextName as Context, StreamId as Stream, Min(Sequence), Max(Sequence), Min(Timestamp) as MinTimestamp
+	Insert Into @Commits (CommitId, Context, Stream, MinSequence, MaxSequence, EventCount, Timestamp)
+	SELECT CommitId, ContextName as Context, StreamId as Stream, Min(Sequence), Max(Sequence), Count(EventId), Min(Timestamp) as MinTimestamp
 		FROM @Events
 		Group By CommitId, ContextName, StreamId
 		order by MinTimestamp;
@@ -43,12 +44,12 @@ BEGIN
 		Begin Try			
 			Begin TRAN;
 				With toInsert (Stream, Context, Sequence) as
-				(SELECT m.Stream, m.Context as Context, m.MaxSequence as Sequence 
+				(SELECT m.Stream, m.Context as Context, (case m.MaxSequence when -1 then COALESCE(s.CurrentSequence, 0) + m.EventCount else m.MaxSequence end) as Sequence 
 					from @Commits m left outer join Streams s
 					on m.Stream = s.StreamId AND m.Context = s.Context
 					WHERE
 						(m.RowId = @CurrentCommit) AND 
-						(m.MinSequence = (s.CurrentSequence + 1) OR (s.CurrentSequence is null AND m.MinSequence = 1)))
+						(m.MinSequence=-1 OR m.MinSequence = (s.CurrentSequence + 1) OR (s.CurrentSequence is null AND m.MinSequence = 1)))
 				Merge Streams as target
 				using toInsert as source
 				on (target.StreamId = source.Stream AND target.Context = source.Context)
@@ -61,11 +62,13 @@ BEGIN
 				IF @@ROWCOUNT > 0 
 				Begin
 					Insert Into EventWrappers (EventId, ContextName, StreamId, Sequence, TimeStamp, EventType, Body)
-					SELECT e.EventId, e.ContextName, e.StreamId, e.Sequence, e.TimeStamp, e.EventType, e.Body 
+					SELECT e.EventId, e.ContextName, e.StreamId, case e.Sequence when -1 then (s.CurrentSequence - c.EventCount + e.SequenceInCommit) else e.Sequence end, e.TimeStamp, e.EventType, e.Body 
 					from @Events e inner join @Commits c
 						on e.CommitId = c.CommitId 
 						AND
-						c.RowId = @CurrentCommit;
+						c.RowId = @CurrentCommit inner join Streams s on
+						e.ContextName = s.Context AND e.StreamId = s.StreamID
+					order by e.SequenceInCommit;
 				End
 				else
 				Begin
@@ -83,11 +86,3 @@ BEGIN
     SELECT c.CommitId from @Commits c inner join @FailedCommits sc
 		on c.RowId = sc.RowId
 END
-
-
---update Streams Set CurrentSequence = (Select Max(
-
-
-
-
-GO

@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Common.Logging;
 using Res.Core.Storage;
+using Res.Core.TcpTransport;
 
 namespace Res.Core.StorageBuffering
 {
@@ -38,7 +39,7 @@ namespace Res.Core.StorageBuffering
             Logger.Info("[StorageWriter] Have capacity, will accept.");
             var entry = new Entry(commit, _maxAgeBeforeDrop);
             _queue.Enqueue(entry);
-            Logger.Info("[StorageWriter] Commit queued.");
+            Logger.InfoFormat("[StorageWriter] Commit queued. {0}", _queue.Count);
             return entry.Task;
         }
 
@@ -51,19 +52,29 @@ namespace Res.Core.StorageBuffering
         private void run(CancellationToken token)
         {
             var list = new List<Entry>(_maxBatchSize);
-            
+            Logger.InfoFormat("[StorageWriter] Entering main loop. {0}", _maxBatchSize);
+
+
             while (token.IsCancellationRequested == false)
             {
                 try
                 {
-                    while (list.Count < _maxBatchSize)
+                    while (list.Count <= _maxBatchSize)
                     {
+
                         Entry entry;
                         if (_queue.TryDequeue(out entry) == false)
+                        {
                             break;
+                        }
+
+                        Logger.Info("[StorageWriter] Got something to write...");
 
                         if (entry.ShouldDrop())
+                        {
+                            Logger.Info("[StorageWriter] Dropping message....too old.");
                             entry.Harikiri();
+                        }
                         else
                             list.Add(entry);
                     }
@@ -73,13 +84,13 @@ namespace Res.Core.StorageBuffering
                         store(list.ToArray());
                         list.Clear();
                     }
-
-                    _spinwait.SpinOnce();
                 }
                 catch (Exception e)
                 {
                     Logger.Warn("[StorageWriter] Error in mainloop.", e);
                 }
+
+                _spinwait.SpinOnce();
             }
 
             Logger.Info("[StorageWriter] Exiting. No more spinning for me today...");
@@ -107,6 +118,10 @@ namespace Res.Core.StorageBuffering
             {
                 foreach (var entry in entries)
                     entry.Fail(e);
+            }
+            finally
+            {
+                commits.Clear();
             }
         }
 

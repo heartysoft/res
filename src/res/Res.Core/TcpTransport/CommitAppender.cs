@@ -23,11 +23,14 @@ namespace Res.Core.TcpTransport
 
     public class ErrorResolver
     {
+        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+
         public ErrorEntry GetError(Exception e)
         {
             if (e == null)
                 return null;
 
+            Log.Info("[ErrorResolver] Unresolved exception.", e);
 
             throw new NotImplementedException();
         }
@@ -67,7 +70,7 @@ namespace Res.Core.TcpTransport
         {
             Log.Info("[CommitAppender] Write completed, sending back response.");
             var c = (CommitContinuationContext)state;
-
+            Log.Info("[CommitAppender] Got continuation context.");
             var ready = new CommitResultReady(Protocol, c, _resolver.GetError(commitTask.Exception));
             Log.Info("[CommitAppender] Here you go, Sink.");
             _sink.EnqueResult(ready);
@@ -91,7 +94,10 @@ namespace Res.Core.TcpTransport
                 var headers = message.Pop().ConvertToString();
                 var body = message.Pop().ConvertToString();
 
-                events[i] = new EventForStorage(eventId, expectedVersion + i, timestamp, typeKey, body, headers);
+                //-1 to override concurrency check. Being lazy and not using a constant.
+                var version = expectedVersion == -1 ? -1 : expectedVersion + i; 
+
+                events[i] = new EventForStorage(eventId, version, timestamp, typeKey, body, headers);
             }
 
             return new CommitForStorage(context, stream, events);

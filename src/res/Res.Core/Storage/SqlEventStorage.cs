@@ -4,11 +4,14 @@ using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using Common.Logging;
 
 namespace Res.Core.Storage
 {
     public class SqlEventStorage : EventStorage
     {
+        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+
         private readonly string _connectionString;
         private static readonly Dictionary<string, string> DatabaseChecks = new Dictionary<string, string> {
             {"SELECT 1","Could not connect to SQL Server instance with supplied configuration."},
@@ -119,7 +122,9 @@ namespace Res.Core.Storage
 
                 try
                 {
+                    Log.Info("[SqlEventStorage] Opening connection.");
                     command.Connection.Open();
+                    Log.Info("[SqlEventStorage] Executing sproc to write events.");
                     using (var reader = command.ExecuteReader())
                     {
                         while (reader.Read())
@@ -135,6 +140,11 @@ namespace Res.Core.Storage
 
                         return new CommitResults(successfulCommits, unsuccessfulCommits);
                     }
+                }
+                catch (Exception e)
+                {
+                    Log.Warn("[SqlEventStorage] Error during event storage.", e);
+                    throw;
                 }
                 finally
                 {
@@ -237,9 +247,12 @@ namespace Res.Core.Storage
         private void addCommitsToTable(CommitsForStorage commits, DataTable table)
         {
             foreach (var commit in commits.Commits)
-                foreach (var e in commit.Events)
-                    table.Rows.Add(e.EventId, commit.Stream, commit.Context, e.Sequence, e.Timestamp, e.TypeKey, e.Body,
-                                   commit.CommitId);
+                for (int index = 0; index < commit.Events.Length; index++)
+                {
+                    var e = commit.Events[index];
+                    table.Rows.Add(e.EventId, commit.Stream, commit.Context, e.Sequence, index+1, e.Timestamp, e.TypeKey, e.Body,
+                        commit.CommitId);
+                }
         }
 
         private DataTable getEmptyFetchEventsTable()
@@ -262,6 +275,7 @@ namespace Res.Core.Storage
             table.Columns.Add("StreamId", typeof(string));
             table.Columns.Add("ContextName", typeof(string));
             table.Columns.Add("Sequence", typeof(long));
+            table.Columns.Add("SequenceInCommit", typeof (int));
             table.Columns.Add("TimeStamp", typeof(DateTime));
             table.Columns.Add("EventType", typeof(string));
             table.Columns.Add("Body", typeof(string));

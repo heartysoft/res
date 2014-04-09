@@ -2,7 +2,7 @@
 {
     public class ExpectedVersion
     {
-        public const int Any = -2;
-        public const int OnlyNew = -1;
+        public const int Any = -1;
+        public const int OnlyNew = 1;
     }
 }

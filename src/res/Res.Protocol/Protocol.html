@@ -39,8 +39,8 @@
 <ul>
 <li>Expected initial version for the stream in the context.</li>
 <li>If positive, a mismatch will cause a concurrency violation.</li>
-<li>If -1, must be a new stream. [Currently not implemented.]</li>
-<li>If -2, concurrency check will be bypassed. [Currently not implemented].</li>
+<li>If 1, must be a new stream.</li>
+<li>If -1, concurrency check will be bypassed. [Currently not implemented].</li>
 </ul></li>
 <li>Event Count
 <ul>
@@ -89,15 +89,15 @@
 <li>Client protocol.</li>
 <li>Currently, only "Res01"</li>
 </ul></li>
+<li><code><strong>RequestId</strong> string </code>
+<ul>
+<li>Request correlation id.</li>
+</ul></li>
 <li><code><strong>Command</strong> string</code>
 <ul>
 <li>CommitResult ["CR"]</li>
 </ul></li>
-<li><code><strong>RequestId</strong> Guid </code>
-<ul>
-<li>Request correlation id.</li>
-</ul></li>
-<li><code><strong>Result</strong> int or empty </code>
+<li><code><strong>Result</strong> string or empty </code>
 <ul>
 <li>Empty if successful. Error code otherwise. [TODO: Description of error codes.]</li>
 </ul></li>

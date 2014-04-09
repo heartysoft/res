@@ -19,7 +19,7 @@ namespace Res
         {
             Logger.Info("[ResHost] Starting...Geronimo....");
             _cancellationToken = new CancellationTokenSource();
-            var eventStorage = new SqlEventStorage(config.ConnectionStringName);
+            var eventStorage = new SqlEventStorage(ConfigurationManager.ConnectionStrings[config.ConnectionStringName].ConnectionString);
             var storageWriter = new EventStorageWriter(config.Writer.BufferSize, config.Writer.TimeoutBeforeDrop,
                 eventStorage, config.Writer.BatchSize);
             storageWriter.Start(_cancellationToken.Token);

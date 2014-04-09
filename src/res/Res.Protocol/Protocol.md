@@ -23,8 +23,8 @@ Comes from client to router socket.
 8. ExpectedVersion
     - Expected initial version for the stream in the context.
     - If positive, a mismatch will cause a concurrency violation.
-    - If -1, must be a new stream. [Currently not implemented.]
-    - If -2, concurrency check will be bypassed. [Currently not implemented].
+    - If 1, must be a new stream.
+    - If -1, concurrency check will be bypassed. [Currently not implemented].
 9. Event Count
     - Number of events.
 10. One per event:

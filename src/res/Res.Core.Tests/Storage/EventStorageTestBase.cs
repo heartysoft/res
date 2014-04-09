@@ -214,6 +214,44 @@ namespace Res.Core.Tests.Storage
         }
 
         [Test]
+        public void commits_with_concurrency_check_disabled_should_append()
+        {
+            var commits = new CommitBuilder()
+                .NewCommit(Guid.NewGuid(), "foo", "stream")
+                .Event(new EventForStorage(Guid.NewGuid(), -1, DateTime.UtcNow, "someType", "someBody", null))
+                .Event(new EventForStorage(Guid.NewGuid(), -1, DateTime.UtcNow, "someType", "someBody", null))
+                .NewCommit(Guid.NewGuid(), "foo", "AnotherStream")
+                .Event(new EventForStorage(Guid.NewGuid(), -1, DateTime.UtcNow, "someType", "someBody", null))
+                .Build();
+
+            var result = _storage.Store(commits);
+
+            Assert.AreEqual(2, result.SuccessfulCommits.Length);
+        }
+
+        [Test]
+        public void commits_with_concurrency_check_disabled_should_append_when_there_are_existing_events()
+        {
+            var commits = new CommitBuilder()
+                .NewCommit(Guid.NewGuid(), "foo", "stream")
+                .Event(new EventForStorage(Guid.NewGuid(), 1, DateTime.UtcNow, "someType", "someBody", null))
+                .Event(new EventForStorage(Guid.NewGuid(), 2, DateTime.UtcNow, "someType", "someBody", null))
+                .Build();
+
+            _storage.Store(commits);
+
+            commits = new CommitBuilder()
+                .NewCommit(Guid.NewGuid(), "foo", "stream")
+                .Event(new EventForStorage(Guid.NewGuid(), -1, DateTime.UtcNow, "someNewType", "someBody1", null))
+                .Event(new EventForStorage(Guid.NewGuid(), -1, DateTime.UtcNow, "someNewType2", "someBody2", null))
+                .Build();
+
+            var result = _storage.Store(commits);
+
+            Assert.AreEqual(1, result.SuccessfulCommits.Length);
+        }
+
+        [Test]
         public void should_fetch_strored_events()
         {
             var event1Id = Guid.NewGuid();
