@@ -45,11 +45,13 @@ namespace Res.Client.Internal
         {
             if (_reapTime <= DateTime.Now)
             {
-                Log.Info("[STZMG] Reaping dead requests.");
                 _reapTime = DateTime.Now.Add(_reaperInterval);
                 foreach (var callback in _callbacks.Values)
                     if (callback.ShouldDrop())
+                    {
+                        Log.Info("[STZMG] Reaping dead request.");
                         callback.Drop();
+                    }
             }
         }
 

@@ -18,6 +18,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{D48E88
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Res.Client", "Res.Client\Res.Client.csproj", "{3CB0B093-182C-4FBA-AB25-3FD728E402E6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Res.Dira", "Res.Dira\Res.Dira.csproj", "{BC5CCFC3-00B6-42B2-AA96-548BEACCA5EA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -44,6 +46,10 @@ Global
 		{3CB0B093-182C-4FBA-AB25-3FD728E402E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3CB0B093-182C-4FBA-AB25-3FD728E402E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3CB0B093-182C-4FBA-AB25-3FD728E402E6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BC5CCFC3-00B6-42B2-AA96-548BEACCA5EA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BC5CCFC3-00B6-42B2-AA96-548BEACCA5EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BC5CCFC3-00B6-42B2-AA96-548BEACCA5EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BC5CCFC3-00B6-42B2-AA96-548BEACCA5EA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
