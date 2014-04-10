@@ -19,16 +19,19 @@ namespace Res.Client.Internal
 
         readonly object _startLock = new object();
         private bool _started;
-        public void Start(CancellationToken token)
+        private CancellationTokenSource _token;
+        private Task _task;
+
+        public void Start()
         {
-            
             lock (_startLock)
             {
                 if (!_started)
                 {
+                    _token = new CancellationTokenSource();
                     Log.Info("[RequestProcessor] Starting up.");
                     _started = true;
-                    Task.Factory.StartNew(() => run(token), token, TaskCreationOptions.LongRunning,
+                    _task = Task.Factory.StartNew(() => run(_token.Token), _token.Token, TaskCreationOptions.LongRunning,
                         TaskScheduler.Default);
                 }
             }
@@ -79,6 +82,12 @@ namespace Res.Client.Internal
                 gateway.Shutdown();
                 Log.InfoFormat("[RequestProcessor] Gateway shutdown. Thread ID: {0}", Thread.CurrentThread.ManagedThreadId);
             }
+        }
+
+        public void Stop()
+        {
+            _token.Cancel();
+            _task.Wait();
         }
     }
 }

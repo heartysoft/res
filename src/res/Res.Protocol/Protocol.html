@@ -71,18 +71,13 @@
 </ol></li>
 </ol>
 
-<h2>CommitResult</h2>
-
-<p>Sent back to client after a commit</p>
+<h1>Result Format In General</h1>
 
 <ol>
-<li>[Routing Frames]
-<ul>
-<li>Used for routing the message back.</li>
-</ul></li>
+<li>[Routing Frames]</li>
 <li>Empty
 <ul>
-<li>Denotes end of routing frame.</li>
+<li>Signals end of routing frame</li>
 </ul></li>
 <li><code><strong>Protocol</strong> string </code>
 <ul>
@@ -95,19 +90,18 @@
 </ul></li>
 <li><code><strong>Command</strong> string</code>
 <ul>
-<li>CommitResult ["CR"]</li>
+<li>Message type from ResCommands representing the response.</li>
 </ul></li>
-<li><code><strong>Result</strong> string or empty </code>
+<li><p>[Details]</p>
+
 <ul>
-<li>Empty if successful. Error code otherwise. [TODO: Description of error codes.]</li>
+<li>In case of any error, Command will be ResCommands.Error ["ER"], and Details will be two frames:
+<ul>
+<li>Error code. An integer code representing the error.</li>
+<li>Serialised error message</li>
 </ul></li>
-<li><code><strong>Error</strong> string</code>
-<ul>
-<li>Serialised error details | Empty in case of success.</li>
-</ul></li>
-<li><code><strong>CommitId</strong> Guid</code>
-<ul>
-<li>The commit id, if commit is successful.</li>
+<li>In case of success, Command will represent the response, and Details will be zero or more frames depending on the command.</li>
+<li>The description of each type of response contains only the Command and Details in the following sections, as the header and error formats are the same for all responses.</li>
 </ul></li>
 </ol>
 
@@ -115,8 +109,35 @@
 
 <ul>
 <li><code>Empty:</code> Success</li>
-<li><code>0x1:</code> Storage Writer Busy</li>
+<li><code>-1:</code> Unexpected error</li>
+<li><code>1:</code> Malformed message</li>
+<li><code>2:</code> Unsupported protocol</li>
+<li><code>3:</code> Unsupported Command</li>
+<li><code>4:</code> Storage Writer Busy</li>
+<li><code>5:</code> Storage Writer Timeout</li>
+<li><code>6:</code> Concurrency Exception</li>
+<li><code>7:</code> Event Storage Exception</li>
+<li><code>8:</code> Event Not Found</li>
+<li><code>9:</code> Storage Reader Timeout</li>
+<li><code>10:</code> Storage Reader Busy</li>
 </ul>
+
+<h2>CommitResult</h2>
+
+<p>Sent back to client after a commit</p>
+
+<ol>
+<li><code><strong>Command</strong> string</code>
+<ul>
+<li>CommitResult ["CR"]</li>
+</ul></li>
+<li><code><strong>CommitId</strong> Guid</code>
+<ul>
+<li>The commit id, if commit is successful.</li>
+</ul></li>
+</ol>
+
+<h1>Internal events. May remove if we choose to go in mem queue + polling on socket thread, like we are doing for the client. NOT for external consumption.</h1>
 
 <h2>Response Ready</h2>
 
@@ -126,6 +147,10 @@
 <li>[Address] 
 <ul>
 <li>single frame...comes from internal sink</li>
+</ul></li>
+<li>Empty
+<ul>
+<li>Denote end of routing frames</li>
 </ul></li>
 <li>Protocol
 <ul>

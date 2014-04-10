@@ -18,10 +18,10 @@ namespace Res.Client.Internal
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
         private DateTime _reapTime;
 
-        public SingleThreadedZeroMqGateway(NetMQContext ctx, string endpoint, TimeSpan reaperInterval)
+        public SingleThreadedZeroMqGateway(string endpoint, TimeSpan reaperInterval)
         {
             Log.InfoFormat("[STZMG] Starting. Thread Id: {0}", Thread.CurrentThread.ManagedThreadId);
-            _ctx = ctx;
+            _ctx = NetMQContext.Create();
             _endpoint = endpoint;
             _reaperInterval = reaperInterval;
             _socket = connect();
@@ -128,6 +128,7 @@ namespace Res.Client.Internal
             {
                 Log.InfoFormat("[STZMG] Disposing old socket. Thread Id: {0}", Thread.CurrentThread.ManagedThreadId);
                 _socket.ReceiveReady -= socket_ReceiveReady;
+                _socket.Options.Linger = TimeSpan.FromSeconds(0);
                 _socket.Dispose();
                 _socket = null;
             }
@@ -145,9 +146,10 @@ namespace Res.Client.Internal
                     socket.Connect(_endpoint);
                     return socket;
                 }
-                catch(Exception e)
+                catch(NetMQException e)
                 {
                     Log.WarnFormat("[STZMG] Error connecting to socket. Retrying... Thread ID: {0}", e, Thread.CurrentThread.ManagedThreadId);
+                    socket.Options.Linger = TimeSpan.FromSeconds(0);
                     socket.Dispose();
                     spinner.SpinOnce();
                 }
@@ -160,11 +162,12 @@ namespace Res.Client.Internal
             if (_socket != null)
             {
                 _socket.ReceiveReady -= socket_ReceiveReady;
-                _socket.ReceiveReady -= socket_ReceiveReady;
-                _socket.ReceiveReady -= socket_ReceiveReady;
+                _socket.Options.Linger = TimeSpan.FromSeconds(0);
                 _socket.Dispose();
+                Log.InfoFormat("[STZMG] Socket disposed. Thread Id: {0}", Thread.CurrentThread.ManagedThreadId);
+                _ctx.Dispose();
+                Log.InfoFormat("[STZMG] Context disposed. Thread Id: {0}", Thread.CurrentThread.ManagedThreadId);
             }
-            Log.InfoFormat("[STZMG] Socket disposed. Thread Id: {0}", Thread.CurrentThread.ManagedThreadId);
         }
 
 
