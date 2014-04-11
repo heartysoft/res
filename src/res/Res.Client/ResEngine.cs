@@ -60,6 +60,9 @@ namespace Res.Client
 
         internal static Task<CommitResponse> CommitAsync(string context, string stream, EventData[] events, long expectedVersion, TimeSpan timeout)
         {
+            if (!_running)
+                return Task.FromResult(default(CommitResponse));
+
             return _acceptor.CommitAsync(context, stream, events, expectedVersion, timeout);
         }
 
