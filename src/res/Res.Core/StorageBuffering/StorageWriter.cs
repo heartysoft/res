@@ -55,6 +55,7 @@ namespace Res.Core.StorageBuffering
             Logger.InfoFormat("[StorageWriter] Entering main loop. {0}", _maxBatchSize);
 
 
+            var spinWait = new SpinWait();
             while (token.IsCancellationRequested == false)
             {
                 try
@@ -84,6 +85,10 @@ namespace Res.Core.StorageBuffering
                         store(list.ToArray());
                         list.Clear();
                     }
+                    else
+                    {
+                        spinWait.SpinOnce();
+                    }
                 }
                 catch (Exception e)
                 {
@@ -104,6 +109,7 @@ namespace Res.Core.StorageBuffering
 
             try
             {
+                Logger.InfoFormat("[StorageWriter] Storing {0} commits.", commit.Commits.Length);
                 var results = _storage.Store(commit);
                 Logger.Info("[StorageWriter] Entries stored.");
 
