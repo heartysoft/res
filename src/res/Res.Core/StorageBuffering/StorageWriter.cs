@@ -60,7 +60,7 @@ namespace Res.Core.StorageBuffering
             {
                 try
                 {
-                    while (list.Count <= _maxBatchSize)
+                    while (list.Count < _maxBatchSize)
                     {
 
                         Entry entry;
@@ -82,6 +82,8 @@ namespace Res.Core.StorageBuffering
 
                     if (list.Count > 0)
                     {
+                        Console.WriteLine(_maxBatchSize);
+                        Console.WriteLine(_queue.Count);
                         store(list.ToArray());
                         list.Clear();
                     }
@@ -110,6 +112,7 @@ namespace Res.Core.StorageBuffering
             try
             {
                 Logger.InfoFormat("[StorageWriter] Storing {0} commits.", commit.Commits.Length);
+                Console.WriteLine("[StorageWriter] Storing {0} commits.", commit.Commits.Length);
                 var results = _storage.Store(commit);
                 Logger.Info("[StorageWriter] Entries stored.");
 

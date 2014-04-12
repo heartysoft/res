@@ -23,7 +23,7 @@ namespace Res
     {
         [XmlElement("bufferSize")]
         public int BufferSize { get; set; }
-        [XmlElement("bacthSize")]
+        [XmlElement("batchSize")]
         public int BatchSize { get; set; }
         [XmlElement("timeoutBeforeDrop")]
         public TimeSpan TimeoutBeforeDrop { get; set; }
