@@ -30,20 +30,37 @@ namespace Res.Dira
             Console.WriteLine("Hello...shall we try out the res server?");
 
             Console.WriteLine("Starting client engine for {0}...", endpoint);
-            ResEngine.Start(endpoint);
+            var engine = new ResEngine();
+            engine.Start(endpoint);
+            GlobalHack.SetEngine(engine);
             
             Console.WriteLine("Client engine started.");
 
-            var cmdr = new CmdR("input>", new string[] {"exit"});
+            var cmdr = new CmdR("input>", new[] {"exit"});
             cmdr.AutoRegisterCommands();
 
             cmdr.Run(args);
 
 
 
-            ResEngine.Stop();
+            engine.Dispose();
             Console.WriteLine("Bye bye.");
 
+        }
+    }
+
+    public static class GlobalHack
+    {
+        static private ResEngine _engine;
+
+        public static void SetEngine(ResEngine engine)
+        {
+            _engine = engine;
+        }
+
+        public static ResClient GetClient()
+        {
+            return _engine.CreateClient(TimeSpan.FromSeconds(10));
         }
     }
 
@@ -56,7 +73,9 @@ namespace Res.Dira
             if (param.ContainsKey("n"))
                 n = int.Parse(param["n"]);
 
-            Appender.AppendEvents(n);
+            var client = GlobalHack.GetClient();
+            var appender = new Appender(client);
+            appender.AppendEvents(n);
 
             cmdR.State.CmdPrompt = "input>";
         }
@@ -67,7 +86,14 @@ namespace Res.Dira
 
     public class Appender
     {
-        public static void AppendEvents(int n)
+        private readonly ResClient _client;
+
+        public Appender(ResClient client)
+        {
+            _client = client;
+        }
+
+        public void AppendEvents(int n)
         {
             Console.WriteLine("Appending {0} events...here we go...", n);
 
@@ -82,9 +108,8 @@ namespace Res.Dira
             Console.WriteLine("Appended {0} events in {1} seconds at {2} events / sec.", n, sw.Elapsed.TotalSeconds, n / sw.Elapsed.TotalSeconds);
         }
 
-        static void appendEvents(int n)
+        void appendEvents(int n)
         {
-            var client = new ThreadsafeResClient();
             var events = new[]
             {
                 new EventData("test-order-placed", Guid.NewGuid(), "{}",
@@ -99,7 +124,7 @@ namespace Res.Dira
                         {
                             try
                             {
-                                var task = client.CommitAsync("res.dira", "some stream", events, ExpectedVersion.Any,
+                                var task = _client.CommitAsync("res.dira", "some stream", events, ExpectedVersion.Any,
                                     TimeSpan.FromSeconds(10));
                                 return task;
                             }

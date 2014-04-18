@@ -39,13 +39,13 @@ namespace Res.Core.Tests.Client
         [Test]
         public void ShouldBootUpAndTeardown()
         {
-            var client = new ThreadsafeResClient();
+            var client = _harness.CreateClient();
         }
 
         [Test]
         public void ShouldStoreAnEvent()
         {
-            var client = new ThreadsafeResClient();
+            var client = _harness.CreateClient();
             var commit = client.CommitAsync("test-context", Guid.NewGuid().ToString(), new[]
             {
                 new EventData("test", Guid.NewGuid(), "", "some body", DateTime.Now) 
@@ -57,7 +57,7 @@ namespace Res.Core.Tests.Client
         [Test]
         public void ShouldStoreMultiplEvents()
         {
-            var client = new ThreadsafeResClient();
+            var client = _harness.CreateClient();
             var commit = client.CommitAsync("test-context", Guid.NewGuid().ToString(), new[]
             {
                 new EventData("test", Guid.NewGuid(), "", "some body", DateTime.Now),
@@ -72,7 +72,7 @@ namespace Res.Core.Tests.Client
         [Test]
         public void ShouldHandleMultipleNonConflictingCommits()
         {
-            var client = new ThreadsafeResClient();
+            var client = _harness.CreateClient();
             var commit = client.CommitAsync("test-context", Guid.NewGuid().ToString(), new[]
             {
                 new EventData("test", Guid.NewGuid(), "", "some body", DateTime.Now),
@@ -93,7 +93,7 @@ namespace Res.Core.Tests.Client
         [Test]
         public void ConflictingWritesShouldFail()
         {
-            var client = new ThreadsafeResClient();
+            var client = _harness.CreateClient();
             var stream = Guid.NewGuid().ToString();
 
             var commit = client.CommitAsync("test-context", stream, new[]
@@ -124,7 +124,7 @@ namespace Res.Core.Tests.Client
         [Test]
         public void ShouldHandleSerialisedWrites()
         {
-            var client = new ThreadsafeResClient();
+            var client = _harness.CreateClient();
             var commit = client.CommitAsync("test-context", Guid.NewGuid().ToString(), new[]
             {
                 new EventData("test", Guid.NewGuid(), "", "some body", DateTime.Now),
@@ -174,17 +174,24 @@ namespace Res.Core.Tests.Client
     {
         public const string Endpoint = "tcp://127.0.0.1:9099";
         private Process _process;
+        private ResEngine _engine;
 
         public void Start()
         {
             var start = new ProcessStartInfo(@"..\..\..\Res\bin\debug\res.exe", "-endpoint:" + Endpoint);
             _process = Process.Start(start);
-            ResEngine.Start(Endpoint);
+            _engine = new ResEngine();
+            _engine.Start(Endpoint);
+        }
+
+        public ResClient CreateClient()
+        {
+            return _engine.CreateClient(TimeSpan.FromSeconds(10));      
         }
 
         public void Stop()
         {
-            ResEngine.Stop();
+            _engine.Dispose();
             _process.Kill();
         }
     }

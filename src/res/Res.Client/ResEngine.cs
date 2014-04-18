@@ -7,26 +7,17 @@ using Res.Client.Internal;
 
 namespace Res.Client
 {
-    public static class ResEngine
+    public class ResEngine : IDisposable
     {
-        private static RequestAcceptor _acceptor;
+        private RequestAcceptor _acceptor;
 
-        private static readonly object RunningLock = new object();
-        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+        private readonly ILog _log = LogManager.GetCurrentClassLogger();
 
-        private static bool _running;
-        private static RequestProcessor _processor;
+        private RequestProcessor _processor;
 
-        public static void Start(string endpoint)
+        public void Start(string endpoint)
         {
-            lock (RunningLock)
-            {
-                if (_running)
-                    return;
-
-                _running = true;
-            }
-            Log.Info("[ResEngine] Starting...");
+            _log.Info("[ResEngine] Starting...");
 
             const int bufferSize = 11;
 
@@ -40,35 +31,28 @@ namespace Res.Client
             _processor = new RequestProcessor(gatewayFactory, buffer);
             _processor.Start();
             
-            Log.Info("[ResEngine] Started.");
+            _log.Info("[ResEngine] Started.");
         }
 
-        public static void Stop()
+        public ResClient CreateClient(TimeSpan defaultTimeout)
         {
-            lock (RunningLock)
-            {
-                if (!_running)
-                    return;
-
-                _running = false;
-
-                Log.Info("[ResEngine] Stopping...");
-                _processor.Stop();
-                Log.Info("[ResEngine] Processor stopped. Bye bye.");
-            }
+            return new ThreadsafeResClient(_acceptor, defaultTimeout);
         }
 
-        internal static Task<CommitResponse> CommitAsync(string context, string stream, EventData[] events, long expectedVersion, TimeSpan timeout)
+        protected virtual void Dispose(bool disposing)
         {
-            if (!_running)
-                return Task.FromResult(default(CommitResponse));
+            if (!disposing)
+                return;
 
-            return _acceptor.CommitAsync(context, stream, events, expectedVersion, timeout);
+            _log.Info("[ResEngine] Stopping...");
+            _processor.Stop();
+            _log.Info("[ResEngine] Processor stopped. Bye bye.");
         }
 
-        internal static Task<CommitResponse> CommitAsync(string context, string stream, EventData[] events, long expectedVersion)
+        public void Dispose()
         {
-            return CommitAsync(context, stream, events, expectedVersion, TimeSpan.FromSeconds(10));
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
     }
 }
