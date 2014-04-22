@@ -77,6 +77,10 @@
     <Compile Include="TcpTransport\Receiver.cs" />
     <Compile Include="TcpTransport\ResultProcessor.cs" />
     <Compile Include="TcpTransport\Sink.cs" />
+    <Compile Include="TcpTransport\Subscriptions\OutBuffer.cs" />
+    <Compile Include="TcpTransport\Subscriptions\SubscriptionProcessor.cs" />
+    <Compile Include="TcpTransport\Subscriptions\TcpGateway.cs" />
+    <Compile Include="TcpTransport\Subscriptions\Transceiver.cs" />
     <Compile Include="TcpTransport\TaskCompleted.cs" />
     <Compile Include="TcpTransport\TcpEndpoint.cs" />
   </ItemGroup>

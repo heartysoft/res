@@ -40,6 +40,86 @@ Comes from client to router socket.
         - String representing body. Upto client to decide how to use this.
 
 
+##2. Subscribe
+
+Comes from client to router socket.
+
+###Message Format
+1. [Return Address] : 
+    - Routing frames. 
+    - An ordered array of frames, as requests may be brokered.
+2. Empty
+    - Denotes end of routing frames.
+3. Protocol 
+    - "Res01"
+    - Request protocol. Currently, onlt Res01 is supported.
+4. Command 
+    - RegisterSubscriptions ["RS"]
+5. RequestId
+	- Request Identifier. This will be passed back as part of response enabling client to correlate.
+6. <code>**SubscriberId**</code>
+	- Unique subscriber id.
+7. <code>**Count** int </code>
+	- Number of subscriptions being registered.
+8. One per subscription
+	1. <code>**SubscriptionRequestId** int</code>
+		- Index of subscription request (can be used for client correlation).
+	2. <code>**Context** string</code>
+		- Context for subscription. Exact match is required for events.
+	3. <code>**Filter** string</code>
+		- Filter. Prefix (i.e. starts with) match is required on the stream.
+	4. <code>**Start Time** datetime</code>
+		- When to start the subscription, if it does not already exist.
+	5. <code>**Current Time** datetime</code>
+		- Current time.
+
+
+##3. FetchEvents
+Used to fetch events for subscriptions.
+
+###Message Format:
+1. [Return Address] : 
+    - Routing frames. 
+    - An ordered array of frames, as requests may be brokered.
+2. Empty
+    - Denotes end of routing frames.
+3. Protocol 
+    - "Res01"
+    - Request protocol. Currently, onlt Res01 is supported.
+4. Command 
+    - FetchEvents ["FE"]
+5. <code>**Count** int </code>
+	- Number of subscriptions being requested.
+6. One per subscription
+	1. <code>**SubscriptionId** long</code>
+	2. <code>**SuggestedCount** int<code>
+		- The number of events for this subscription to fetch. This is a suggestion, and the actual number of events returned may be larger. Events matching the timestamp of the "last" event will be included.
+	3. <code>**Current Time** datetime</code>
+		- Current time. 
+
+
+##4. Progress Subscriptions
+Acknowledge previous events, progress subscription.
+
+###Message Format:
+1. [Return Address] : 
+    - Routing frames. 
+    - An ordered array of frames, as requests may be brokered.
+2. Empty
+    - Denotes end of routing frames.
+3. Protocol 
+    - "Res01"
+    - Request protocol. Currently, onlt Res01 is supported.
+4. Command 
+    - ProgressSubscription ["PS"]
+5. <code>**Count** int </code>
+	- Number of subscriptions being requested.
+6. One per subscription
+	1. <code>**SubscriptionId** long</code>
+	2. <code>**Current Time** datetime</code>
+		- Current time. 
+
+
 #Result Format In General
 1. [Routing Frames]
 2. Empty
@@ -81,6 +161,47 @@ Sent back to client after a commit
     - CommitResult ["CR"]
 2. <code>**CommitId** Guid</code>
     - The commit id, if commit is successful.
+
+
+##SubscribeResult
+Sent back to client after a subscribe.
+
+1. <code>**Command** string</code>
+	- SubscribeResult ["SR"]
+2. <code>**Count** int </code>
+	- Number of subscriptions (same as request).
+3. One per subscription:
+	1. <code>**SubscriptionRequestId** int</code>
+		- Index of subscription request (can be used for client correlation).
+	2. <code>**SubscriptionId** -long</code>
+		- Subscription id, can be used to fetch events.
+
+##Fetch Events Result
+1. <code>**Command** string</code>
+	- EventsFetched ["EF"]
+2. <code>**Count** int </code>
+	- Number of subscriptions. Only subscriptions with events to return will be counted.
+3. One per subscription:
+	1. <code>**SubscriptionId** long</code>
+	2. <code>**Count** int </code>
+		- Number of events fetched for the subscription.
+	3. One per event:
+		1. <code>**EventId** guid</code>
+		2. <code>**StreamId** string</code>
+		3. <code>**Context** string</code>
+		4. <code>**Sequence** long</code>
+		5. <code>**Timestamp** datetime</code>
+		6. <code>**Type tag** string</code>
+		7. <code>**Headers** string</code>
+		8. <code>**Body** string</code>
+
+##Progress Subscription Result
+1. <code>**Command** string</code>
+	- Subscription Progressed ["SP"]
+2. <code>**Count** int </code>
+	- Number of subscriptions.
+3. One per subscription:
+	1. <code>**SubscriptionId** -long</code>
 
 
 #Internal events. May remove if we choose to go in mem queue + polling on socket thread, like we are doing for the client. NOT for external consumption.
