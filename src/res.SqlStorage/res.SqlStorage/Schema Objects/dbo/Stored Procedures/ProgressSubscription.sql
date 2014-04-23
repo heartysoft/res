@@ -17,7 +17,7 @@ BEGIN
     -- Insert statements for procedure here
 	Update Subscriptions Set CurrentBookmark = NextBookmark, LastActive = @CurrentTime
 	WHERE
-	SubscriptionId = @SubscriptionId AND NextBookmark = @ExpectedNextBookmark
+	SubscriptionId = @SubscriptionId AND NextBookmark <= @ExpectedNextBookmark
 END
 
 

@@ -1,9 +1,10 @@
 $framework = '4.0'
 properties {
+    $config= if($config -eq $null) {'Debug' } else {$config}
     $base_dir = resolve-path .\..
     $source_dir = "$base_dir\src"
     $tools_dir = "$base_dir\tools"
-    $config="Debug"    
+
     $res_dir = "$source_dir\res"
     $res_artefacts_dir="$res_dir\Res\bin\$config"
     $resclient_artefacts_dir="$res_dir\Res.Client\bin\$config"
@@ -11,6 +12,9 @@ properties {
     $test_results_dir="$base_dir\test-results"
     $package_dir = "$base_dir\deploy\$config"
 }
+
+
+
 
 task default -depends local
 
@@ -22,6 +26,8 @@ task clean {
 }
 
 task compile -depends clean {
+    echo $config
+    echo $res_artefacts_dir
     exec { msbuild $res_dir\Res.sln /t:Clean /t:Build /p:Configuration=$config /v:q /nologo }
 }
 

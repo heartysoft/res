@@ -178,8 +178,14 @@ namespace Res.Core.Tests.Client
 
         public void Start()
         {
+            
+#if DEBUG
             var start = new ProcessStartInfo(@"..\..\..\Res\bin\debug\res.exe", "-endpoint:" + Endpoint);
+#else
+            var start = new ProcessStartInfo(@"..\..\..\Res\bin\release\res.exe", "-endpoint:" + Endpoint);
+#endif
             _process = Process.Start(start);
+            
             _engine = new ResEngine();
             _engine.Start(Endpoint);
         }
