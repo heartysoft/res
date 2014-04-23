@@ -84,27 +84,23 @@ namespace Res.Core.Storage
                 command.CommandType = CommandType.StoredProcedure;
                 command.Parameters.Add(parameter);
 
-                try
+
+
+                command.Connection.Open();
+                using (var reader = command.ExecuteReader())
                 {
-                    command.Connection.Open();
-                    using (var reader = command.ExecuteReader())
+                    while (reader.Read())
                     {
-                        while (reader.Read())
-                        {
-                            var requestId = reader.GetGuid(0);
-                            var e = readEventInStorage(reader, 1);
+                        var requestId = reader.GetGuid(0);
+                        var e = readEventInStorage(reader, 1);
 
-                            results[requestId] = e;
-                        }
-
-                        return results;
+                        results[requestId] = e;
                     }
+
+                    return results;
                 }
-                finally
-                {
-                    if (connection.State == ConnectionState.Open)
-                        connection.Close();
-                }
+
+
             }
         }
 
@@ -146,11 +142,6 @@ namespace Res.Core.Storage
                     Log.Warn("[SqlEventStorage] Error during event storage.", e);
                     throw;
                 }
-                finally
-                {
-                    if (connection.State == ConnectionState.Open)
-                        connection.Close();
-                }
             }
         }
 
@@ -170,24 +161,16 @@ namespace Res.Core.Storage
                 if (maxVersion.HasValue)
                     command.Parameters.AddWithValue("ToVersion", maxVersion);
 
-                try
+                command.Connection.Open();
+                using (var reader = command.ExecuteReader())
                 {
-                    command.Connection.Open();
-                    using (var reader = command.ExecuteReader())
+                    while (reader.Read())
                     {
-                        while (reader.Read())
-                        {
-                            var @event = readEventInStorage(reader, 0);
-                            events.Add(@event);
-                        }
-
-                        return events.ToArray();
+                        var @event = readEventInStorage(reader, 0);
+                        events.Add(@event);
                     }
-                }
-                finally
-                {
-                    if (connection.State == ConnectionState.Open)
-                        connection.Close();
+
+                    return events.ToArray();
                 }
             }
         }
@@ -250,7 +233,7 @@ namespace Res.Core.Storage
                 for (int index = 0; index < commit.Events.Length; index++)
                 {
                     var e = commit.Events[index];
-                    table.Rows.Add(e.EventId, commit.Stream, commit.Context, e.Sequence, index+1, e.Timestamp, e.TypeKey, e.Body,
+                    table.Rows.Add(e.EventId, commit.Stream, commit.Context, e.Sequence, index + 1, e.Timestamp, e.TypeKey, e.Body,
                         commit.CommitId);
                 }
         }
@@ -275,7 +258,7 @@ namespace Res.Core.Storage
             table.Columns.Add("StreamId", typeof(string));
             table.Columns.Add("ContextName", typeof(string));
             table.Columns.Add("Sequence", typeof(long));
-            table.Columns.Add("SequenceInCommit", typeof (int));
+            table.Columns.Add("SequenceInCommit", typeof(int));
             table.Columns.Add("TimeStamp", typeof(DateTime));
             table.Columns.Add("EventType", typeof(string));
             table.Columns.Add("Body", typeof(string));
@@ -310,8 +293,6 @@ namespace Res.Core.Storage
                             }
                         }
                     }
-
-                    connection.Close();
                 }
             }
             catch (SqlException sex)

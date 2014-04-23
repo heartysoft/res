@@ -46,14 +46,14 @@ namespace Res.Core.TcpTransport.NetworkIO
                 _socket = null;
             }
 
-            Log.InfoFormat("[TcpGateway] Creating new socket. Thread Id: {0}", Thread.CurrentThread.ManagedThreadId);
-            var socket = _ctx.CreateDealerSocket();
-            socket.ReceiveReady += socket_ReceiveReady;
-
             var spinner = new SpinWait();
 
             while (true)
             {
+                Log.InfoFormat("[TcpGateway] Creating new socket. Thread Id: {0}", Thread.CurrentThread.ManagedThreadId);
+                var socket = _ctx.CreateDealerSocket();
+                socket.ReceiveReady += socket_ReceiveReady;
+
                 try
                 {
                     socket.Connect(_endpoint);

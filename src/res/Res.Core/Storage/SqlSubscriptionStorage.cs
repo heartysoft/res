@@ -37,26 +37,19 @@ namespace Res.Core.Storage
                 command.Parameters.AddWithValue("SuggestedCount", suggestedCount);
                 command.Parameters.AddWithValue("CurrentTime", now);
 
-                try
-                {
-                    command.Connection.Open();
-                    using (var reader = command.ExecuteReader())
-                    {
-                        var events = new List<EventInStorage>();
-                        
-                        while (reader.Read())
-                        {
-                            var @event = readEventInStorage(reader, 0);
-                            events.Add(@event);
-                        }
 
-                        return events.ToArray();
-                    }
-                }
-                finally
+                command.Connection.Open();
+                using (var reader = command.ExecuteReader())
                 {
-                    if (connection.State == ConnectionState.Open)
-                        connection.Close();
+                    var events = new List<EventInStorage>();
+
+                    while (reader.Read())
+                    {
+                        var @event = readEventInStorage(reader, 0);
+                        events.Add(@event);
+                    }
+
+                    return events.ToArray();
                 }
             }
         }
@@ -71,16 +64,10 @@ namespace Res.Core.Storage
                 command.Parameters.AddWithValue("ExpectedNextBookmark", expectedNextBookmark);
                 command.Parameters.AddWithValue("CurrentTime", now);
 
-                try
-                {
-                    command.Connection.Open();
-                    command.ExecuteNonQuery();
-                }
-                finally
-                {
-                    if (connection.State == ConnectionState.Open)
-                        connection.Close();
-                }
+
+                command.Connection.Open();
+                command.ExecuteNonQuery();
+
             }
         }
 
@@ -120,17 +107,10 @@ namespace Res.Core.Storage
                 command.Parameters.AddWithValue("CurrentTime", request.CurrentTime);
                 command.Parameters.AddWithValue("Filter", request.Filter);
 
-                try
-                {
-                    command.Connection.Open();
-                    var subscriptionId = (long)command.ExecuteScalar();
-                    return new SubscribeResponse(request.RequestId, subscriptionId);
-                }
-                finally
-                {
-                    if (connection.State == ConnectionState.Open)
-                        connection.Close();
-                }
+                command.Connection.Open();
+                var subscriptionId = (long)command.ExecuteScalar();
+
+                return new SubscribeResponse(request.RequestId, subscriptionId);
             }
         }
     }
