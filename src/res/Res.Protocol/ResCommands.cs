@@ -16,5 +16,7 @@ namespace Res.Protocol
         public const string SubscribeResponse = "SR";
         public const string FetchEvents = "FE";
         public const string EventsFetched = "EF";
+        public const string ProgressSubscriptions = "PS";
+        public const string SubscriptionsProgressed = "SP";
     }
 }

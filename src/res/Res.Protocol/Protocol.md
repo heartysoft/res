@@ -108,14 +108,13 @@ Acknowledge previous events, progress subscription.
     - Request protocol. Currently, onlt Res01 is supported.
 4. Command 
     - ProgressSubscription ["PS"]
-5. <code>**Count** int </code>
+5. RequestId
+6. <code>**Count** int </code>
 	- Number of subscriptions being requested.
-6. One per subscription
+7. One per subscription
 	1. <code>**SubscriptionId** long</code>
     2. <code>**LastEventTime** datetime</code>
-        - Used 
-	3. <code>**Current Time** datetime</code>
-		- Current time. 
+        - Used for idempotency. If next bookmark does not match, progress will not occur (this can happen, for example, if the subscription has already been progressed, and a subsequent fetch has happened.)
 
 
 #Result Format In General

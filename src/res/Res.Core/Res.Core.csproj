@@ -92,8 +92,10 @@
     <Compile Include="TcpTransport\NetworkIO\Transceiver.cs" />
     <Compile Include="TcpTransport\Subscriptions\EventsFetched.cs" />
     <Compile Include="TcpTransport\Subscriptions\FetchEventsHandler.cs" />
+    <Compile Include="TcpTransport\Subscriptions\ProgressSubscriptionHandler.cs" />
     <Compile Include="TcpTransport\Subscriptions\SubscribeCompleted.cs" />
     <Compile Include="TcpTransport\Subscriptions\SubscribeHandler.cs" />
+    <Compile Include="TcpTransport\Subscriptions\SubscriptionsProgressed.cs" />
     <Compile Include="TcpTransport\TaskCompleted.cs" />
     <Compile Include="TcpTransport\TcpEndpoint.cs" />
   </ItemGroup>
