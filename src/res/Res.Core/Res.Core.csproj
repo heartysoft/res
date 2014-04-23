@@ -65,6 +65,10 @@
     <Compile Include="Storage\FetchEventRequest.cs" />
     <Compile Include="Storage\InMemoryEventStorage.cs" />
     <Compile Include="Storage\SqlEventStorage.cs" />
+    <Compile Include="Storage\SqlSubscriptionStorage.cs" />
+    <Compile Include="Storage\SubscribeRequest.cs" />
+    <Compile Include="Storage\SubscribeResponse.cs" />
+    <Compile Include="Storage\SubscriptionStorage.cs" />
     <Compile Include="TcpTransport\CommitAppender.cs" />
     <Compile Include="TcpTransport\CommitContinuationContext.cs" />
     <Compile Include="TcpTransport\CommitResultReady.cs" />
@@ -72,15 +76,21 @@
     <Compile Include="TcpTransport\ErrorHandlingMessageProcessor.cs" />
     <Compile Include="TcpTransport\ErrorResolver.cs" />
     <Compile Include="TcpTransport\CoreMessageProcessor.cs" />
+    <Compile Include="TcpTransport\Exceptions\MalformedMessageReceivedException.cs" />
+    <Compile Include="TcpTransport\Exceptions\UnsupportedCommandException.cs" />
+    <Compile Include="TcpTransport\Exceptions\UnsupportedProtocolException.cs" />
+    <Compile Include="TcpTransport\MessageProcessing\RequestHandler.cs" />
+    <Compile Include="TcpTransport\MessageProcessing\TcpMessageDispatcher.cs" />
     <Compile Include="TcpTransport\MessageProcessor.cs" />
     <Compile Include="TcpTransport\NetMQExtensions.cs" />
     <Compile Include="TcpTransport\Receiver.cs" />
     <Compile Include="TcpTransport\ResultProcessor.cs" />
     <Compile Include="TcpTransport\Sink.cs" />
-    <Compile Include="TcpTransport\Subscriptions\OutBuffer.cs" />
-    <Compile Include="TcpTransport\Subscriptions\SubscriptionProcessor.cs" />
-    <Compile Include="TcpTransport\Subscriptions\TcpGateway.cs" />
-    <Compile Include="TcpTransport\Subscriptions\Transceiver.cs" />
+    <Compile Include="TcpTransport\NetworkIO\OutBuffer.cs" />
+    <Compile Include="TcpTransport\MessageProcessing\TcpIncomingMessageProcessor.cs" />
+    <Compile Include="TcpTransport\NetworkIO\TcpGateway.cs" />
+    <Compile Include="TcpTransport\NetworkIO\Transceiver.cs" />
+    <Compile Include="TcpTransport\Subscriptions\SubscribeHandler.cs" />
     <Compile Include="TcpTransport\TaskCompleted.cs" />
     <Compile Include="TcpTransport\TcpEndpoint.cs" />
   </ItemGroup>
@@ -97,6 +107,7 @@
       <Name>Res.Protocol</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

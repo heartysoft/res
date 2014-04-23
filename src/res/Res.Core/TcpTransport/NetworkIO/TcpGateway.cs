@@ -3,7 +3,7 @@ using System.Threading;
 using Common.Logging;
 using NetMQ;
 
-namespace Res.Core.TcpTransport.Subscriptions
+namespace Res.Core.TcpTransport.NetworkIO
 {
     public class TcpGateway
     {

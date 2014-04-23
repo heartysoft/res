@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Common.Logging;
 using Res.Core.Storage;
 using Res.Core.StorageBuffering;
+using Res.Core.TcpTransport.Exceptions;
 
 namespace Res.Core.TcpTransport
 {
@@ -13,9 +14,9 @@ namespace Res.Core.TcpTransport
 
         private static readonly Dictionary<Type, Func<Exception, ErrorEntry>> Registry = new Dictionary<Type, Func<Exception, ErrorEntry>>
         {
-            {typeof(CoreMessageProcessor.MalformedMessageReceivedException), e => new ErrorEntry(1, e.ToString())},
-            {typeof(CoreMessageProcessor.UnsupportedProtocolException), e => new ErrorEntry(2, e.ToString())},
-            {typeof(CoreMessageProcessor.UnsupportedCommandException), e => new ErrorEntry(3, e.ToString())},
+            {typeof(MalformedMessageReceivedException), e => new ErrorEntry(1, e.ToString())},
+            {typeof(UnsupportedProtocolException), e => new ErrorEntry(2, e.ToString())},
+            {typeof(UnsupportedCommandException), e => new ErrorEntry(3, e.ToString())},
             {typeof(EventStorageWriter.StorageWriterBusyException), e => new ErrorEntry(4, e.ToString())},
             {typeof(EventStorageWriter.StorageWriterTimeoutException), e => new ErrorEntry(5, e.ToString())},
             {typeof(EventStorageWriter.ConcurrencyException), e => new ErrorEntry(6, e.ToString())},

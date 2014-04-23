@@ -116,7 +116,9 @@ Acknowledge previous events, progress subscription.
 	- Number of subscriptions being requested.
 6. One per subscription
 	1. <code>**SubscriptionId** long</code>
-	2. <code>**Current Time** datetime</code>
+    2. <code>**LastEventTime** datetime</code>
+        - Used 
+	3. <code>**Current Time** datetime</code>
 		- Current time. 
 
 

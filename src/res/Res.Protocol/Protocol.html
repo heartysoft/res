@@ -71,6 +71,154 @@
 </ol></li>
 </ol>
 
+<h2>2. Subscribe</h2>
+
+<p>Comes from client to router socket.</p>
+
+<h3>Message Format</h3>
+
+<ol>
+<li>[Return Address] : 
+<ul>
+<li>Routing frames. </li>
+<li>An ordered array of frames, as requests may be brokered.</li>
+</ul></li>
+<li>Empty
+<ul>
+<li>Denotes end of routing frames.</li>
+</ul></li>
+<li>Protocol 
+<ul>
+<li>"Res01"</li>
+<li>Request protocol. Currently, onlt Res01 is supported.</li>
+</ul></li>
+<li>Command 
+<ul>
+<li>RegisterSubscriptions ["RS"]</li>
+</ul></li>
+<li>RequestId
+<ul>
+<li>Request Identifier. This will be passed back as part of response enabling client to correlate.</li>
+</ul></li>
+<li><code><strong>SubscriberId</strong></code>
+<ul>
+<li>Unique subscriber id.</li>
+</ul></li>
+<li><code><strong>Count</strong> int </code>
+<ul>
+<li>Number of subscriptions being registered.</li>
+</ul></li>
+<li>One per subscription
+<ol>
+<li><code><strong>SubscriptionRequestId</strong> int</code>
+<ul>
+<li>Index of subscription request (can be used for client correlation).</li>
+</ul></li>
+<li><code><strong>Context</strong> string</code>
+<ul>
+<li>Context for subscription. Exact match is required for events.</li>
+</ul></li>
+<li><code><strong>Filter</strong> string</code>
+<ul>
+<li>Filter. Prefix (i.e. starts with) match is required on the stream.</li>
+</ul></li>
+<li><code><strong>Start Time</strong> datetime</code>
+<ul>
+<li>When to start the subscription, if it does not already exist.</li>
+</ul></li>
+<li><code><strong>Current Time</strong> datetime</code>
+<ul>
+<li>Current time.</li>
+</ul></li>
+</ol></li>
+</ol>
+
+<h2>3. FetchEvents</h2>
+
+<p>Used to fetch events for subscriptions.</p>
+
+<h3>Message Format:</h3>
+
+<ol>
+<li>[Return Address] : 
+<ul>
+<li>Routing frames. </li>
+<li>An ordered array of frames, as requests may be brokered.</li>
+</ul></li>
+<li>Empty
+<ul>
+<li>Denotes end of routing frames.</li>
+</ul></li>
+<li>Protocol 
+<ul>
+<li>"Res01"</li>
+<li>Request protocol. Currently, onlt Res01 is supported.</li>
+</ul></li>
+<li>Command 
+<ul>
+<li>FetchEvents ["FE"]</li>
+</ul></li>
+<li><code><strong>Count</strong> int </code>
+<ul>
+<li>Number of subscriptions being requested.</li>
+</ul></li>
+<li>One per subscription
+<ol>
+<li><code><strong>SubscriptionId</strong> long</code></li>
+<li><code><strong>SuggestedCount</strong> int<code>
+<ul>
+<li>The number of events for this subscription to fetch. This is a suggestion, and the actual number of events returned may be larger. Events matching the timestamp of the "last" event will be included.</li>
+</ul></li>
+<li><code><strong>Current Time</strong> datetime</code>
+<ul>
+<li>Current time. </li>
+</ul></li>
+</ol></li>
+</ol>
+
+<h2>4. Progress Subscriptions</h2>
+
+<p>Acknowledge previous events, progress subscription.</p>
+
+<h3>Message Format:</h3>
+
+<ol>
+<li>[Return Address] : 
+<ul>
+<li>Routing frames. </li>
+<li>An ordered array of frames, as requests may be brokered.</li>
+</ul></li>
+<li>Empty
+<ul>
+<li>Denotes end of routing frames.</li>
+</ul></li>
+<li>Protocol 
+<ul>
+<li>"Res01"</li>
+<li>Request protocol. Currently, onlt Res01 is supported.</li>
+</ul></li>
+<li>Command 
+<ul>
+<li>ProgressSubscription ["PS"]</li>
+</ul></li>
+<li><code><strong>Count</strong> int </code>
+<ul>
+<li>Number of subscriptions being requested.</li>
+</ul></li>
+<li>One per subscription
+<ol>
+<li><code><strong>SubscriptionId</strong> long</code></li>
+<li><code><strong>LastEventTime</strong> datetime</code>
+<ul>
+<li>Used </li>
+</ul></li>
+<li><code><strong>Current Time</strong> datetime</code>
+<ul>
+<li>Current time. </li>
+</ul></li>
+</ol></li>
+</ol>
+
 <h1>Result Format In General</h1>
 
 <ol>
@@ -135,6 +283,81 @@
 <ul>
 <li>The commit id, if commit is successful.</li>
 </ul></li>
+</ol>
+
+<h2>SubscribeResult</h2>
+
+<p>Sent back to client after a subscribe.</p>
+
+<ol>
+<li><code><strong>Command</strong> string</code>
+<ul>
+<li>SubscribeResult ["SR"]</li>
+</ul></li>
+<li><code><strong>Count</strong> int </code>
+<ul>
+<li>Number of subscriptions (same as request).</li>
+</ul></li>
+<li>One per subscription:
+<ol>
+<li><code><strong>SubscriptionRequestId</strong> int</code>
+<ul>
+<li>Index of subscription request (can be used for client correlation).</li>
+</ul></li>
+<li><code><strong>SubscriptionId</strong> -long</code>
+<ul>
+<li>Subscription id, can be used to fetch events.</li>
+</ul></li>
+</ol></li>
+</ol>
+
+<h2>Fetch Events Result</h2>
+
+<ol>
+<li><code><strong>Command</strong> string</code>
+<ul>
+<li>EventsFetched ["EF"]</li>
+</ul></li>
+<li><code><strong>Count</strong> int </code>
+<ul>
+<li>Number of subscriptions. Only subscriptions with events to return will be counted.</li>
+</ul></li>
+<li>One per subscription:
+<ol>
+<li><code><strong>SubscriptionId</strong> long</code></li>
+<li><code><strong>Count</strong> int </code>
+<ul>
+<li>Number of events fetched for the subscription.</li>
+</ul></li>
+<li>One per event:
+<ol>
+<li><code><strong>EventId</strong> guid</code></li>
+<li><code><strong>StreamId</strong> string</code></li>
+<li><code><strong>Context</strong> string</code></li>
+<li><code><strong>Sequence</strong> long</code></li>
+<li><code><strong>Timestamp</strong> datetime</code></li>
+<li><code><strong>Type tag</strong> string</code></li>
+<li><code><strong>Headers</strong> string</code></li>
+<li><code><strong>Body</strong> string</code></li>
+</ol></li>
+</ol></li>
+</ol>
+
+<h2>Progress Subscription Result</h2>
+
+<ol>
+<li><code><strong>Command</strong> string</code>
+<ul>
+<li>Subscription Progressed ["SP"]</li>
+</ul></li>
+<li><code><strong>Count</strong> int </code>
+<ul>
+<li>Number of subscriptions.</li>
+</ul></li>
+<li>One per subscription:
+<ol>
+<li><code><strong>SubscriptionId</strong> -long</code></li>
+</ol></li>
 </ol>
 
 <h1>Internal events. May remove if we choose to go in mem queue + polling on socket thread, like we are doing for the client. NOT for external consumption.</h1>

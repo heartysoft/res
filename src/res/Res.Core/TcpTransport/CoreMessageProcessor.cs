@@ -5,6 +5,7 @@ using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using NetMQ;
 using NetMQ.zmq;
+using Res.Core.TcpTransport.Exceptions;
 using Res.Protocol;
 
 namespace Res.Core.TcpTransport
@@ -43,23 +44,6 @@ namespace Res.Core.TcpTransport
             }
         }
 
-        public class MalformedMessageReceivedException : Exception
-        {
-            public MalformedMessageReceivedException(int frameCount) :
-                base(string.Format("Received a message with {0} frames. Minimum expected frame count is {1}.", frameCount, 3))
-            {
-            }
-        }
-
-        public class UnsupportedCommandException : Exception
-        {
-            public UnsupportedCommandException(string command, string protocol)
-                : base(string.Format("Command {0} is not supported under protocol {1}", command, protocol))
-            {
-                
-            }
-        }
-
         private static void ensureProtocol(string protocol)
         {
             var supportedProtocols = new[] {ResProtocol.ResClient01};
@@ -67,14 +51,6 @@ namespace Res.Core.TcpTransport
                 throw new UnsupportedProtocolException(protocol, supportedProtocols);
         }
 
-        public class UnsupportedProtocolException : Exception
-        {
-            public UnsupportedProtocolException(string protocol, params string[] requiredProtocol)
-                : base(
-                    string.Format("Received request with protocol: {0}. Supported protocols: {1}", protocol,
-                        string.Join(", ", requiredProtocol)))
-            {
-            }
-        }
+        
     }
 }

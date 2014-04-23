@@ -13,6 +13,7 @@ BEGIN
 	Declare @CurrentBookmark datetime2(4);
 	Declare @NextBookmark datetime2(4);
 	Declare @Context nvarchar(50);
+	Declare @Filter nvarchar(200);
 	
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
@@ -26,16 +27,18 @@ BEGIN
 	begin 
 		With 
 			cte AS (
-				SELECT TOP (@SuggestedCount) ew.TimeStamp, s.Context
+				SELECT TOP (@SuggestedCount) ew.TimeStamp, s.Context, s.Filter
 				FROM EventWrappers ew inner join Subscriptions s
 				on ew.ContextName = s.Context
 				where s.SubscriptionId = @SubscriptionId
 				AND
 				ew.TimeStamp >= s.CurrentBookmark
+				AND
+				(s.Filter = '*' OR ew.StreamId like s.Filter + '%')
 				Order By ew.TimeStamp
 			)
-		SELECT @NextBookmark=Max(Timestamp), @Context=Context from cte
-		Group By Context		
+		SELECT @NextBookmark=Max(Timestamp), @Context=Context, @Filter=Filter from cte
+		Group By Context, Filter		
 		
 		Update Subscriptions SET NextBookmark = @NextBookmark, 
 			LastActive = @CurrentTime
@@ -44,12 +47,14 @@ BEGIN
 	else
 	begin
 		Update Subscriptions SET LastActive = @CurrentTime,
-		@Context = Context
+		@Context = Context, 
+		@Filter = Filter
 		WHERE SubscriptionId = @SubscriptionId
 	end
 	
 	SELECT * from EventWrappers WHERE
 		ContextName = @Context AND
+		(@Filter = '*' OR StreamId like @Filter + '%') AND
 		TimeStamp BETWEEN @CurrentBookmark AND @NextBookmark
 		order by TimeStamp,Sequence;
 
@@ -64,8 +69,6 @@ BEGIN
 	end
 
 END
-
-
 
 
 GO

@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Concurrent;
 
-namespace Res.Core.TcpTransport.Subscriptions
+namespace Res.Core.TcpTransport.NetworkIO
 {
     public class OutBuffer
     {
