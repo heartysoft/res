@@ -84,14 +84,14 @@ Used to fetch events for subscriptions.
     - Request protocol. Currently, onlt Res01 is supported.
 4. Command 
     - FetchEvents ["FE"]
-5. <code>**Count** int </code>
+5. <code>**RequestId** whatever</code>
+	- Used for correlation. Sent back verbatim.
+6. <code>**Count** int </code>
 	- Number of subscriptions being requested.
-6. One per subscription
+7. One per subscription
 	1. <code>**SubscriptionId** long</code>
 	2. <code>**SuggestedCount** int</code>
 		- The number of events for this subscription to fetch. This is a suggestion, and the actual number of events returned may be larger. Events matching the timestamp of the "last" event will be included.
-	3. <code>**Current Time** datetime</code>
-		- Current time. 
 
 
 ##4. Progress Subscriptions
@@ -175,21 +175,18 @@ Sent back to client after a subscribe.
 ##Fetch Events Result
 1. <code>**Command** string</code>
 	- EventsFetched ["EF"]
-2. <code>**Count** int </code>
-	- Number of subscriptions. Only subscriptions with events to return will be counted.
-3. One per subscription:
-	1. <code>**SubscriptionId** long</code>
-	2. <code>**Count** int </code>
-		- Number of events fetched for the subscription.
-	3. One per event:
-		1. <code>**EventId** guid</code>
-		2. <code>**StreamId** string</code>
-		3. <code>**Context** string</code>
-		4. <code>**Sequence** long</code>
-		5. <code>**Timestamp** datetime</code>
-		6. <code>**Type tag** string</code>
-		7. <code>**Headers** string</code>
-		8. <code>**Body** string</code>
+2. <code>**SubscriptionId** long</code>
+3. <code>**Count** int </code>
+	- Number of events.
+4. One per event:
+	1. <code>**EventId** guid</code>
+	2. <code>**StreamId** string</code>
+	3. <code>**Context** string</code>
+	4. <code>**Sequence** long</code>
+	5. <code>**Timestamp** datetime</code>
+	6. <code>**Type tag** string</code>
+	7. <code>**Headers** string</code>
+	8. <code>**Body** string</code>
 
 ##Progress Subscription Result
 1. <code>**Command** string</code>

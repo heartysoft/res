@@ -90,6 +90,8 @@
     <Compile Include="TcpTransport\MessageProcessing\TcpIncomingMessageProcessor.cs" />
     <Compile Include="TcpTransport\NetworkIO\TcpGateway.cs" />
     <Compile Include="TcpTransport\NetworkIO\Transceiver.cs" />
+    <Compile Include="TcpTransport\Subscriptions\EventsFetched.cs" />
+    <Compile Include="TcpTransport\Subscriptions\FetchEventsHandler.cs" />
     <Compile Include="TcpTransport\Subscriptions\SubscribeCompleted.cs" />
     <Compile Include="TcpTransport\Subscriptions\SubscribeHandler.cs" />
     <Compile Include="TcpTransport\TaskCompleted.cs" />

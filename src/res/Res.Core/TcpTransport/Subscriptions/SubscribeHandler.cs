@@ -16,16 +16,11 @@ namespace Res.Core.TcpTransport.Subscriptions
         private readonly SubscriptionStorage _storage;
         private SpinWait _spin;
 
-        public SubscribeHandler(SubscriptionStorage storage)
+        public SubscribeHandler(SubscriptionStorage storage, OutBuffer outBuffer)
         {
             _storage = storage;
-            _spin = new SpinWait();
-
-        }
-
-        public SubscribeHandler(OutBuffer outBuffer)
-        {
             _outBuffer = outBuffer;
+            _spin = new SpinWait();
         }
 
         public void Handle(NetMQFrame[] sender, NetMQMessage message)
@@ -44,6 +39,7 @@ namespace Res.Core.TcpTransport.Subscriptions
 
             msg.Append(sender);
             msg.AppendEmptyFrame();
+            msg.Append(ResProtocol.ResClient01);
             msg.Append(requestId);
             msg.Append(ResCommands.SubscribeResponse);
             msg.Append(count.ToString(CultureInfo.InvariantCulture));

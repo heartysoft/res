@@ -14,5 +14,7 @@ namespace Res.Protocol
         public const string Error = "ER";
         public const string RegisterSubscriptions = "RS";
         public const string SubscribeResponse = "SR";
+        public const string FetchEvents = "FE";
+        public const string EventsFetched = "EF";
     }
 }
