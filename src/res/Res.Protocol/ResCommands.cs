@@ -12,5 +12,7 @@ namespace Res.Protocol
         public const string ResultReady = "RR";
         public const string CommitResult = "CR";
         public const string Error = "ER";
+        public const string RegisterSubscriptions = "RS";
+        public const string SubscribeResponse = "SR";
     }
 }

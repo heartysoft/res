@@ -21,7 +21,7 @@ namespace Res.Core.Storage
             _connectionString = connectionString;
         }
 
-        public SubscribeResponse[] Subscribe(SubscribeRequest[] requests)
+        public SubscribeResponse[] Subscribe(IEnumerable<SubscribeRequest> requests)
         {
             var responses = requests.Select(doSubscribe);
             return responses.ToArray();

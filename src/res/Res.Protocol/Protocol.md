@@ -62,16 +62,12 @@ Comes from client to router socket.
 7. <code>**Count** int </code>
 	- Number of subscriptions being registered.
 8. One per subscription
-	1. <code>**SubscriptionRequestId** int</code>
-		- Index of subscription request (can be used for client correlation).
-	2. <code>**Context** string</code>
+	1. <code>**Context** string</code>
 		- Context for subscription. Exact match is required for events.
-	3. <code>**Filter** string</code>
+	2. <code>**Filter** string</code>
 		- Filter. Prefix (i.e. starts with) match is required on the stream.
-	4. <code>**Start Time** datetime</code>
+	3. <code>**Start Time** datetime(UTC)</code>
 		- When to start the subscription, if it does not already exist.
-	5. <code>**Current Time** datetime</code>
-		- Current time.
 
 
 ##3. FetchEvents
@@ -92,7 +88,7 @@ Used to fetch events for subscriptions.
 	- Number of subscriptions being requested.
 6. One per subscription
 	1. <code>**SubscriptionId** long</code>
-	2. <code>**SuggestedCount** int<code>
+	2. <code>**SuggestedCount** int</code>
 		- The number of events for this subscription to fetch. This is a suggestion, and the actual number of events returned may be larger. Events matching the timestamp of the "last" event will be included.
 	3. <code>**Current Time** datetime</code>
 		- Current time. 
@@ -173,9 +169,7 @@ Sent back to client after a subscribe.
 2. <code>**Count** int </code>
 	- Number of subscriptions (same as request).
 3. One per subscription:
-	1. <code>**SubscriptionRequestId** int</code>
-		- Index of subscription request (can be used for client correlation).
-	2. <code>**SubscriptionId** -long</code>
+	1. <code>**SubscriptionId** -long</code>
 		- Subscription id, can be used to fetch events.
 
 ##Fetch Events Result

@@ -110,10 +110,6 @@
 </ul></li>
 <li>One per subscription
 <ol>
-<li><code><strong>SubscriptionRequestId</strong> int</code>
-<ul>
-<li>Index of subscription request (can be used for client correlation).</li>
-</ul></li>
 <li><code><strong>Context</strong> string</code>
 <ul>
 <li>Context for subscription. Exact match is required for events.</li>
@@ -122,13 +118,9 @@
 <ul>
 <li>Filter. Prefix (i.e. starts with) match is required on the stream.</li>
 </ul></li>
-<li><code><strong>Start Time</strong> datetime</code>
+<li><code><strong>Start Time</strong> datetime(UTC)</code>
 <ul>
 <li>When to start the subscription, if it does not already exist.</li>
-</ul></li>
-<li><code><strong>Current Time</strong> datetime</code>
-<ul>
-<li>Current time.</li>
 </ul></li>
 </ol></li>
 </ol>
@@ -165,7 +157,7 @@
 <li>One per subscription
 <ol>
 <li><code><strong>SubscriptionId</strong> long</code></li>
-<li><code><strong>SuggestedCount</strong> int<code>
+<li><code><strong>SuggestedCount</strong> int</code>
 <ul>
 <li>The number of events for this subscription to fetch. This is a suggestion, and the actual number of events returned may be larger. Events matching the timestamp of the "last" event will be included.</li>
 </ul></li>
@@ -300,10 +292,6 @@
 </ul></li>
 <li>One per subscription:
 <ol>
-<li><code><strong>SubscriptionRequestId</strong> int</code>
-<ul>
-<li>Index of subscription request (can be used for client correlation).</li>
-</ul></li>
 <li><code><strong>SubscriptionId</strong> -long</code>
 <ul>
 <li>Subscription id, can be used to fetch events.</li>
