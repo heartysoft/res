@@ -49,7 +49,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StorageBuffering\StorageReader.cs" />
     <Compile Include="StorageBuffering\StorageWriter.cs" />
@@ -83,7 +82,9 @@
     <Compile Include="TcpTransport\MessageProcessing\TcpMessageDispatcher.cs" />
     <Compile Include="TcpTransport\MessageProcessor.cs" />
     <Compile Include="TcpTransport\NetMQExtensions.cs" />
+    <Compile Include="TcpTransport\QueryEndpoint.cs" />
     <Compile Include="TcpTransport\Receiver.cs" />
+    <Compile Include="TcpTransport\ResConfiguration.cs" />
     <Compile Include="TcpTransport\ResultProcessor.cs" />
     <Compile Include="TcpTransport\Sink.cs" />
     <Compile Include="TcpTransport\NetworkIO\OutBuffer.cs" />

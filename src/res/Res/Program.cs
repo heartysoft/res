@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Common.Logging;
 using NetMQ.zmq;
+using Res.Core.TcpTransport;
 using SimpleConfig;
 using Topshelf;
 using Topshelf.Common.Logging;

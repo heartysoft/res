@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Configuration;
 using System.Xml.Serialization;
 
-namespace Res
+namespace Res.Core.TcpTransport
 {
     [XmlType("res")]
     public class ResConfiguration
@@ -17,6 +16,8 @@ namespace Res
         public StorageBufferConfiguration Reader { get; set; }
         [XmlElement("writer")]
         public StorageBufferConfiguration Writer { get; set; }
+        [XmlElement("queryEndpoint")]
+        public QueryEndpointConfiguration QueryEndpoint { get; set; }
     }
 
     public class StorageBufferConfiguration
@@ -27,5 +28,15 @@ namespace Res
         public int BatchSize { get; set; }
         [XmlElement("timeoutBeforeDrop")]
         public TimeSpan TimeoutBeforeDrop { get; set; }
+    }
+
+    public class QueryEndpointConfiguration
+    {
+        [XmlElement("endpoint")]
+        public string Endpoint { get; set; }
+
+        [XmlElement("bufferSize")]
+        public int BufferSize { get; set; }
+
     }
 }
