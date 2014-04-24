@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Res.Client.Internal.Subscriptions;
 
 namespace Res.Client.Internal
 {
-    public class RequestAcceptor
+    public class CommitRequestAcceptor
     {
         private readonly MultiWriterSingleReaderBuffer _buffer;
 
-        public RequestAcceptor(MultiWriterSingleReaderBuffer buffer)
+        public CommitRequestAcceptor(MultiWriterSingleReaderBuffer buffer)
         {
             _buffer = buffer;
         }
@@ -19,4 +20,6 @@ namespace Res.Client.Internal
             return task;
         }
     }
+
+    
 }

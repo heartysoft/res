@@ -9,7 +9,7 @@ namespace Res.Client
 {
     public class ResEngine : IDisposable
     {
-        private RequestAcceptor _acceptor;
+        private CommitRequestAcceptor _acceptor;
 
         private readonly ILog _log = LogManager.GetCurrentClassLogger();
 
@@ -24,7 +24,7 @@ namespace Res.Client
             TimeSpan reaperForDeadTasksInterval = TimeSpan.FromSeconds(2);
 
             var buffer = new MultiWriterSingleReaderBuffer(bufferSize);
-            _acceptor = new RequestAcceptor(buffer);
+            _acceptor = new CommitRequestAcceptor(buffer);
 
             //important: socket needs to be created on request processor main thread. 
             Func<ResGateway> gatewayFactory = () => new SingleThreadedZeroMqGateway(endpoint, reaperForDeadTasksInterval);

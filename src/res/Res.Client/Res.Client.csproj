@@ -65,10 +65,9 @@
     <Compile Include="Exceptions\UnsupportedProtocolException.cs" />
     <Compile Include="ExpectedVersion.cs" />
     <Compile Include="Internal\CommitRequest.cs" />
-    <Compile Include="Internal\Committer.cs" />
     <Compile Include="Internal\ErrorResolver.cs" />
     <Compile Include="Internal\MultiWriterSingleReaderBuffer.cs" />
-    <Compile Include="Internal\RequestAcceptor.cs" />
+    <Compile Include="Internal\CommitRequestAcceptor.cs" />
     <Compile Include="Internal\RequestProcessor.cs" />
     <Compile Include="Internal\RequestTimedOutPendingSendException.cs" />
     <Compile Include="Internal\ResGateway.cs" />
@@ -76,9 +75,31 @@
     <Compile Include="Internal\ResResponse.cs" />
     <Compile Include="Exceptions\ResServerException.cs" />
     <Compile Include="Internal\SingleThreadedZeroMqGateway.cs" />
+    <Compile Include="EventInStorage.cs" />
+    <Compile Include="Internal\Subscriptions\Messages\FetchEventsRequest.cs" />
+    <Compile Include="Internal\Subscriptions\Messages\FetchEventsResponse.cs" />
+    <Compile Include="Internal\Subscriptions\Messages\ProgressSubscriptionEntry.cs" />
+    <Compile Include="Internal\Subscriptions\Messages\ProgressSubscriptionRequest.cs" />
+    <Compile Include="Internal\Subscriptions\Messages\ProgressSubscriptionResponse.cs" />
+    <Compile Include="Internal\Subscriptions\Messages\SubscribeRequest.cs" />
+    <Compile Include="Internal\Subscriptions\Messages\SubscribeResponse.cs" />
+    <Compile Include="Internal\Subscriptions\SubscriptionRequestAcceptor.cs" />
+    <Compile Include="Internal\Subscriptions\FetchEventParameters.cs" />
+    <Compile Include="Internal\Subscriptions\FetchingState.cs" />
+    <Compile Include="Internal\Subscriptions\InvalidSubscriptionProcessState.cs" />
+    <Compile Include="Internal\Subscriptions\ProcessingState.cs" />
+    <Compile Include="Internal\Subscriptions\ProgressingState.cs" />
+    <Compile Include="SubscribedEvents.cs" />
+    <Compile Include="Subscription.cs" />
+    <Compile Include="SubscriptionDefinition.cs" />
+    <Compile Include="Internal\Subscriptions\SubscriptionProcess.cs" />
+    <Compile Include="Internal\Subscriptions\SubscriptionProcessState.cs" />
+    <Compile Include="Internal\Subscriptions\SubscriptionState.cs" />
+    <Compile Include="Internal\Subscriptions\WaitingState.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ResClient.cs" />
     <Compile Include="ResEngine.cs" />
+    <Compile Include="ResSubscriptionEngine.cs" />
     <Compile Include="ThreadsafeResClient.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -90,6 +111,7 @@
       <Name>Res.Protocol</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

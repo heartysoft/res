@@ -6,10 +6,10 @@ namespace Res.Client
 {
     public class ThreadsafeResClient : ResClient
     {
-        private readonly RequestAcceptor _acceptor;
+        private readonly CommitRequestAcceptor _acceptor;
         private readonly TimeSpan _defaultTimeout;
 
-        public ThreadsafeResClient(RequestAcceptor acceptor, TimeSpan defaultTimeout)
+        public ThreadsafeResClient(CommitRequestAcceptor acceptor, TimeSpan defaultTimeout)
         {
             _acceptor = acceptor;
             _defaultTimeout = defaultTimeout;

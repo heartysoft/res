@@ -64,7 +64,7 @@ namespace Res.Client.Internal
 
                 //address frames
                 var count = msg.FrameCount;
-                for(int i=0; i<count; i++)
+                for (int i = 0; i < count; i++)
                 {
                     var f = msg.Pop();
                     if (f.BufferSize == 0)
@@ -85,7 +85,7 @@ namespace Res.Client.Internal
                 var requestId = msg.Pop().ConvertToString();
 
                 InflightEntry callback;
-                if(_callbacks.TryRemove(requestId, out callback))
+                if (_callbacks.TryRemove(requestId, out callback))
                 {
                     callback.ProcessResult(msg);
                 }
@@ -105,23 +105,17 @@ namespace Res.Client.Internal
             var request = pendingRequest.Request;
             var requestId = Guid.NewGuid().ToString();
 
-            //TODO: OO this out...not many commands yet...
-            if (request is CommitRequest)
+
+            try
             {
-                try
-                {
-                    var callback = Committer.Send(_socket, (PendingResRequest<CommitResponse>) pendingRequest, requestId);
-                    _callbacks[requestId] = new InflightEntry(pendingRequest, callback);
-                }
-                catch(NetMQException)
-                {
-                    _socket = connect();
-                }
+                var callback = request.Send(_socket, pendingRequest, requestId);
+                _callbacks[requestId] = new InflightEntry(pendingRequest, callback);
             }
-            else
+            catch (NetMQException)
             {
-                throw new NotImplementedException("Only commits for now");
+                _socket = connect();
             }
+
         }
 
         private NetMQSocket connect()
@@ -142,12 +136,13 @@ namespace Res.Client.Internal
                 Log.InfoFormat("[STZMG] Creating new socket. Thread Id: {0}", Thread.CurrentThread.ManagedThreadId);
                 var socket = _ctx.CreateDealerSocket();
                 socket.ReceiveReady += socket_ReceiveReady;
+                
                 try
                 {
                     socket.Connect(_endpoint);
                     return socket;
                 }
-                catch(NetMQException e)
+                catch (NetMQException e)
                 {
                     Log.WarnFormat("[STZMG] Error connecting to socket. Retrying... Thread ID: {0}", e, Thread.CurrentThread.ManagedThreadId);
                     socket.Options.Linger = TimeSpan.FromSeconds(0);
