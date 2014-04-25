@@ -50,8 +50,8 @@ namespace Res.Client.Internal.Subscriptions.Messages
                 if (command != ResCommands.EventsFetched)
                     pending.SetException(new UnsupportedCommandException(command));
 
-                var subscriptionId = long.Parse(msg.Pop().ConvertToString());
-                var count = int.Parse(msg.Pop().ConvertToString());
+                var subscriptionId = long.Parse(m.Pop().ConvertToString());
+                var count = int.Parse(m.Pop().ConvertToString());
 
                 var events = new EventInStorage[count];
 
@@ -60,11 +60,11 @@ namespace Res.Client.Internal.Subscriptions.Messages
                     var id = new Guid(m.Pop().ToByteArray());
                     var streamId = m.Pop().ConvertToString();
                     var context = m.Pop().ConvertToString();
-                    var sequence = long.Parse(msg.Pop().ConvertToString());
-                    var timestamp = DateTime.FromBinary(long.Parse(msg.Pop().ConvertToString()));
-                    var type = msg.Pop().ConvertToString();
-                    var headers = msg.Pop().ConvertToString();
-                    var body = msg.Pop().ConvertToString();
+                    var sequence = long.Parse(m.Pop().ConvertToString());
+                    var timestamp = DateTime.FromBinary(long.Parse(m.Pop().ConvertToString()));
+                    var type = m.Pop().ConvertToString();
+                    var headers = m.Pop().ConvertToString();
+                    var body = m.Pop().ConvertToString();
 
                     events[i] = new EventInStorage(context, streamId, sequence, type, id, headers, body, timestamp);
                 }

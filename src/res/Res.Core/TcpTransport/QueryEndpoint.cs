@@ -33,6 +33,7 @@ namespace Res.Core.TcpTransport
             messageProcessor = new ErrorHandlingMessageProcessor(messageProcessor);
 
             //important...the factory method parameter must "create" the gateway, threading issue otherwise.
+            Logger.DebugFormat("[QueryEndpoint] Initialising Transceiver. Endpoint: {0}", config.QueryEndpoint.Endpoint);
             _transceiver = new Transceiver(() => new TcpGateway(ctx, config.QueryEndpoint.Endpoint, messageProcessor), outBuffer);
         }
 

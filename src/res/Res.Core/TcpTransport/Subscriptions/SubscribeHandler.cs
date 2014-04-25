@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Threading;
 using System.Windows.Markup;
+using Common.Logging;
 using NetMQ;
 using Res.Core.Storage;
 using Res.Core.TcpTransport.NetworkIO;
@@ -15,7 +16,7 @@ namespace Res.Core.TcpTransport.Subscriptions
         private readonly OutBuffer _outBuffer;
         private readonly SubscriptionStorage _storage;
         private SpinWait _spin;
-
+        private static readonly ILog Logger = LogManager.GetCurrentClassLogger();
         public SubscribeHandler(SubscriptionStorage storage, OutBuffer outBuffer)
         {
             _storage = storage;
@@ -25,12 +26,16 @@ namespace Res.Core.TcpTransport.Subscriptions
 
         public void Handle(NetMQFrame[] sender, NetMQMessage message)
         {
+            Logger.Debug("[SubscribeHandler] Received subscribe request.");
+
             var requestId = message.Pop();
             var subscriberId = message.Pop().ConvertToString();
             var count = int.Parse(message.Pop().ConvertToString());
 
             var responses = doRequest(message, count, subscriberId);
+            Logger.Debug("[SubscribeHandler] Sending Subscribe Response.");
             sendResponse(sender, requestId, count, responses);
+            Logger.Debug("[SubscribeHandler] Subscribe response sent.");
         }
 
         private void sendResponse(NetMQFrame[] sender, NetMQFrame requestId, int count, SubscribeResponse[] responses)

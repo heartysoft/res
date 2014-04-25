@@ -56,7 +56,8 @@ namespace Res.Core.TcpTransport.NetworkIO
 
                 try
                 {
-                    socket.Connect(_endpoint);
+                    socket.Bind(_endpoint);
+                    Log.DebugFormat("[TcpGateway] Socket connected at {0}. Thread Id: {1}", _endpoint, Thread.CurrentThread.ManagedThreadId);
                     return socket;
                 }
                 catch (NetMQException e)
@@ -72,6 +73,7 @@ namespace Res.Core.TcpTransport.NetworkIO
         void socket_ReceiveReady(object sender, NetMQSocketEventArgs e)
         {
             var message = e.Socket.ReceiveMessage();
+            Log.DebugFormat("[TcpGateway] Received a message. Thread Id: {0}", Thread.CurrentThread.ManagedThreadId);
             _processor.ProcessMessage(message, _socket);
         }
 
