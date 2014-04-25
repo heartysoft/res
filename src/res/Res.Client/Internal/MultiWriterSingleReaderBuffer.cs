@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.IO;
 using System.Threading.Tasks;
+using NetMQ;
 
 namespace Res.Client.Internal
 {
@@ -34,26 +35,24 @@ namespace Res.Client.Internal
         {
             return _queue.TryDequeue(out pendingResRequest);
         }
-
-       
     }
 
     public interface PendingResRequest
     {
-        ResRequest Request { get; }
         bool ShouldDrop();
         void Drop();
+        Action<NetMQMessage> Send(NetMQSocket socket, string requestId);
     }
 
     public class PendingResRequest<T> : PendingResRequest where T : ResResponse
     {
-        public ResRequest Request { get; private set; }
+        private readonly ResRequest _request;
         private readonly TaskCompletionSource<T> _tcs;
         private readonly DateTime _timeout;
 
         public PendingResRequest(ResRequest request, TaskCompletionSource<T> tcs, DateTime timeout)
         {
-            Request = request;
+            _request = request;
             _tcs = tcs;
             _timeout = timeout;
         }
@@ -66,6 +65,11 @@ namespace Res.Client.Internal
         public void Drop()
         {
             SetException(new RequestTimedOutPendingSendException());
+        }
+
+        public Action<NetMQMessage> Send(NetMQSocket socket, string requestId)
+        {
+            return _request.Send(socket, this, requestId);
         }
 
         public void SetResult(T result)

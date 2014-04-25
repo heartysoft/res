@@ -102,13 +102,11 @@ namespace Res.Client.Internal
 
         public void SendRequest(PendingResRequest pendingRequest)
         {
-            var request = pendingRequest.Request;
             var requestId = Guid.NewGuid().ToString();
-
 
             try
             {
-                var callback = request.Send(_socket, pendingRequest, requestId);
+                var callback = pendingRequest.Send(_socket, requestId);
                 _callbacks[requestId] = new InflightEntry(pendingRequest, callback);
             }
             catch (NetMQException)

@@ -150,6 +150,10 @@
 <ul>
 <li>FetchEvents ["FE"]</li>
 </ul></li>
+<li><code><strong>RequestId</strong> whatever</code>
+<ul>
+<li>Used for correlation. Sent back verbatim.</li>
+</ul></li>
 <li><code><strong>Count</strong> int </code>
 <ul>
 <li>Number of subscriptions being requested.</li>
@@ -160,10 +164,6 @@
 <li><code><strong>SuggestedCount</strong> int</code>
 <ul>
 <li>The number of events for this subscription to fetch. This is a suggestion, and the actual number of events returned may be larger. Events matching the timestamp of the "last" event will be included.</li>
-</ul></li>
-<li><code><strong>Current Time</strong> datetime</code>
-<ul>
-<li>Current time. </li>
 </ul></li>
 </ol></li>
 </ol>
@@ -193,6 +193,7 @@
 <ul>
 <li>ProgressSubscription ["PS"]</li>
 </ul></li>
+<li>RequestId</li>
 <li><code><strong>Count</strong> int </code>
 <ul>
 <li>Number of subscriptions being requested.</li>
@@ -202,11 +203,7 @@
 <li><code><strong>SubscriptionId</strong> long</code></li>
 <li><code><strong>LastEventTime</strong> datetime</code>
 <ul>
-<li>Used </li>
-</ul></li>
-<li><code><strong>Current Time</strong> datetime</code>
-<ul>
-<li>Current time. </li>
+<li>Used for idempotency. If next bookmark does not match, progress will not occur (this can happen, for example, if the subscription has already been progressed, and a subsequent fetch has happened.)</li>
 </ul></li>
 </ol></li>
 </ol>
@@ -284,7 +281,7 @@
 <ol>
 <li><code><strong>Command</strong> string</code>
 <ul>
-<li>SubscribeResult ["SR"]</li>
+<li>SubscribeResponse ["SR"]</li>
 </ul></li>
 <li><code><strong>Count</strong> int </code>
 <ul>
@@ -306,16 +303,10 @@
 <ul>
 <li>EventsFetched ["EF"]</li>
 </ul></li>
-<li><code><strong>Count</strong> int </code>
-<ul>
-<li>Number of subscriptions. Only subscriptions with events to return will be counted.</li>
-</ul></li>
-<li>One per subscription:
-<ol>
 <li><code><strong>SubscriptionId</strong> long</code></li>
 <li><code><strong>Count</strong> int </code>
 <ul>
-<li>Number of events fetched for the subscription.</li>
+<li>Number of events.</li>
 </ul></li>
 <li>One per event:
 <ol>
@@ -327,7 +318,6 @@
 <li><code><strong>Type tag</strong> string</code></li>
 <li><code><strong>Headers</strong> string</code></li>
 <li><code><strong>Body</strong> string</code></li>
-</ol></li>
 </ol></li>
 </ol>
 

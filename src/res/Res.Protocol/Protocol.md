@@ -164,7 +164,7 @@ Sent back to client after a commit
 Sent back to client after a subscribe.
 
 1. <code>**Command** string</code>
-	- SubscribeResult ["SR"]
+	- SubscribeResponse ["SR"]
 2. <code>**Count** int </code>
 	- Number of subscriptions (same as request).
 3. One per subscription:

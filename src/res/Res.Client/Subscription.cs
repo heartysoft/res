@@ -8,13 +8,15 @@ namespace Res.Client
 {
     public class Subscription
     {
+        private readonly string _subscriberId;
         private readonly SubscriptionDefinition[] _subscriptions;
         private readonly Action<SubscribedEvents> _handler;
         private readonly SubscriptionRequestAcceptor _acceptor;
         private readonly TimeSpan _timeout;
 
-        public Subscription(SubscriptionDefinition[] subscriptions, Action<SubscribedEvents> handler, SubscriptionRequestAcceptor acceptor)
+        public Subscription(string subscriberId, SubscriptionDefinition[] subscriptions, Action<SubscribedEvents> handler, SubscriptionRequestAcceptor acceptor)
         {
+            _subscriberId = subscriberId;
             _subscriptions = subscriptions;
             _handler = handler;
             _acceptor = acceptor;
@@ -32,7 +34,7 @@ namespace Res.Client
             {
                 try
                 {
-                    var result = _acceptor.SubscribeAsync(_subscriptions, _timeout).Result;
+                    var result = _acceptor.SubscribeAsync(_subscriberId, _subscriptions, _timeout).Result;
                     foreach (var subscriptionId in result.SubscriptionIds)
                     {
                         long id = subscriptionId;
