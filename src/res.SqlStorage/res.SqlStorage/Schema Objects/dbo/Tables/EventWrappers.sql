@@ -3,7 +3,7 @@
 	[StreamId] [nvarchar](50) NOT NULL,
 	[ContextName] [nvarchar](50) NOT NULL,
 	[Sequence] [bigint] NOT NULL,
-	[TimeStamp] [datetime2](3) NOT NULL,
+	[TimeStamp] [datetime2](4) NOT NULL,
 	[EventType] [nvarchar](500) NOT NULL,
 	[Body] [nvarchar](max) NOT NULL
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]

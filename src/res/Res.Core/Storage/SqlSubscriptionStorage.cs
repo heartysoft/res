@@ -35,7 +35,7 @@ namespace Res.Core.Storage
                 command.CommandType = CommandType.StoredProcedure;
                 command.Parameters.AddWithValue("SubscriptionId", subscriptionId);
                 command.Parameters.AddWithValue("SuggestedCount", suggestedCount);
-                command.Parameters.AddWithValue("CurrentTime", now);
+                command.Parameters.Add("CurrentTime", SqlDbType.DateTime2, 4).Value = now;
 
 
                 command.Connection.Open();
@@ -61,13 +61,11 @@ namespace Res.Core.Storage
             {
                 command.CommandType = CommandType.StoredProcedure;
                 command.Parameters.AddWithValue("SubscriptionId", subscriptionId);
-                command.Parameters.AddWithValue("ExpectedNextBookmark", expectedNextBookmark);
-                command.Parameters.AddWithValue("CurrentTime", now);
-
+                command.Parameters.Add("ExpectedNextBookmark", SqlDbType.DateTime2, 4).Value = expectedNextBookmark;
+                command.Parameters.Add("CurrentTime", SqlDbType.DateTime2, 4).Value = now;
 
                 command.Connection.Open();
                 command.ExecuteNonQuery();
-
             }
         }
 
@@ -103,8 +101,8 @@ namespace Res.Core.Storage
                 command.CommandType = CommandType.StoredProcedure;
                 command.Parameters.AddWithValue("Context", request.Context);
                 command.Parameters.AddWithValue("Subscriber", request.SubscriberId);
-                command.Parameters.AddWithValue("StartTime", request.StartTime);
-                command.Parameters.AddWithValue("CurrentTime", request.CurrentTime);
+                command.Parameters.Add("StartTime", SqlDbType.DateTime2, 4).Value = request.StartTime;
+                command.Parameters.Add("CurrentTime", SqlDbType.DateTime2, 4).Value = request.CurrentTime;
                 command.Parameters.AddWithValue("Filter", request.Filter);
 
                 command.Connection.Open();

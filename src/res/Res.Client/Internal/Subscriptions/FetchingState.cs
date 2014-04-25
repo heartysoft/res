@@ -17,7 +17,7 @@ namespace Res.Client.Internal.Subscriptions
                     if (state.LastEventTime.HasValue && state.EventIdsForLastEventTime != null)
                     {
                         var newEvents =
-                            result.Events.Where(x => state.EventIdsForLastEventTime.Contains(x.EventId) == false)
+                            result.Events.Where(x => x.Timestamp >= state.LastEventTime && state.EventIdsForLastEventTime.Contains(x.EventId) == false)
                                 .ToArray();
 
                         result = new FetchEventsResponse(newEvents);

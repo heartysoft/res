@@ -4,7 +4,7 @@
 	[ContextName] [nvarchar](50) NOT NULL,
 	[Sequence] [bigint] NULL,
 	[SequenceInCommit] [int],
-	[TimeStamp] [datetime2](3) NULL,
+	[TimeStamp] [datetime2](4) NULL,
 	[EventType] [nvarchar](500) NULL,
 	[Body] [nvarchar](max) NULL,
 	[CommitId] [uniqueidentifier] NOT NULL,
