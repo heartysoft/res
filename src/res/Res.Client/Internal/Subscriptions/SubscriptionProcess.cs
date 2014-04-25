@@ -15,7 +15,7 @@ namespace Res.Client.Internal.Subscriptions
             {
                 CancellationToken = token,
                 DefaultRequestTimeOut = timeout,
-                FetchEventsBatchSize = 32,
+                FetchEventsBatchSize = 128,
                 Handler = handler,
                 SubscriptionId = subscriptionId,
                 Acceptor = acceptor,

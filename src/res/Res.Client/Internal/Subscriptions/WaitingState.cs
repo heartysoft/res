@@ -6,7 +6,7 @@ namespace Res.Client.Internal.Subscriptions
     {
         public SubscriptionProcessState Work(SubscriptionState state)
         {
-            Task.Delay(state.WaitBeforeRetryingFetch, state.CancellationToken);
+            Task.Delay(state.WaitBeforeRetryingFetch, state.CancellationToken).Wait(state.CancellationToken);
             return new FetchingState();
         }
     }
