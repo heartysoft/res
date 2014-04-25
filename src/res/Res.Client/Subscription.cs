@@ -43,6 +43,8 @@ namespace Res.Client
                         Task.Factory.StartNew(() => startProcess(id, _acceptor, _timeout, token), token,
                             TaskCreationOptions.LongRunning, TaskScheduler.Default);
                     }
+
+                    return;
                 }
                 catch (RequestTimedOutPendingSendException)
                 {

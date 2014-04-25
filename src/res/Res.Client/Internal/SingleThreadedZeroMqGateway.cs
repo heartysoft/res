@@ -68,10 +68,10 @@ namespace Res.Client.Internal
 
         void socket_ReceiveReady(object sender, NetMQSocketEventArgs e)
         {
-            Log.InfoFormat("[STZMG] Receiving a message. Thread Id: {0}", Thread.CurrentThread.ManagedThreadId);
             try
             {
                 var msg = e.Socket.ReceiveMessage();
+                Log.InfoFormat("[STZMG] Received a message. Thread Id: {0}", Thread.CurrentThread.ManagedThreadId);
 
                 //address frames
                 var count = msg.FrameCount;

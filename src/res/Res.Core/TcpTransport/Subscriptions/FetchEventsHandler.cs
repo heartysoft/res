@@ -55,9 +55,9 @@ namespace Res.Core.TcpTransport.Subscriptions
                     msg.Append(e.Context);
                     msg.Append(e.Sequence.ToString(CultureInfo.InvariantCulture));
                     msg.Append(e.Timestamp.ToBinary().ToString(CultureInfo.InvariantCulture));
-                    msg.Append(e.TypeKey);
-                    msg.Append(e.Headers);
-                    msg.Append(e.Body);
+                    msg.Append(e.TypeKey ?? string.Empty);
+                    msg.Append(e.Headers ?? string.Empty);
+                    msg.Append(e.Body ?? string.Empty);
                 }
 
                 var eventsFetched = new EventsFetched(msg);

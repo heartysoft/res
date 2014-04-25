@@ -21,6 +21,8 @@ namespace Res.Client.Internal.Subscriptions
 
                 subscribedEvents.Completed.Wait(state.CancellationToken);
                 state.LastEventTime = _events.Events.Last().Timestamp;
+                state.EventIdsForLastEventTime = _events.Events.Where(x => x.Timestamp == state.LastEventTime).Select(x => x.EventId).ToArray();
+
                 return new ProgressingState();
             }
             else
