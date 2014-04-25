@@ -1,6 +1,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Common.Logging;
 using Res.Client.Internal;
 using Res.Client.Internal.Subscriptions;
 
@@ -13,6 +14,7 @@ namespace Res.Client
         private readonly Action<SubscribedEvents> _handler;
         private readonly SubscriptionRequestAcceptor _acceptor;
         private readonly TimeSpan _timeout;
+        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
         public Subscription(string subscriberId, SubscriptionDefinition[] subscriptions, Action<SubscribedEvents> handler, SubscriptionRequestAcceptor acceptor)
         {
@@ -34,7 +36,7 @@ namespace Res.Client
             {
                 try
                 {
-                    var result = _acceptor.SubscribeAsync(_subscriberId, _subscriptions, _timeout).Result;
+                    var result = _acceptor.SubscribeAsync(_subscriberId, _subscriptions, _timeout).GetAwaiter().GetResult();
                     foreach (var subscriptionId in result.SubscriptionIds)
                     {
                         long id = subscriptionId;
@@ -44,6 +46,8 @@ namespace Res.Client
                 }
                 catch (RequestTimedOutPendingSendException)
                 {
+                    Log.InfoFormat("[Subscription - {0}] Timeout initialising subscription. Retring in {1} seconds.", _subscriberId, 5);
+                    Task.Delay(5000, token).Wait(token);
                 }
             }
         }

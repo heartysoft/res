@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Threading;
 using Common.Logging;
 using NetMQ;
@@ -46,12 +47,22 @@ namespace Res.Client.Internal
             if (_reapTime <= DateTime.Now)
             {
                 _reapTime = DateTime.Now.Add(_reaperInterval);
+
+                var toRemove = new List<string>();
+
                 foreach (var callback in _callbacks.Values)
                     if (callback.ShouldDrop())
                     {
                         Log.Info("[STZMG] Reaping dead request.");
                         callback.Drop();
+                        toRemove.Add(callback.RequestId);
                     }
+
+                foreach (var requestId in toRemove)
+                {
+                    InflightEntry entry;
+                    _callbacks.TryRemove(requestId, out entry);
+                }
             }
         }
 
@@ -107,7 +118,7 @@ namespace Res.Client.Internal
             try
             {
                 var callback = pendingRequest.Send(_socket, requestId);
-                _callbacks[requestId] = new InflightEntry(pendingRequest, callback);
+                _callbacks[requestId] = new InflightEntry(requestId, pendingRequest, callback);
             }
             catch (NetMQException)
             {
@@ -167,11 +178,13 @@ namespace Res.Client.Internal
 
         private class InflightEntry
         {
+            public string RequestId { get; private set; }
             private readonly PendingResRequest _request;
             private readonly Action<NetMQMessage> _resultProcessor;
 
-            public InflightEntry(PendingResRequest request, Action<NetMQMessage> resultProcessor)
+            public InflightEntry(string requestId, PendingResRequest request, Action<NetMQMessage> resultProcessor)
             {
+                RequestId = requestId;
                 _request = request;
                 _resultProcessor = resultProcessor;
             }

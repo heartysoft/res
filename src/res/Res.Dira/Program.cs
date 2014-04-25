@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using cmdR;
 using Res.Client;
@@ -72,6 +73,11 @@ namespace Res.Dira
         {
             return _engine.CreateClient(TimeSpan.FromSeconds(10));
         }
+
+        public static ResSubscriptionEngine GetSubscriptionEngine()
+        {
+            return _subscriptionEngine;
+        }
     }
 
     public class AppendEventsCommand : ICmdRCommand
@@ -92,6 +98,43 @@ namespace Res.Dira
 
         public string Command { get { return "append n"; } }
         public string Description { get { return "append events. supported param: n [count]."; } }
+    }
+
+    public class SubscribeCommand : ICmdRCommand
+    {
+        public void Execute(IDictionary<string, string> param, CmdR cmdR)
+        {
+            var engine = GlobalHack.GetSubscriptionEngine();
+
+            var subscriberId = param["subscriber"];
+            var ctx = param["ctx"];
+            var filter = param["filter"];
+            var startTime = param["startTime"];
+
+            var start = startTime == "now" ? DateTime.Now : DateTime.ParseExact(startTime, "dd-MM-yyyy hh:mm:ss", null);
+
+            Action<SubscribedEvents> handler = evts =>
+            {
+                Console.WriteLine("[Subscriber - {0}]: received {1} events.", subscriberId, evts.Events.Length);
+                evts.Done();
+            };
+
+            var sub = engine.Subscribe(subscriberId, new[] {new SubscriptionDefinition(ctx, filter, start)}, handler);
+            sub.Start(new CancellationToken());
+
+            cmdR.State.CmdPrompt = "input>";
+        }
+
+        public string Command { get { return "subscribe subscriber ctx filter startTime"; } }
+
+        public string Description
+        {
+            get
+            {
+                return
+                    "subcribe to events. supported params: subscriber [id], ctx [context, res.dira is default for appends], filter [filter], startTime [now | dd-MM-yyyy hh:mm:ss]";
+            }
+        }
     }
 
     public class Appender
@@ -134,7 +177,7 @@ namespace Res.Dira
                         {
                             try
                             {
-                                var task = _client.CommitAsync("res.dira", "some stream", events, ExpectedVersion.Any,
+                                var task = _client.CommitAsync("res.dira", "test-stream", events, ExpectedVersion.Any,
                                     TimeSpan.FromSeconds(10));
                                 return task;
                             }
