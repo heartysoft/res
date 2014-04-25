@@ -5,7 +5,7 @@ using Res.Client.Internal.Subscriptions;
 
 namespace Res.Client
 {
-    public class ResSubscriptionEngine
+    public class ResSubscriptionEngine : IDisposable
     {
         private SubscriptionRequestAcceptor _acceptor;
 
@@ -35,6 +35,22 @@ namespace Res.Client
         public Subscription Subscribe(string subscriberId, SubscriptionDefinition[] subscriptions, Action<SubscribedEvents> handler)
         {
             return new Subscription(subscriberId, subscriptions, handler, _acceptor);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposing)
+                return;
+
+            _log.Info("[ResSubscriptionEngine] Stopping...");
+            _processor.Stop();
+            _log.Info("[ResSubscriptionEngine] Processor stopped. Bye bye.");
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
     }
 }

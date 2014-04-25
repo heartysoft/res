@@ -32,7 +32,12 @@ namespace Res.Dira
             Console.WriteLine("Starting client engine for {0}...", endpoint);
             var engine = new ResEngine();
             engine.Start(endpoint);
+
+            var subscriptionEngine = new ResSubscriptionEngine();
+            subscriptionEngine.Start(ConfigurationManager.AppSettings["res-sub"]);
+
             GlobalHack.SetEngine(engine);
+            GlobalHack.SetSubscriptionEngine(subscriptionEngine);
             
             Console.WriteLine("Client engine started.");
 
@@ -41,8 +46,7 @@ namespace Res.Dira
 
             cmdr.Run(args);
 
-
-
+            subscriptionEngine.Dispose();
             engine.Dispose();
             Console.WriteLine("Bye bye.");
 
@@ -52,10 +56,16 @@ namespace Res.Dira
     public static class GlobalHack
     {
         static private ResEngine _engine;
+        private static ResSubscriptionEngine _subscriptionEngine;
 
         public static void SetEngine(ResEngine engine)
         {
             _engine = engine;
+        }
+
+        public static void SetSubscriptionEngine(ResSubscriptionEngine engine)
+        {
+            _subscriptionEngine = engine;
         }
 
         public static ResClient GetClient()
