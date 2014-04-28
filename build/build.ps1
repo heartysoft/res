@@ -5,19 +5,24 @@ properties {
     $source_dir = "$base_dir\src"
     $tools_dir = "$base_dir\tools"
     $env = "local"
-    $out_dir = "$base_dir\out"
+    $out_dir = "$base_dir\out\$config"
     $res_dir = "$source_dir\res"
     $res_artefacts_dir="$res_dir\Res\bin\$config"
     $resclient_artefacts_dir="$res_dir\Res.Client\bin\$config"
     $res_test_dir = "$res_dir\Res.Core.Tests\bin\$config"
     $test_results_dir="$base_dir\test-results"
     $package_dir = "$base_dir\deploy\$config"
+    $test_dir = "$out_dir\tests"
 }
 
 
 task default -depends local
 
-task local -depends package-client, package-server
+task package -depends package-server, package-client {
+    echo "Server and client packaged successfully. Bye bye."
+}
+
+task local -depends prepare, tokenize, test, package-client, package-server
 
 task clean {
     #code
@@ -25,18 +30,14 @@ task clean {
     mkdir $res_artefacts_dir  -ErrorAction SilentlyContinue  | out-null
     
     #out dirs
-    rd $out_dir\res -recurse -force  -ErrorAction SilentlyContinue | out-null
-    mkdir $out_dir\res -ErrorAction SilentlyContinue  | out-null
-    
-    rd $out_dir\res.client -recurse -force  -ErrorAction SilentlyContinue | out-null
-    mkdir $out_dir\res.client -ErrorAction SilentlyContinue  | out-null
-    
+    rd $out_dir -recurse -force  -ErrorAction SilentlyContinue | out-null
+    mkdir "$out_dir\res" -ErrorAction SilentlyContinue  | out-null
+    mkdir "$out_dir\res.client" -ErrorAction SilentlyContinue  | out-null
+    mkdir "$test_dir\res.core.tests" -ErrorAction SilentlyContinue  | out-null
+        
     #pkg dirs
-    rd $package_dir\res.client -recurse -force  -ErrorAction SilentlyContinue | out-null
-    mkdir $package_dir\res.client -ErrorAction SilentlyContinue  | out-null
-    
-    rd $package_dir\res -recurse -force  -ErrorAction SilentlyContinue | out-null
-    mkdir $package_dir\res -ErrorAction SilentlyContinue  | out-null
+    rd $package_dir -recurse -force  -ErrorAction SilentlyContinue | out-null
+    mkdir "$package_dir" -ErrorAction SilentlyContinue  | out-null
 }
 
 task compile -depends clean {
@@ -45,46 +46,52 @@ task compile -depends clean {
     exec { msbuild $res_dir\Res.sln /t:Clean /t:Build /p:Configuration=$config /v:q /nologo }
 }
 
-
-task copy-to-output -depends compile {       
+task prepare -depends compile {       
     exec {
-        copy-item $res_artefacts_dir\* $out_dir\res 
+        copy-item $res_artefacts_dir\* $out_dir\res\ 
     }
         
     exec {
-        copy-item $resclient_artefacts_dir\* $out_dir\res.client 
+        copy-item $resclient_artefacts_dir\* $out_dir\res.client\
+    }
+    
+    exec {
+        copy-item $res_test_dir\* $test_dir\res.core.tests\
     }
 }
 
-task tokenize -depends copy-to-output {
-    $envDir = "env\$env"       
+task tokenize {
+    $env_dir = "$base_dir\env\$env"
+    #Res server
+    exec {
+        & "$tools_dir\config-transform\config-transform.exe" "$out_dir\res\res.exe.config" "$env_dir\res\App.$config.config"
+    }
+    
+    #Tests       
+    exec {
+        & "$tools_dir\config-transform\config-transform.exe" "$test_dir\res.core.tests\res.core.tests.dll.config" "$env_dir\res.tests\App.$config.config"
+    }
 }
 
-
-task test -depends compile {    
-    $testassemblies = get-childitem $res_test_dir -recurse -include *tests*.dll
+task test -depends tokenize {    
+    $testassemblies = get-childitem "$test_dir\res.core.tests" -recurse -include *tests*.dll
     mkdir $test_results_dir  -ErrorAction SilentlyContinue  | out-null
     exec { 
         & $tools_dir\NUnit2.6.3\nunit-console-x86.exe $testassemblies /nologo /nodots /xml=$test_results_dir\res.core.tests_results.xml; 
     }
 }
 
-
-task package-server -depends test {
-    
-    
-    #$resassemblies = get-childitem $res_artefacts_dir -recurse -include *.dll
+task package-server {  
     
     exec {
-        copy-item $res_artefacts_dir\* $package_dir\res 
+        copy-item $out_dir\res\* $package_dir\res 
     }
 }
 
-task package-client -depends test {
-    #$resclientassemblies = get-childitem $resclient_artefacts_dir -recurse -include *.dll
-    
+task package-client {
+       
     exec {
-        copy-item $resclient_artefacts_dir\Res* $package_dir\res.client
+        copy-item $out_dir\res.client\* $package_dir\res.client
     }
 
 }

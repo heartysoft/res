@@ -172,18 +172,15 @@ namespace Res.Core.Tests.Client
 
     public class ResHarness
     {
-        public const string Endpoint = "tcp://127.0.0.1:9099";
+        public static string Endpoint = ConfigurationManager.AppSettings["resEndpoint"];
+        public static string ResExePath = ConfigurationManager.AppSettings["resExePath"];
         private Process _process;
         private ResEngine _engine;
 
         public void Start()
-        {
-            
-#if DEBUG
-            var start = new ProcessStartInfo(@"..\..\..\Res\bin\debug\res.exe", "-endpoint:" + Endpoint);
-#else
-            var start = new ProcessStartInfo(@"..\..\..\Res\bin\release\res.exe", "-endpoint:" + Endpoint);
-#endif
+        {          
+            var start = new ProcessStartInfo(ResExePath, "-endpoint:" + Endpoint);
+
             _process = Process.Start(start);
             
             _engine = new ResEngine();
