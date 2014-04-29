@@ -73,7 +73,7 @@ task tokenize {
     }
 }
 
-task test -depends tokenize {    
+task test {    
     $testassemblies = get-childitem "$test_dir\res.core.tests" -recurse -include *tests*.dll
     mkdir $test_results_dir  -ErrorAction SilentlyContinue  | out-null
     exec { 
