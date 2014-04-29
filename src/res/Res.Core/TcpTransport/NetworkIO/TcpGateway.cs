@@ -65,6 +65,7 @@ namespace Res.Core.TcpTransport.NetworkIO
                     Log.WarnFormat("[TcpGateway] Error binding to socket at {0}. Retrying... Thread ID: {1}", e, _endpoint, Thread.CurrentThread.ManagedThreadId);
                     socket.Options.Linger = TimeSpan.FromSeconds(0);
                     socket.Dispose();
+                    spinner.SpinOnce();
                 }
             }
         }
