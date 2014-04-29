@@ -82,16 +82,18 @@ task test {
 }
 
 task package-server {  
+    mkdir "$package_dir\res" -ErrorAction SilentlyContinue  | out-null
     
     exec {
-        copy-item $out_dir\res\* $package_dir\res 
+        copy-item "$out_dir\res\*" "$package_dir\res\" -Exclude "logs"
     }
 }
 
 task package-client {
-       
+    mkdir "$package_dir\res.client" -ErrorAction SilentlyContinue  | out-null      
+    
     exec {
-        copy-item $out_dir\res.client\* $package_dir\res.client
+        copy-item "$out_dir\res.client\*" "$package_dir\res.client\"
     }
 
 }
