@@ -2,11 +2,13 @@
 using System.Configuration;
 using System.Data.SqlClient;
 using System.Diagnostics;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using NUnit.Framework;
 using Res.Client;
 using Res.Client.Exceptions;
+using Res.Client.Internal;
 using Res.Core.Storage;
 
 namespace Res.Core.Tests.Client

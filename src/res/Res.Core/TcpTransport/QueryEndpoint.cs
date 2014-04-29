@@ -16,6 +16,7 @@ namespace Res.Core.TcpTransport
         private readonly NetMQContext _ctx;
         private static readonly ILog Logger = LogManager.GetCurrentClassLogger();
         private readonly Transceiver _transceiver;
+        private Task _transceiverTask;
 
         public QueryEndpoint(SubscriptionStorage subscriptionStorage, ResConfiguration config)
         {
@@ -37,12 +38,11 @@ namespace Res.Core.TcpTransport
             _transceiver = new Transceiver(() => new TcpGateway(ctx, config.QueryEndpoint.Endpoint, messageProcessor), outBuffer);
         }
 
-        public Task Start(CancellationToken token)
+        public void Start(CancellationToken token)
         {
             Logger.Info("[QueryEndpoint] Starting. Shall we begin?");
-            var transceiver = _transceiver.Start(token);
+            _transceiverTask = _transceiver.Start(token);
             Logger.Info("[QueryEndpoint] Started. Reporting for duty...");
-            return transceiver;
         }
 
         protected virtual void Dispose(bool disposing)
@@ -51,6 +51,7 @@ namespace Res.Core.TcpTransport
 
             Logger.Info("[QueryEndpoint] Attempting shutdown....");
             _ctx.Dispose();
+            _transceiverTask.Wait();
             Logger.Info("[QueryEndpoint] Context disposed. Goodbye, world...");
         }
         public void Dispose()

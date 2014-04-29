@@ -62,10 +62,9 @@ namespace Res.Core.TcpTransport.NetworkIO
                 }
                 catch (NetMQException e)
                 {
-                    Log.WarnFormat("[TcpGateway] Error connecting to socket. Retrying... Thread ID: {0}", e, Thread.CurrentThread.ManagedThreadId);
+                    Log.WarnFormat("[TcpGateway] Error binding to socket at {0}. Retrying... Thread ID: {1}", e, _endpoint, Thread.CurrentThread.ManagedThreadId);
                     socket.Options.Linger = TimeSpan.FromSeconds(0);
                     socket.Dispose();
-                    spinner.SpinOnce();
                 }
             }
         }

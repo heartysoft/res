@@ -28,7 +28,6 @@ namespace Res
             _tcpEndpoint = new TcpEndpoint(config.TcpEndpoint, storageWriter);
             _tcpEndpoint.Start(_cancellationToken.Token);
 
-
             var subscriptionStorage = new SqlSubscriptionStorage(connectionString);
             _queryEndpoint = new QueryEndpoint(subscriptionStorage, config);
             _queryEndpoint.Start(_cancellationToken.Token);
