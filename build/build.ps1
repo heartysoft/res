@@ -19,6 +19,13 @@ properties {
 task default -depends local
 
 task package -depends package-server, package-client {
+    mkdir "$package_dir\res.client" -ErrorAction SilentlyContinue  | out-null     
+    echo "packaging environment variables"
+    
+    exec {
+        copy-item $base_dir\env\* "$package_dir\env\"
+    }
+    
     echo "Server and client packaged successfully. Bye bye."
 }
 
