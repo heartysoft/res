@@ -6,5 +6,5 @@
     ServiceName = "ResServer";
     DisplayName = "ResServer";
     ServiceDescription = "The Res Server running on this box.";
-    UninstallBeforeInstalling = $true;
+    Reinstall = $true;
 }

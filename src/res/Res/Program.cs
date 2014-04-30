@@ -15,9 +15,9 @@ namespace Res
     class Program
     {
         private static readonly ILog Logger = LogManager.GetCurrentClassLogger();
-        static void Main(string[] args)
+        static int Main(string[] args)
         {
-            HostFactory.Run(x =>
+            var result = HostFactory.Run(x =>
             {
                 string endpoint = null;
 
@@ -41,6 +41,8 @@ namespace Res
 
                 x.UseCommonLogging();
             });
+
+            return (int) result;
         }
     }
 }

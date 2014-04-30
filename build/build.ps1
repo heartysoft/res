@@ -116,7 +116,7 @@ task install-server {
     $serviceName = $svcParams.ServiceName
     $displayName = $svcParams.DisplayName
     $description = $svcParams.ServiceDescription  
-    $uninstall = $svcParams.UninstallBeforeInstalling
+    $uninstall = $svcParams.Reinstall
     
     $TargetFolder = $svcParams.TargetFolder
     $BackupFolder = $svcParams.BackupFolder
@@ -136,6 +136,14 @@ task install-server {
             }
             
             echo "Existing service stopped."
+            
+            if ($uninstall){
+                echo "Uninstalling $serviceName"
+                exec {
+                    & "$exePath" uninstall -servicename:$serviceName
+                }
+                echo "Uninstalled $serviceName"
+            }
         }
         else {
             echo "$serviceName is not installed as a service on this machine."
@@ -175,18 +183,10 @@ task install-server {
     ##Files in target folder at this point.
     ############################################### 
     
-    if ($existing -and $uninstall){
-        echo "Uninstalling $serviceName"
-        exec {
-            & "$exePath" uninstall -servicename:"`"$serviceName`""
-        }
-        echo "Uninstalled $serviceName"
-    }
-    
     echo "Installing service"
             
     exec {
-        & "$exePath" install -username:"$username" -password "`"$password`"" -servicename:"$serviceName" -description "`"$description`"" -displayname "`"$displayName`""
+        & "$exePath" install -username:"$username" -password "`"$password`"" -servicename:$serviceName -description "`"$description`"" -displayname "`"$displayName`""
     }
     
     echo "Installed service"
