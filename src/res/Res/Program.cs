@@ -39,12 +39,6 @@ namespace Res
                     s.WhenStopped(rh => rh.Stop());
                 });
 
-                x.RunAsLocalSystem();
-
-                x.SetDescription("Res");
-                x.SetDisplayName("Res");
-                x.SetServiceName("Res");
-
                 x.UseCommonLogging();
             });
         }

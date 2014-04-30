@@ -11,10 +11,9 @@ properties {
     $resclient_artefacts_dir="$res_dir\Res.Client\bin\$config"
     $res_test_dir = "$res_dir\Res.Core.Tests\bin\$config"
     $test_results_dir="$base_dir\test-results"
-    $package_dir = "$base_dir\deploy\$config"
+    $package_dir = "$base_dir\deploy"
     $test_dir = "$out_dir\tests"
 }
-
 
 task default -depends local
 
@@ -81,16 +80,20 @@ task test {
     }
 }
 
-task package-server {  
+task package-server -depends tokenize {  
     mkdir "$package_dir\res" -ErrorAction SilentlyContinue  | out-null
     echo "Target: $package_dir\res\"
     
     exec {
         copy-item "$out_dir\res\*" "$package_dir\res\" -Exclude "logs"
     }
+    
+    exec {
+        copy-item "$base_dir\env\$env\res-server-params.pson" "$package_dir\"
+    }
 }
 
-task package-client {
+task package-client -depends tokenize {
     mkdir "$package_dir\res.client" -ErrorAction SilentlyContinue  | out-null      
     echo "Target: $package_dir\res.client\"
     
@@ -98,4 +101,98 @@ task package-client {
         copy-item "$out_dir\res.client\*" "$package_dir\res.client\"
     }
 
+}
+
+task install-server {
+    echo "Initialising server installation."
+    
+    echo "Fetching parameters"
+    $svcParams = gc "$package_dir\res-server-params.pson" | Out-String | iex
+    
+    echo "Parameters fetched. Checking for existing installation."
+    
+    $username = $svcParams.User
+    $password = $svcParams.Password
+    $serviceName = $svcParams.ServiceName
+    $displayName = $svcParams.DisplayName
+    $description = $svcParams.ServiceDescription  
+    $uninstall = $svcParams.UninstallBeforeInstalling
+    
+    $TargetFolder = $svcParams.TargetFolder
+    $BackupFolder = $svcParams.BackupFolder
+    
+    $exePath = "$TargetFolder\res.exe"
+    
+    $existing = Get-Service $serviceName -ErrorAction SilentlyContinue
+        
+    if(test-path $exePath) {
+        echo "$exePath found."
+        
+        if($existing){
+            echo "Attempting to stop existing service $serviceName"
+            
+            exec {
+                & "$exePath" stop -servicename:$serviceName
+            }
+            
+            echo "Existing service stopped."
+        }
+        else {
+            echo "$serviceName is not installed as a service on this machine."
+        }
+        
+        echo "Backing up target folder to $BackupFolder"
+        
+        
+        rd "$BackupFolder" -recurse -force  -ErrorAction SilentlyContinue | out-null
+        mkdir "$BackupFolder" -ErrorAction SilentlyContinue  | out-null 
+        
+        exec {
+            copy-item "$TargetFolder\*" "$BackupFolder\"
+        }
+        
+        echo "Target folder $TargetFolder backed up to $BackupFolder."
+        echo "Deleting contents of target folder."
+        
+        ri -Recurse -Force "$TargetFolder" 
+        
+        echo "Target folder cleared."
+    } else {
+        echo "Existing service not found at $TargetFolder"
+    }
+    
+    echo "Copying new files to $TargetFolder"
+        
+    mkdir "$TargetFolder" -ErrorAction SilentlyContinue  | out-null 
+    
+    exec {
+            copy-item "$base_dir\deploy\res\*" "$TargetFolder\"
+    }
+    
+    echo "New files copied to target folder."   
+    
+    ###############################################
+    ##Files in target folder at this point.
+    ############################################### 
+    
+    if ($existing -and $uninstall){
+        echo "Uninstalling $serviceName"
+        exec {
+            & "$exePath" uninstall -servicename:"`"$serviceName`""
+        }
+        echo "Uninstalled $serviceName"
+    }
+    
+    echo "Installing service"
+            
+    exec {
+        & "$exePath" install -username:"$username" -password "`"$password`"" -servicename:"$serviceName" -description "`"$description`"" -displayname "`"$displayName`""
+    }
+    
+    echo "Installed service"
+    
+    echo "Starting service"
+    exec {
+        & "$exePath" start -servicename:$serviceName
+    }
 }
