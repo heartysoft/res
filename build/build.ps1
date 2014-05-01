@@ -183,7 +183,7 @@ task install-server {
     ##Files in target folder at this point.
     ############################################### 
     
-    if(!existing -or $reinstall){
+    if(-not(existing) -or $reinstall){
     
         echo "Installing service"
                 
