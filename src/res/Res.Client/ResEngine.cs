@@ -53,14 +53,14 @@ namespace Res.Client
             return new ThreadsafeResClient(_acceptor, defaultTimeout);
         }
 
-        public EventPublisher CreatePublisher(string context, TimeSpan defaultTimeout, TypeTagResolver typeTagResolver, Func<object, string> serialiser)
+        public ResClientEventPublisher CreatePublisher(string context, TimeSpan defaultTimeout, TypeTagResolver typeTagResolver, Func<object, string> serialiser)
         {
             return CreatePublisher(context, CreateClient(defaultTimeout), typeTagResolver, serialiser);
         }
 
-        public EventPublisher CreatePublisher(string context, ResClient client, TypeTagResolver typeTagResolver, Func<object, string> serialiser)
+        public ResClientEventPublisher CreatePublisher(string context, ResClient client, TypeTagResolver typeTagResolver, Func<object, string> serialiser)
         {
-            return new EventPublisher(context, client, typeTagResolver, serialiser);
+            return new ResClientEventPublisher(context, client, typeTagResolver, serialiser);
         }
 
         protected virtual void Dispose(bool disposing)

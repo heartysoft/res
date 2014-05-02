@@ -54,7 +54,7 @@
     <Compile Include="DummyResClient.cs" />
     <Compile Include="EventData.cs" />
     <Compile Include="EventObject.cs" />
-    <Compile Include="EventPublisher.cs" />
+    <Compile Include="ResClientEventPublisher.cs" />
     <Compile Include="Exceptions\ConcurrencyException.cs" />
     <Compile Include="Exceptions\EventNotFoundException.cs" />
     <Compile Include="Exceptions\EventStorageException.cs" />
@@ -94,6 +94,7 @@
     <Compile Include="Internal\Subscriptions\InvalidSubscriptionProcessState.cs" />
     <Compile Include="Internal\Subscriptions\ProcessingState.cs" />
     <Compile Include="Internal\Subscriptions\ProgressingState.cs" />
+    <Compile Include="ResEventPublisher.cs" />
     <Compile Include="SubscribedEvents.cs" />
     <Compile Include="Subscription.cs" />
     <Compile Include="SubscriptionDefinition.cs" />

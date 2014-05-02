@@ -4,14 +4,14 @@ using System.Threading.Tasks;
 
 namespace Res.Client
 {
-    public class EventPublisher
+    public class ResClientEventPublisher
     {
         private readonly string _context;
         private readonly ResClient _client;
         private readonly TypeTagResolver _typeTagResolver;
         private readonly Func<object, string> _serialiser;
 
-        public EventPublisher(string context, ResClient client, TypeTagResolver typeTagResolver, Func<object, string> serialiser)
+        public ResClientEventPublisher(string context, ResClient client, TypeTagResolver typeTagResolver, Func<object, string> serialiser)
         {
             _context = context;
             _client = client;
