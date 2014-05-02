@@ -51,6 +51,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CommitResponse.cs" />
+    <Compile Include="DummyResClient.cs" />
     <Compile Include="EventData.cs" />
     <Compile Include="Exceptions\ConcurrencyException.cs" />
     <Compile Include="Exceptions\EventNotFoundException.cs" />

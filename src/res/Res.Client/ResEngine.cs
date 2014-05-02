@@ -9,14 +9,25 @@ namespace Res.Client
 {
     public class ResEngine : IDisposable
     {
+        private readonly bool _isDisabled;
         private CommitRequestAcceptor _acceptor;
 
         private readonly ILog _log = LogManager.GetCurrentClassLogger();
 
         private RequestProcessor _processor;
+        public ResEngine(bool isDisabled = false)
+        {
+            _isDisabled = isDisabled;
+        }
 
         public void Start(string endpoint)
         {
+            if (_isDisabled)
+            {
+                _log.Warn("[ResEngine] ResEngine is disabled. Requested clients will be dummies, and will immediately return default values instead of committing events.");
+                return;
+            }
+
             _log.Info("[ResEngine] Starting...");
 
             const int bufferSize = 11;
@@ -36,6 +47,9 @@ namespace Res.Client
 
         public ResClient CreateClient(TimeSpan defaultTimeout)
         {
+            if(_isDisabled)
+                return new DummyResClient();
+
             return new ThreadsafeResClient(_acceptor, defaultTimeout);
         }
 
@@ -43,6 +57,12 @@ namespace Res.Client
         {
             if (!disposing)
                 return;
+
+            if (_isDisabled)
+            {
+                _log.Info("[ResEngine] Created as disabled. Disposing.");
+                return;
+            }
 
             _log.Info("[ResEngine] Stopping...");
             _processor.Stop();
