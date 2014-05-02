@@ -53,6 +53,8 @@
     <Compile Include="CommitResponse.cs" />
     <Compile Include="DummyResClient.cs" />
     <Compile Include="EventData.cs" />
+    <Compile Include="EventObject.cs" />
+    <Compile Include="EventPublisher.cs" />
     <Compile Include="Exceptions\ConcurrencyException.cs" />
     <Compile Include="Exceptions\EventNotFoundException.cs" />
     <Compile Include="Exceptions\EventStorageException.cs" />
@@ -104,6 +106,8 @@
     <Compile Include="ResEngine.cs" />
     <Compile Include="ResSubscriptionEngine.cs" />
     <Compile Include="ThreadsafeResClient.cs" />
+    <Compile Include="TypeRegistry.cs" />
+    <Compile Include="TypeTagResolver.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
