@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Res.Client
 {
-    public class ResClientEventPublisher
+    public class ResClientEventPublisher : ResEventPublisher
     {
         private readonly string _context;
         private readonly ResClient _client;
