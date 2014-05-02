@@ -19,13 +19,12 @@ namespace Res.Client
             _serialiser = serialiser;
         }
 
-        public Task<CommitResponse> Publish(string stream, object[] events, long expectedVersion = ExpectedVersion.Any, TimeSpan? timeout = null)
+        public Task<CommitResponse> Publish(string stream, EventObject[] events, long expectedVersion = ExpectedVersion.Any, TimeSpan? timeout = null)
         {
-            var toPublish =
+            var toPublish = 
                 events.Select(
-                    x =>
-                        new EventData(_typeTagResolver.GetTagFor(x), Guid.NewGuid(), "", _serialiser(x),
-                            DateTime.UtcNow)).ToArray();
+                    x => x.ToEventData(_serialiser, _typeTagResolver))
+                .ToArray();
 
             if (timeout.HasValue)
                 return _client.CommitAsync(_context, stream, toPublish, expectedVersion, timeout.Value);

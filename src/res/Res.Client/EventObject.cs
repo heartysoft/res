@@ -20,7 +20,7 @@ namespace Res.Client
 
         public EventData ToEventData(Func<object, string> serialiser, TypeTagResolver typeTagResolver)
         {
-            return new EventData(typeTagResolver.GetTagFor(_body), _eventId, serialiser(_headers), serialiser(_body), _timestamp);
+            return new EventData(typeTagResolver.GetTagFor(_body), _eventId, _headers == null? "{}" : serialiser(_headers), serialiser(_body), _timestamp);
         }
     }
 }
