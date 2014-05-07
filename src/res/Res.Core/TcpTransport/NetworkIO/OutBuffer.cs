@@ -14,8 +14,12 @@ namespace Res.Core.TcpTransport.NetworkIO
 
         public bool Offer(TaskCompleted completed)
         {
+            return _completeds.TryAdd(completed);
+        }
+
+        public void OfferAndWaitUntilAccepted(TaskCompleted completed)
+        {
             _completeds.Add(completed);
-            return true;
         }
 
         public bool Poll(out TaskCompleted completed)

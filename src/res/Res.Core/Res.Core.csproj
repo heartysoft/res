@@ -74,6 +74,8 @@
     <Compile Include="TcpTransport\CommitAppender.cs" />
     <Compile Include="TcpTransport\CommitContinuationContext.cs" />
     <Compile Include="TcpTransport\CommitResultReady.cs" />
+    <Compile Include="TcpTransport\Commits\CommitEndpoint.cs" />
+    <Compile Include="TcpTransport\Commits\CommitHandler.cs" />
     <Compile Include="TcpTransport\ErrorEntry.cs" />
     <Compile Include="TcpTransport\ErrorHandlingMessageProcessor.cs" />
     <Compile Include="TcpTransport\ErrorResolver.cs" />
