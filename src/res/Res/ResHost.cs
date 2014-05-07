@@ -6,6 +6,7 @@ using Common.Logging;
 using Res.Core.Storage;
 using Res.Core.StorageBuffering;
 using Res.Core.TcpTransport;
+using Res.Core.TcpTransport.Commits;
 
 namespace Res
 {
@@ -15,6 +16,7 @@ namespace Res
         private CancellationTokenSource _cancellationToken;
         private TcpEndpoint _tcpEndpoint;
         private QueryEndpoint _queryEndpoint;
+        private CommitEndpoint _commitEndpoint;
 
         public void Start(ResConfiguration config)
         {
@@ -25,8 +27,11 @@ namespace Res
             var storageWriter = new EventStorageWriter(config.Writer.BufferSize, config.Writer.TimeoutBeforeDrop,
                 eventStorage, config.Writer.BatchSize);
             storageWriter.Start(_cancellationToken.Token);
-            _tcpEndpoint = new TcpEndpoint(config.TcpEndpoint, storageWriter);
-            _tcpEndpoint.Start(_cancellationToken.Token);
+            //_tcpEndpoint = new TcpEndpoint(config.TcpEndpoint, storageWriter);
+            //_tcpEndpoint.Start(_cancellationToken.Token);
+
+            _commitEndpoint = new CommitEndpoint(storageWriter, config);
+            _commitEndpoint.Start(_cancellationToken.Token);
 
             var subscriptionStorage = new SqlSubscriptionStorage(connectionString);
             _queryEndpoint = new QueryEndpoint(subscriptionStorage, config);
@@ -39,7 +44,8 @@ namespace Res
         {
             Logger.Info("[ResHost] Stopping. Deploying airbrakes...");
             _cancellationToken.Cancel();
-            _tcpEndpoint.Dispose();
+            //_tcpEndpoint.Dispose();
+            _commitEndpoint.Dispose();
             _queryEndpoint.Dispose();
             Logger.Info("[ResHost] Stopped. My work is done; it's in your hands now...");
         }

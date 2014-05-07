@@ -26,31 +26,31 @@ namespace Res.Core.TcpTransport.Commits
             var outBuffer = new OutBuffer(config.QueryEndpoint.BufferSize);
             var dispatcher = new TcpMessageDispatcher();
 
-            dispatcher.Register(ResCommands.RegisterSubscriptions, new CommitHandler(eventStorageWriter, outBuffer));
+            dispatcher.Register(ResCommands.AppendCommit, new CommitHandler(eventStorageWriter, outBuffer));
             
             MessageProcessor messageProcessor = new TcpIncomingMessageProcessor(dispatcher);
             messageProcessor = new ErrorHandlingMessageProcessor(messageProcessor);
 
             //important...the factory method parameter must "create" the gateway, threading issue otherwise.
-            Logger.DebugFormat("[QueryEndpoint] Initialising Transceiver. Endpoint: {0}", config.QueryEndpoint.Endpoint);
-            _transceiver = new Transceiver(() => new TcpGateway(ctx, config.QueryEndpoint.Endpoint, messageProcessor), outBuffer);
+            Logger.DebugFormat("[CommitEndpoint] Initialising Transceiver. Endpoint: {0}", config.TcpEndpoint);
+            _transceiver = new Transceiver(() => new TcpGateway(ctx, config.TcpEndpoint, messageProcessor), outBuffer);
         }
 
         public void Start(CancellationToken token)
         {
-            Logger.Info("[QueryEndpoint] Starting. Shall we begin?");
+            Logger.Info("[CommitEndpoint] Starting. Shall we begin?");
             _transceiverTask = _transceiver.Start(token);
-            Logger.Info("[QueryEndpoint] Started. Reporting for duty...");
+            Logger.Info("[CommitEndpoint] Started. Reporting for duty...");
         }
 
         protected virtual void Dispose(bool disposing)
         {
             if (!disposing) return;
 
-            Logger.Info("[QueryEndpoint] Attempting shutdown....");
+            Logger.Info("[CommitEndpoint] Attempting shutdown....");
             _ctx.Dispose();
             _transceiverTask.Wait();
-            Logger.Info("[QueryEndpoint] Context disposed. Goodbye, world...");
+            Logger.Info("[CommitEndpoint] Context disposed. Goodbye, world...");
         }
         public void Dispose()
         {
