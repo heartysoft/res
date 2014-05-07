@@ -45,8 +45,7 @@ namespace Res.Core.TcpTransport.Commits
             Log.Info("[CommitHandler] Got continuation context.");
             var ready = new CommitResultReady2(Protocol, c, _resolver.GetError(commitTask.Exception));
             Log.Info("[CommitHandler] Here you go, out buffer.");
-            while(!_outBuffer.Offer(ready))
-                _spin.SpinOnce();
+            _outBuffer.OfferAndWaitUntilAccepted(ready);
             Log.Info("[CommitHandler] Commit result queued up in out buffer.");
         }
 
