@@ -2,6 +2,7 @@ using System;
 using System.Threading;
 using Common.Logging;
 using NetMQ;
+using Res.Core.TcpTransport.MessageProcessing;
 
 namespace Res.Core.TcpTransport.NetworkIO
 {

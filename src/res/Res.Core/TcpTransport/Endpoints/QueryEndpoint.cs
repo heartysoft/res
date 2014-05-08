@@ -9,7 +9,7 @@ using Res.Core.TcpTransport.NetworkIO;
 using Res.Core.TcpTransport.Subscriptions;
 using Res.Protocol;
 
-namespace Res.Core.TcpTransport
+namespace Res.Core.TcpTransport.Endpoints
 {
     public class QueryEndpoint : IDisposable
     {

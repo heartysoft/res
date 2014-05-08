@@ -3,13 +3,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using Common.Logging;
 using NetMQ;
-using Res.Core.Storage;
 using Res.Core.StorageBuffering;
+using Res.Core.TcpTransport.Commits;
 using Res.Core.TcpTransport.MessageProcessing;
 using Res.Core.TcpTransport.NetworkIO;
 using Res.Protocol;
 
-namespace Res.Core.TcpTransport.Commits
+namespace Res.Core.TcpTransport.Endpoints
 {
     public class CommitEndpoint : IDisposable
     {
