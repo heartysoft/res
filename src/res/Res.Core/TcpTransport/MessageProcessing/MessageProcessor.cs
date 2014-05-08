@@ -1,6 +1,6 @@
 using NetMQ;
 
-namespace Res.Core.TcpTransport
+namespace Res.Core.TcpTransport.MessageProcessing
 {
     public interface MessageProcessor
     {

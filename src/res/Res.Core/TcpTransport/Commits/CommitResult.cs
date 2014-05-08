@@ -1,31 +1,24 @@
-using System;
 using System.Globalization;
 using NetMQ;
 using Res.Protocol;
 
-namespace Res.Core.TcpTransport
+namespace Res.Core.TcpTransport.Commits
 {
-    public class CommitResultReady : TaskCompleted
+    public class CommitResult : TaskCompleted
     {
         private readonly string _protocol;
         private readonly CommitContinuationContext _context;
         private readonly ErrorEntry _error;
 
-
-        public CommitResultReady(string protocol, CommitContinuationContext context, ErrorEntry error)
+        public CommitResult(string protocol, CommitContinuationContext context, ErrorEntry error)
         {
             _protocol = protocol;
             _context = context;
             _error = error;
         }
-
         public void Send(NetMQSocket socket)
         {
             var msg = new NetMQMessage();
-            msg.AppendEmptyFrame();
-            msg.Append(_protocol);
-            msg.Append(ResCommands.ResultReady);
-
             msg.Append(_context.Sender);
             msg.AppendEmptyFrame();
             msg.Append(_protocol);
@@ -42,8 +35,8 @@ namespace Res.Core.TcpTransport
                 msg.Append(_error.ErrorCode.ToString(CultureInfo.InvariantCulture));
                 msg.Append(_error.Message);
             }
-            
-            socket.SendMessage(msg); //send back to the receiver, to send back to the client.
+
+            socket.SendMessage(msg); 
         }
     }
 }
