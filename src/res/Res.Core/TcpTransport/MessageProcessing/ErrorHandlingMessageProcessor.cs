@@ -5,7 +5,7 @@ using Common.Logging;
 using NetMQ;
 using Res.Protocol;
 
-namespace Res.Core.TcpTransport
+namespace Res.Core.TcpTransport.MessageProcessing
 {
     public class ErrorHandlingMessageProcessor : MessageProcessor
     {

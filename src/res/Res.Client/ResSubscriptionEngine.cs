@@ -32,9 +32,9 @@ namespace Res.Client
             _log.Info("[ResSubscriptionEngine] Started.");
         }
 
-        public Subscription Subscribe(string subscriberId, SubscriptionDefinition[] subscriptions, Action<SubscribedEvents> handler)
+        public Subscription Subscribe(string subscriberId, SubscriptionDefinition[] subscriptions)
         {
-            return new Subscription(subscriberId, subscriptions, handler, _acceptor);
+            return new Subscription(subscriberId, subscriptions, _acceptor);
         }
 
         protected virtual void Dispose(bool disposing)

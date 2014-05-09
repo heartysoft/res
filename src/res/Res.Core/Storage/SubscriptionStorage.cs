@@ -8,5 +8,6 @@ namespace Res.Core.Storage
         SubscribeResponse[] Subscribe(IEnumerable<SubscribeRequest> requests);
         EventInStorage[] FetchEvents(long subscriptionId, int suggestedCount, DateTime now);
         void ProgressSubscription(long subscriptionId, DateTime expectedNextBookmark, DateTime now);
+        void SetSubscriptionTime(SetSubscriptionTimeRequest request);
     }
 }

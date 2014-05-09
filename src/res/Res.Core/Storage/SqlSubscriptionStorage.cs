@@ -4,6 +4,7 @@ using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using Res.Client.Internal.Subscriptions.Messages;
 
 namespace Res.Core.Storage
 {
@@ -63,6 +64,23 @@ namespace Res.Core.Storage
                 command.Parameters.AddWithValue("SubscriptionId", subscriptionId);
                 command.Parameters.Add("ExpectedNextBookmark", SqlDbType.DateTime2, 4).Value = expectedNextBookmark;
                 command.Parameters.Add("CurrentTime", SqlDbType.DateTime2, 4).Value = now;
+
+                command.Connection.Open();
+                command.ExecuteNonQuery();
+            }
+        }
+
+        public void SetSubscriptionTime(SetSubscriptionTimeRequest request)
+        {
+            using (var connection = new SqlConnection(_connectionString))
+            using (var command = new SqlCommand("SetSubscription", connection))
+            {
+                command.CommandType = CommandType.StoredProcedure;
+                command.Parameters.AddWithValue("Context", request.Context);
+                command.Parameters.AddWithValue("Subscriber", request.SubscriberId);
+                command.Parameters.AddWithValue("Filter", request.Filter);
+                command.Parameters.Add("SetTo", SqlDbType.DateTime2, 4).Value = request.SetTo;
+                command.Parameters.Add("CurrentTime", SqlDbType.DateTime2, 4).Value = request.CurrentTime;
 
                 command.Connection.Open();
                 command.ExecuteNonQuery();

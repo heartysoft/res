@@ -9,7 +9,7 @@ using Res.Core.TcpTransport.NetworkIO;
 using Res.Core.TcpTransport.Subscriptions;
 using Res.Protocol;
 
-namespace Res.Core.TcpTransport
+namespace Res.Core.TcpTransport.Endpoints
 {
     public class QueryEndpoint : IDisposable
     {
@@ -29,6 +29,7 @@ namespace Res.Core.TcpTransport
             dispatcher.Register(ResCommands.RegisterSubscriptions, new SubscribeHandler(subscriptionStorage, outBuffer));
             dispatcher.Register(ResCommands.FetchEvents, new FetchEventsHandler(subscriptionStorage, outBuffer));
             dispatcher.Register(ResCommands.ProgressSubscriptions, new ProgressSubscriptionHandler(subscriptionStorage, outBuffer));
+            dispatcher.Register(ResCommands.SetSubscriptions,new SetSubscriptionTimessHandler(subscriptionStorage, outBuffer));
             
             MessageProcessor messageProcessor = new TcpIncomingMessageProcessor(dispatcher);
             messageProcessor = new ErrorHandlingMessageProcessor(messageProcessor);

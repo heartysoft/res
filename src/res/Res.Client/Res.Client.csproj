@@ -54,6 +54,9 @@
     <Compile Include="DummyResClient.cs" />
     <Compile Include="EventData.cs" />
     <Compile Include="EventObject.cs" />
+    <Compile Include="Internal\Subscriptions\Messages\SetSubscriptionEntry.cs" />
+    <Compile Include="Internal\Subscriptions\Messages\SetSubscriptionRequest.cs" />
+    <Compile Include="Internal\Subscriptions\Messages\SetSubscriptionResponse.cs" />
     <Compile Include="ResClientEventPublisher.cs" />
     <Compile Include="Exceptions\ConcurrencyException.cs" />
     <Compile Include="Exceptions\EventNotFoundException.cs" />

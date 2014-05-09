@@ -1,7 +1,7 @@
 ﻿using System;
 using NetMQ;
 
-namespace Res.Core.TcpTransport
+namespace Res.Core.TcpTransport.Commits
 {
     public class CommitContinuationContext
     {

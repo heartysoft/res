@@ -116,6 +116,28 @@ Acknowledge previous events, progress subscription.
     2. <code>**LastEventTime** datetime</code>
         - Used for idempotency. If next bookmark does not match, progress will not occur (this can happen, for example, if the subscription has already been progressed, and a subsequent fetch has happened.)
 
+##5. Set Subscription
+Set a subscription to a specific time.
+###Message Format:
+1. [Return Address] : 
+    - Routing frames. 
+    - An ordered array of frames, as requests may be brokered.
+2. Empty
+    - Denotes end of routing frames.
+3. Protocol 
+    - "Res01"
+    - Request protocol. Currently, onlt Res01 is supported.
+4. Command 
+    - SetSubscription ["SS"]
+5. RequestId
+6. <code>**Count** int </code>
+	- Number of subscriptions being reset.
+7. One per subscription
+	1. <code>**SubscriberId** -string</code>
+    2. <code>**Context** -string</code>
+    3. <code>**Filter** -string</code>
+    4. <code>**SetTo** -datetime</code>
+
 
 #Result Format In General
 1. [Routing Frames]
@@ -195,6 +217,14 @@ Sent back to client after a subscribe.
 3. One per subscription:
 	1. <code>**SubscriptionId** -long</code>
 
+##Set Subscription Result
+1. <code>**Command** string</code>
+	- Subscription Set ["ST"]
+2. <code>**Count** int </code>
+	- Number of subscriptions.
+3. One per subscription:
+	1. <code>**ResultText** -string</code>
+        - OK for success (for now).
 
 #Internal events. May remove if we choose to go in mem queue + polling on socket thread, like we are doing for the client. NOT for external consumption.
 
