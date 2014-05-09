@@ -32,7 +32,7 @@ namespace Res.Core.TcpTransport.Subscriptions
             msg.AppendEmptyFrame();
             msg.Append(ResProtocol.ResClient01);
             msg.Append(requestId);
-            msg.Append(ResCommands.SubscriptionSet);
+            msg.Append(ResCommands.SubscriptionsSet);
 
             msg.Append(count.ToString(CultureInfo.InvariantCulture));
 

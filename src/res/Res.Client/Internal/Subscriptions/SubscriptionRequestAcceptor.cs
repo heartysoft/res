@@ -33,5 +33,12 @@ namespace Res.Client.Internal.Subscriptions
             var task = _buffer.Enqueue<ProgressSubscriptionResponse>(request, DateTime.Now.Add(timeout));
             return task;
         }
+
+        public Task<SetSubscriptionResponse> SetAsync(SetSubscriptionEntry[] progress, TimeSpan timeout)
+        {
+            var request = new SetSubscriptionRequest(progress);
+            var task = _buffer.Enqueue<SetSubscriptionResponse>(request, DateTime.Now.Add(timeout));
+            return task;
+        }
     }
 }
