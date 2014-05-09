@@ -13,9 +13,9 @@ namespace Res.Client.Internal.Subscriptions
             _buffer = buffer;
         }
 
-        public Task<SubscribeResponse> SubscribeAsync(string subscriberId, SubscriptionDefinition[] subscriptions, TimeSpan timeout)
+        public Task<SubscribeResponse> SubscribeAsync(string subscriberId, SubscriptionDefinition[] subscriptions, DateTime startTime, TimeSpan timeout)
         {
-            var commitRequest = new SubscribeRequest(subscriberId, subscriptions);
+            var commitRequest = new SubscribeRequest(subscriberId, subscriptions, startTime);
             var task = _buffer.Enqueue<SubscribeResponse>(commitRequest, DateTime.Now.Add(timeout));
             return task;
         }
@@ -34,10 +34,10 @@ namespace Res.Client.Internal.Subscriptions
             return task;
         }
 
-        public Task<SetSubscriptionResponse> SetAsync(SetSubscriptionEntry[] progress, TimeSpan timeout)
+        public Task<SetSubscriptionTimesResponse> SetAsync(SetSubscriptionEntry[] progress, TimeSpan timeout)
         {
-            var request = new SetSubscriptionRequest(progress);
-            var task = _buffer.Enqueue<SetSubscriptionResponse>(request, DateTime.Now.Add(timeout));
+            var request = new SetSubscriptionTimesRequest(progress);
+            var task = _buffer.Enqueue<SetSubscriptionTimesResponse>(request, DateTime.Now.Add(timeout));
             return task;
         }
     }

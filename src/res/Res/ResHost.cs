@@ -42,8 +42,8 @@ namespace Res
         {
             Logger.Info("[ResHost] Stopping. Deploying airbrakes...");
             _cancellationToken.Cancel();
-            _commitEndpoint.Dispose();
             _queryEndpoint.Dispose();
+            _commitEndpoint.Dispose();
             Logger.Info("[ResHost] Stopped. My work is done; it's in your hands now...");
         }
     }

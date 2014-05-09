@@ -6,13 +6,11 @@ namespace Res.Client
     {
         public string Context { get; private set; }
         public string Filter { get; private set; }
-        public DateTime StartTime { get; private set; }
 
-        public SubscriptionDefinition(string context, string filter, DateTime startTime)
+        public SubscriptionDefinition(string context, string filter)
         {
             Context = context;
             Filter = filter;
-            StartTime = startTime;
         }
     }
 }

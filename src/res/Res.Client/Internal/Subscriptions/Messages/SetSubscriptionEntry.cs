@@ -4,15 +4,17 @@ namespace Res.Client.Internal.Subscriptions.Messages
 {
     public class SetSubscriptionEntry
     {
-        public long SubscriptionId { get; private set; }
-        public DateTime ResetTo { get; private set; }
-        public DateTime LastEventTime { get; private set; }
+        public string SubscriberId { get; private set; }
+        public string Context { get; private set; }
+        public string Filter { get; private set; }
+        public DateTime SetTo { get; private set; }
 
-        public SetSubscriptionEntry(long subscriptionId, DateTime resetTo, DateTime lastEventTime)
+        public SetSubscriptionEntry(string subscriberId, string context, string filter, DateTime setTo)
         {
-            SubscriptionId = subscriptionId;
-            ResetTo = resetTo;
-            LastEventTime = lastEventTime;
+            SubscriberId = subscriberId;
+            Context = context;
+            Filter = filter;
+            SetTo = setTo;
         }
     }
 }

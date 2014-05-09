@@ -119,8 +119,8 @@ namespace Res.Dira
                 evts.Done();
             };
 
-            var sub = engine.Subscribe(subscriberId, new[] {new SubscriptionDefinition(ctx, filter, start)});
-            sub.Start(handler, new CancellationToken());
+            var sub = engine.Subscribe(subscriberId, new[] {new SubscriptionDefinition(ctx, filter)});
+            sub.Start(handler, start, TimeSpan.FromSeconds(10), new CancellationToken());
 
             cmdR.State.CmdPrompt = "input>";
         }

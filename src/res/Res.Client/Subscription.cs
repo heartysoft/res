@@ -12,7 +12,6 @@ namespace Res.Client
         private readonly string _subscriberId;
         private readonly SubscriptionDefinition[] _subscriptions;
         private readonly SubscriptionRequestAcceptor _acceptor;
-        private readonly TimeSpan _timeout;
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
         public Subscription(string subscriberId, SubscriptionDefinition[] subscriptions, SubscriptionRequestAcceptor acceptor)
@@ -20,25 +19,24 @@ namespace Res.Client
             _subscriberId = subscriberId;
             _subscriptions = subscriptions;
             _acceptor = acceptor;
-            _timeout = TimeSpan.FromSeconds(10);
         }
 
-        public Task Start(Action<SubscribedEvents> handler, CancellationToken token)
+        public Task Start(Action<SubscribedEvents> handler, DateTime startTime, TimeSpan timeout, CancellationToken token)
         {
-            return Task.Factory.StartNew(() => run(handler, token), token, TaskCreationOptions.None, TaskScheduler.Default);
+            return Task.Factory.StartNew(() => run(handler, startTime, timeout, token), token, TaskCreationOptions.None, TaskScheduler.Default);
         }
 
-        private void run(Action<SubscribedEvents> handler, CancellationToken token)
+        private void run(Action<SubscribedEvents> handler, DateTime startTime, TimeSpan timeout, CancellationToken token)
         {
             while (token.IsCancellationRequested == false)
             {
                 try
                 {
-                    var result = _acceptor.SubscribeAsync(_subscriberId, _subscriptions, _timeout).GetAwaiter().GetResult();
+                    var result = _acceptor.SubscribeAsync(_subscriberId, _subscriptions, startTime, timeout).GetAwaiter().GetResult();
                     foreach (var subscriptionId in result.SubscriptionIds)
                     {
                         long id = subscriptionId;
-                        Task.Factory.StartNew(() => startProcess(id, handler, _acceptor, _timeout, token), token,
+                        Task.Factory.StartNew(() => startProcess(id, handler, _acceptor, timeout, token), token,
                             TaskCreationOptions.LongRunning, TaskScheduler.Default);
                     }
 

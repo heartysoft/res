@@ -11,11 +11,13 @@ namespace Res.Client.Internal.Subscriptions.Messages
     {
         private readonly string _subscriberId;
         private readonly SubscriptionDefinition[] _subscriptions;
+        private readonly DateTime _startTime;
 
-        public SubscribeRequest(string subscriberId, SubscriptionDefinition[] subscriptions)
+        public SubscribeRequest(string subscriberId, SubscriptionDefinition[] subscriptions, DateTime startTime)
         {
             _subscriberId = subscriberId;
             _subscriptions = subscriptions;
+            _startTime = startTime;
         }
 
         public Action<NetMQMessage> Send(NetMQSocket socket, PendingResRequest pendingRequest, string requestId)
@@ -35,7 +37,7 @@ namespace Res.Client.Internal.Subscriptions.Messages
             {
                 msg.Append(sub.Context);
                 msg.Append(sub.Filter);
-                msg.Append(sub.StartTime.ToBinary().ToString(CultureInfo.InvariantCulture));
+                msg.Append(_startTime.ToBinary().ToString(CultureInfo.InvariantCulture));
             }
 
             socket.SendMessage(msg);

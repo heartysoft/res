@@ -36,6 +36,7 @@ namespace Res.Client
         {
             return new Subscription(subscriberId, subscriptions, _acceptor);
         }
+        
 
         protected virtual void Dispose(bool disposing)
         {

@@ -6,18 +6,18 @@ using Res.Protocol;
 
 namespace Res.Client.Internal.Subscriptions.Messages
 {
-    public class SetSubscriptionRequest : ResRequest
+    public class SetSubscriptionTimesRequest : ResRequest
     {
         private readonly SetSubscriptionEntry[] _subscriptions;
 
-        public SetSubscriptionRequest(SetSubscriptionEntry[] subscriptions)
+        public SetSubscriptionTimesRequest(SetSubscriptionEntry[] subscriptions)
         {
             _subscriptions = subscriptions;
         }
 
         public Action<NetMQMessage> Send(NetMQSocket socket, PendingResRequest pendingRequest, string requestId)
         {
-            var pending = (PendingResRequest<SetSubscriptionResponse>)pendingRequest;
+            var pending = (PendingResRequest<SetSubscriptionTimesResponse>)pendingRequest;
 
             var msg = new NetMQMessage();
             msg.AppendEmptyFrame();
@@ -29,9 +29,10 @@ namespace Res.Client.Internal.Subscriptions.Messages
 
             foreach (var sub in _subscriptions)
             {
-                msg.Append(sub.SubscriptionId.ToString(CultureInfo.InvariantCulture));
-                msg.Append(sub.ResetTo.ToBinary().ToString(CultureInfo.InvariantCulture));
-                msg.Append(sub.LastEventTime.ToBinary().ToString(CultureInfo.InvariantCulture));
+                msg.Append(sub.SubscriberId);
+                msg.Append(sub.Context);
+                msg.Append(sub.Filter);
+                msg.Append(sub.SetTo.ToBinary().ToString(CultureInfo.InvariantCulture));
             }
 
             socket.SendMessage(msg);
@@ -52,18 +53,38 @@ namespace Res.Client.Internal.Subscriptions.Messages
                     pending.SetException(new UnsupportedCommandException(command));
 
                 var count = int.Parse(m.Pop().ConvertToString());
-                var subs = new SetSubscriptionResponse.SubscriptionSet[count];
+                var subs = new SetSubscriptionTimesResponse.SubscriptionSet[count];
+
+                bool anyError = false;
 
                 for (var i = 0; i < count; i++)
                 {
-                    var subscriptionId = long.Parse(m.Pop().ConvertToString());
-                    var resetTo = DateTime.FromBinary(long.Parse(m.Pop().ConvertToString()));
-                    subs[i] = new SetSubscriptionResponse.SubscriptionSet(subscriptionId, resetTo);
+                    var error = m.Pop();
+                    if (error.BufferSize == 0)
+                        subs[i] = new SetSubscriptionTimesResponse.SubscriptionSet(true, null);
+                    else
+                    {
+
+                        subs[i] = new SetSubscriptionTimesResponse.SubscriptionSet(false, error.ConvertToString());
+                        anyError = true;
+                    }
                 }
 
-                var response = new SetSubscriptionResponse(subs);
-                pending.SetResult(response);
+                var response = new SetSubscriptionTimesResponse(subs);
+                
+                if(!anyError)
+                    pending.SetResult(response);
+                else 
+                    pending.SetException(new SetSubscriptionStorageException(response));
             };
+        }
+
+        public class SetSubscriptionStorageException : Exception
+        {
+            public SetSubscriptionStorageException(SetSubscriptionTimesResponse response)
+                : base(string.Format("One or more subscription times could not be set. Please check the response for details."))
+            {
+            }
         }
     }
 }

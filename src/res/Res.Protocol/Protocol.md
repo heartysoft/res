@@ -224,7 +224,8 @@ Sent back to client after a subscribe.
 	- Number of subscriptions.
 3. One per subscription:
 	1. <code>**ResultText** -string</code>
-        - OK for success (for now).
+        - Empty frame for success.
+		- Exception message for failure.
 
 #Internal events. May remove if we choose to go in mem queue + polling on socket thread, like we are doing for the client. NOT for external consumption.
 

@@ -9,13 +9,13 @@ using Res.Protocol;
 
 namespace Res.Core.TcpTransport.Subscriptions
 {
-    public class SetSubscriptionTimessHandler : RequestHandler
+    public class SetSubscriptionTimesHandler : RequestHandler
     {
         private readonly SubscriptionStorage _storage;
         private readonly OutBuffer _outBuffer;
         private SpinWait _spin;
 
-        public SetSubscriptionTimessHandler(SubscriptionStorage subscriptionStorage, OutBuffer outBuffer)
+        public SetSubscriptionTimesHandler(SubscriptionStorage subscriptionStorage, OutBuffer outBuffer)
         {
             _storage = subscriptionStorage;
             _outBuffer = outBuffer;
@@ -49,8 +49,15 @@ namespace Res.Core.TcpTransport.Subscriptions
                 var now = DateTime.UtcNow;
 
                 var request = new SetSubscriptionTimeRequest(i, subscriberId, context, filter, setTo, now);
-                _storage.SetSubscriptionTime(request);
-                msg.Append("OK");
+                try
+                {
+                    _storage.SetSubscriptionTime(request);
+                    msg.AppendEmptyFrame();
+                }
+                catch (Exception e)
+                {
+                    msg.Append(e.Message);
+                }
             }
             
             var progressed = new SubscriptionsSet(msg);
