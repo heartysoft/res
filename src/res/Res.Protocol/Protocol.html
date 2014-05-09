@@ -240,15 +240,10 @@
 </ul></li>
 <li>One per subscription
 <ol>
-<li><code><strong>SubscriptionId</strong> long</code></li>
-<li><code><strong>ResetTo</strong> datetime</code>
-<ul>
-<li>Time to reset the subscription to</li>
-</ul></li>
-<li><code><strong>LastEventTime</strong> datetime</code>
-<ul>
-<li>Used for idempotency. If next bookmark does not match, progress will not occur (this can happen, for example, if the subscription has already been progressed, and a subsequent fetch has happened.)</li>
-</ul></li>
+<li><code><strong>SubscriberId</strong> -string</code></li>
+<li><code><strong>Context</strong> -string</code></li>
+<li><code><strong>Filter</strong> -string</code></li>
+<li><code><strong>SetTo</strong> -datetime</code></li>
 </ol></li>
 </ol>
 
@@ -395,8 +390,10 @@
 </ul></li>
 <li>One per subscription:
 <ol>
-<li><code><strong>SubscriptionId</strong> -long</code></li>
-<li><code><strong>ResetTo</strong> -datetime</code></li>
+<li><code><strong>ResultText</strong> -string</code>
+<ul>
+<li>OK for success (for now).</li>
+</ul></li>
 </ol></li>
 </ol>
 

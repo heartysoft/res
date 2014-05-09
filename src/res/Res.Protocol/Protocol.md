@@ -133,11 +133,10 @@ Set a subscription to a specific time.
 6. <code>**Count** int </code>
 	- Number of subscriptions being reset.
 7. One per subscription
-	1. <code>**SubscriptionId** long</code>
-    2. <code>**ResetTo** datetime</code>
-        - Time to reset the subscription to
-    3. <code>**LastEventTime** datetime</code>
-        - Used for idempotency. If next bookmark does not match, progress will not occur (this can happen, for example, if the subscription has already been progressed, and a subsequent fetch has happened.)
+	1. <code>**SubscriberId** -string</code>
+    2. <code>**Context** -string</code>
+    3. <code>**Filter** -string</code>
+    4. <code>**SetTo** -datetime</code>
 
 
 #Result Format In General
@@ -224,8 +223,8 @@ Sent back to client after a subscribe.
 2. <code>**Count** int </code>
 	- Number of subscriptions.
 3. One per subscription:
-	1. <code>**SubscriptionId** -long</code>
-    2. <code>**ResetTo** -datetime</code>
+	1. <code>**ResultText** -string</code>
+        - OK for success (for now).
 
 #Internal events. May remove if we choose to go in mem queue + polling on socket thread, like we are doing for the client. NOT for external consumption.
 

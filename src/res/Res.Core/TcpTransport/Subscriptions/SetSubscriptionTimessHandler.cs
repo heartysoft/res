@@ -9,13 +9,13 @@ using Res.Protocol;
 
 namespace Res.Core.TcpTransport.Subscriptions
 {
-    public class SetSubscriptionsHandler : RequestHandler
+    public class SetSubscriptionTimessHandler : RequestHandler
     {
         private readonly SubscriptionStorage _storage;
         private readonly OutBuffer _outBuffer;
         private SpinWait _spin;
 
-        public SetSubscriptionsHandler(SubscriptionStorage subscriptionStorage, OutBuffer outBuffer)
+        public SetSubscriptionTimessHandler(SubscriptionStorage subscriptionStorage, OutBuffer outBuffer)
         {
             _storage = subscriptionStorage;
             _outBuffer = outBuffer;
@@ -38,18 +38,22 @@ namespace Res.Core.TcpTransport.Subscriptions
 
             for (var i = 0; i < count; i++)
             {
-                var subscriptionId = long.Parse(message.Pop().ConvertToString());
-                var resetToFrame = message.Pop();
-                var resetTo = DateTime.FromBinary(long.Parse(resetToFrame.ConvertToString()));
-                var lastEventTime = DateTime.FromBinary(long.Parse(message.Pop().ConvertToString()));
+                var subscriberIdFrame = message.Pop();
+                var subscriberId = subscriberIdFrame.ConvertToString();
+                var contextFrame = message.Pop();
+                var context = contextFrame.ConvertToString();
+                var filterFrame = message.Pop();
+                var filter = filterFrame.ConvertToString();
+                var setToFrame = message.Pop();
+                var setTo = DateTime.FromBinary(long.Parse(setToFrame.ConvertToString()));
                 var now = DateTime.UtcNow;
 
-                _storage.SetSubscription(subscriptionId, resetTo, lastEventTime, now);
-                msg.Append(subscriptionId.ToString(CultureInfo.InvariantCulture));
-                msg.Append(resetToFrame);
+                var request = new SetSubscriptionTimeRequest(i, subscriberId, context, filter, setTo, now);
+                _storage.SetSubscriptionTime(request);
+                msg.Append("OK");
             }
             
-            var progressed = new SubscriptionsProgressed(msg);
+            var progressed = new SubscriptionsSet(msg);
             while (!_outBuffer.Offer(progressed))
                 _spin.SpinOnce();
         }

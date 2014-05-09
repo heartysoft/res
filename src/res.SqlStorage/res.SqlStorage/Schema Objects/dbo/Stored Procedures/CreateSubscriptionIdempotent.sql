@@ -19,7 +19,7 @@ BEGIN
     -- Insert statements for procedure here
 	Declare @ExistingSubscription bigint;
 	SELECT @ExistingSubscription = SubscriptionId FROM Subscriptions
-		where Subscriber = @Subscriber;
+		where Subscriber = @Subscriber AND Filter = @Filter;
 
 	if @ExistingSubscription is null 
 	begin

@@ -66,6 +66,7 @@
     <Compile Include="Storage\EventStoreConnectionException.cs" />
     <Compile Include="Storage\FetchEventRequest.cs" />
     <Compile Include="Storage\InMemoryEventStorage.cs" />
+    <Compile Include="Storage\SetSubscriptionTimeRequest.cs" />
     <Compile Include="Storage\SqlEventStorage.cs" />
     <Compile Include="Storage\SqlSubscriptionStorage.cs" />
     <Compile Include="Storage\SubscribeRequest.cs" />
@@ -94,10 +95,11 @@
     <Compile Include="TcpTransport\Subscriptions\EventsFetched.cs" />
     <Compile Include="TcpTransport\Subscriptions\FetchEventsHandler.cs" />
     <Compile Include="TcpTransport\Subscriptions\ProgressSubscriptionHandler.cs" />
-    <Compile Include="TcpTransport\Subscriptions\SetSubscriptionsHandler.cs" />
+    <Compile Include="TcpTransport\Subscriptions\SetSubscriptionTimessHandler.cs" />
     <Compile Include="TcpTransport\Subscriptions\SubscribeCompleted.cs" />
     <Compile Include="TcpTransport\Subscriptions\SubscribeHandler.cs" />
     <Compile Include="TcpTransport\Subscriptions\SubscriptionsProgressed.cs" />
+    <Compile Include="TcpTransport\Subscriptions\SubscriptionsSet.cs" />
     <Compile Include="TcpTransport\TaskCompleted.cs" />
   </ItemGroup>
   <ItemGroup>
