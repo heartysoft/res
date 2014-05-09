@@ -69,6 +69,22 @@ namespace Res.Core.Storage
             }
         }
 
+        public void SetSubscription(long subscriptionId, DateTime resetTo, DateTime expectedNextBookmark, DateTime now)
+        {
+            using (var connection = new SqlConnection(_connectionString))
+            using (var command = new SqlCommand("SetSubscription", connection))
+            {
+                command.CommandType = CommandType.StoredProcedure;
+                command.Parameters.AddWithValue("SubscriptionId", subscriptionId);
+                command.Parameters.Add("ResetTo", SqlDbType.DateTime2, 4).Value = resetTo;
+                command.Parameters.Add("ExpectedNextBookmark", SqlDbType.DateTime2, 4).Value = expectedNextBookmark;
+                command.Parameters.Add("CurrentTime", SqlDbType.DateTime2, 4).Value = now;
+
+                command.Connection.Open();
+                command.ExecuteNonQuery();
+            }
+        }
+
         private static EventInStorage readEventInStorage(IDataRecord reader, int startingOrdinal)
         {
             const int eventIdOrdinal = 0;

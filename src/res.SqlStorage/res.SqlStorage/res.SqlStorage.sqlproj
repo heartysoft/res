@@ -69,6 +69,7 @@
     <PreDeploy Include="Scripts\CreateDatabase.sql" />
   </ItemGroup>
   <ItemGroup>
+    <Build Include="Schema Objects\dbo\Stored Procedures\SetSubscription.sql" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Schema Objects\dbo\User Defined Types\EventParameter.sql" />

@@ -208,6 +208,50 @@
 </ol></li>
 </ol>
 
+<h2>5. Set Subscription</h2>
+
+<p>Set a subscription to a specific time.</p>
+
+<h3>Message Format:</h3>
+
+<ol>
+<li>[Return Address] : 
+<ul>
+<li>Routing frames. </li>
+<li>An ordered array of frames, as requests may be brokered.</li>
+</ul></li>
+<li>Empty
+<ul>
+<li>Denotes end of routing frames.</li>
+</ul></li>
+<li>Protocol 
+<ul>
+<li>"Res01"</li>
+<li>Request protocol. Currently, onlt Res01 is supported.</li>
+</ul></li>
+<li>Command 
+<ul>
+<li>SetSubscription ["SS"]</li>
+</ul></li>
+<li>RequestId</li>
+<li><code><strong>Count</strong> int </code>
+<ul>
+<li>Number of subscriptions being reset.</li>
+</ul></li>
+<li>One per subscription
+<ol>
+<li><code><strong>SubscriptionId</strong> long</code></li>
+<li><code><strong>ResetTo</strong> datetime</code>
+<ul>
+<li>Time to reset the subscription to</li>
+</ul></li>
+<li><code><strong>LastEventTime</strong> datetime</code>
+<ul>
+<li>Used for idempotency. If next bookmark does not match, progress will not occur (this can happen, for example, if the subscription has already been progressed, and a subsequent fetch has happened.)</li>
+</ul></li>
+</ol></li>
+</ol>
+
 <h1>Result Format In General</h1>
 
 <ol>
@@ -335,6 +379,24 @@
 <li>One per subscription:
 <ol>
 <li><code><strong>SubscriptionId</strong> -long</code></li>
+</ol></li>
+</ol>
+
+<h2>Set Subscription Result</h2>
+
+<ol>
+<li><code><strong>Command</strong> string</code>
+<ul>
+<li>Subscription Set ["ST"]</li>
+</ul></li>
+<li><code><strong>Count</strong> int </code>
+<ul>
+<li>Number of subscriptions.</li>
+</ul></li>
+<li>One per subscription:
+<ol>
+<li><code><strong>SubscriptionId</strong> -long</code></li>
+<li><code><strong>ResetTo</strong> -datetime</code></li>
 </ol></li>
 </ol>
 
