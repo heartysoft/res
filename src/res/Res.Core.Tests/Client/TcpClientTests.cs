@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Data.SqlClient;
 using System.Diagnostics;
@@ -10,6 +11,7 @@ using Res.Client;
 using Res.Client.Exceptions;
 using Res.Client.Internal;
 using Res.Core.Storage;
+using EventInStorage = Res.Client.EventInStorage;
 
 namespace Res.Core.Tests.Client
 {
@@ -146,6 +148,73 @@ namespace Res.Core.Tests.Client
             commit2.Wait();
         }
 
+        [Test]
+        public void ShouldSubscribe()
+        {
+            var token = new CancellationTokenSource();
+            var sub = _harness.CreateSubscription("res-tests", "test-context", "*");
+            var task = sub.Start(_ => { }, DateTime.UtcNow, TimeSpan.FromSeconds(10), token.Token);
+            token.Cancel();
+            Task.WhenAll(task);
+        }
+
+        [Test]
+        public void ShouldGetSubscribedEvents()
+        {
+            var m = new AutoResetEvent(false);
+            var received = new List<EventInStorage>();
+            var token = new CancellationTokenSource();
+            var sub = _harness.CreateSubscription("res-tests", "test-context", "*");
+            var client = _harness.CreateClient();
+            client.CommitAsync("test-context", "test-stream", new[]
+            {
+                new EventData("test", Guid.NewGuid(), "", "a bit more", DateTime.Now)
+            }, ExpectedVersion.Any).Wait(1000);
+
+            sub.Start(x =>
+            {
+                received.AddRange(x.Events);
+                m.Set();
+            }, DateTime.Now.AddSeconds(-10), TimeSpan.FromSeconds(10), token.Token);
+
+
+            m.WaitOne(5000);
+
+            Assert.AreEqual(1, received.Count);
+        }
+
+        [Test]
+        public void ShouldSetSubscriptionTime()
+        {
+            var m = new AutoResetEvent(false);
+            var received = new List<EventInStorage>();
+            var token = new CancellationTokenSource();
+            var sub = _harness.CreateSubscription("res-tests", "test-context", "*");
+            var client = _harness.CreateClient();
+
+            var now = DateTime.Now;
+
+            client.CommitAsync("test-context", "test-stream", new[]
+            {
+                new EventData("test", Guid.NewGuid(), "", "a bit more", now)
+            }, ExpectedVersion.Any).Wait(1000);
+
+            sub.Start(x =>
+            {
+                received.AddRange(x.Events);
+                m.Set();
+            }, DateTime.Now.AddSeconds(10), TimeSpan.FromMilliseconds(100), token.Token);
+
+            //no events as subscription starts in the future.
+
+            sub.SetSubscriptionTime(now.AddSeconds(-1), TimeSpan.FromSeconds(5)).Wait(token.Token);
+
+            m.WaitOne(5000);
+
+
+            Assert.AreEqual(1, received.Count);
+        }
+
         private static readonly string ConnectionString = ConfigurationManager.ConnectionStrings["ResIntegrationTest"].ConnectionString;
 
          void ClearResStore()
@@ -175,9 +244,11 @@ namespace Res.Core.Tests.Client
     public class ResHarness
     {
         public static string Endpoint = ConfigurationManager.AppSettings["resEndpoint"];
+        public static string SubscriptionEndpoint = ConfigurationManager.AppSettings["resSubscriptionEndpoint"];
         public static string ResExePath = ConfigurationManager.AppSettings["resExePath"];
         private Process _process;
         private ResEngine _engine;
+        private ResSubscriptionEngine _subEngine;
 
         public void Start()
         {          
@@ -187,6 +258,9 @@ namespace Res.Core.Tests.Client
             
             _engine = new ResEngine();
             _engine.Start(Endpoint);
+
+            _subEngine = new ResSubscriptionEngine();
+            _subEngine.Start(SubscriptionEndpoint);
         }
 
         public ResClient CreateClient()
@@ -194,9 +268,17 @@ namespace Res.Core.Tests.Client
             return _engine.CreateClient(TimeSpan.FromSeconds(10));      
         }
 
+
+        public Subscription CreateSubscription(string subscriberId, string context, string filter)
+        {
+            return _subEngine.Subscribe(subscriberId, new[] {new SubscriptionDefinition(context, filter)});
+        }
+        
+
         public void Stop()
         {
             _engine.Dispose();
+            _subEngine.Dispose();
             _process.Kill();
         }
     }

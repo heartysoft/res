@@ -1,5 +1,7 @@
 using System;
 using System.Globalization;
+using System.Linq;
+using System.Text;
 using NetMQ;
 using Res.Client.Exceptions;
 using Res.Protocol;
@@ -82,8 +84,23 @@ namespace Res.Client.Internal.Subscriptions.Messages
         public class SetSubscriptionStorageException : Exception
         {
             public SetSubscriptionStorageException(SetSubscriptionTimesResponse response)
-                : base(string.Format("One or more subscription times could not be set. Please check the response for details."))
+                : base(getMessage(response))
             {
+            }
+
+            private static string getMessage(SetSubscriptionTimesResponse response)
+            {
+                var sb = new StringBuilder();
+                sb.AppendLine("One or more subscriptions could not be set.");
+                sb.AppendLine("Errors: ");
+                var failures = response.SubscriptionsSet.Where(x => !x.Successful);
+                foreach (var subscriptionSet in failures)
+                {
+                    sb.AppendFormat("- {0}", subscriptionSet.ErrorMessage);
+                    sb.AppendLine();
+                }
+
+                return sb.ToString();
             }
         }
     }

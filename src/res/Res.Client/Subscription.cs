@@ -1,9 +1,11 @@
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Common.Logging;
 using Res.Client.Internal;
 using Res.Client.Internal.Subscriptions;
+using Res.Client.Internal.Subscriptions.Messages;
 
 namespace Res.Client
 {
@@ -24,6 +26,12 @@ namespace Res.Client
         public Task Start(Action<SubscribedEvents> handler, DateTime startTime, TimeSpan timeout, CancellationToken token)
         {
             return Task.Factory.StartNew(() => run(handler, startTime, timeout, token), token, TaskCreationOptions.None, TaskScheduler.Default);
+        }
+
+        public Task SetSubscriptionTime(DateTime setTo, TimeSpan timeout)
+        {
+            var setSubs = _subscriptions.Select(x => new SetSubscriptionEntry(_subscriberId, x.Context, x.Filter, setTo)).ToArray();
+            return _acceptor.SetAsync(setSubs, timeout);
         }
 
         private void run(Action<SubscribedEvents> handler, DateTime startTime, TimeSpan timeout, CancellationToken token)
