@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data.SqlClient;
@@ -36,7 +37,15 @@ namespace Res.Core.Tests.Client
         [SetUp]
         public void PerTestSetup()
         {
+            //_harness = new ResHarness();
+            //_harness.Start();
             ClearResStore();
+        }
+
+        [TearDown]
+        public void PerTestTeardown()
+        {
+            //_harness.Stop();
         }
 
 
@@ -171,14 +180,18 @@ namespace Res.Core.Tests.Client
                 new EventData("test", Guid.NewGuid(), "", "a bit more", DateTime.Now)
             }, ExpectedVersion.Any).Wait(1000);
 
-            sub.Start(x =>
+            var task = sub.Start(x =>
             {
                 received.AddRange(x.Events);
                 m.Set();
             }, DateTime.Now.AddSeconds(-10), TimeSpan.FromSeconds(10), token.Token);
 
 
-            m.WaitOne(5000);
+            m.WaitOne();
+
+            token.Cancel();
+
+            Task.WhenAny(task);
 
             Assert.AreEqual(1, received.Count);
         }
@@ -186,8 +199,7 @@ namespace Res.Core.Tests.Client
         [Test]
         public void ShouldSetSubscriptionTime()
         {
-            var m = new AutoResetEvent(false);
-            var received = new List<EventInStorage>();
+            var received = new BlockingCollection<EventInStorage>();
             var token = new CancellationTokenSource();
             var sub = _harness.CreateSubscription("res-tests", "test-context", "*");
             var client = _harness.CreateClient();
@@ -199,25 +211,56 @@ namespace Res.Core.Tests.Client
                 new EventData("test", Guid.NewGuid(), "", "a bit more", now)
             }, ExpectedVersion.Any).Wait(1000);
 
-            sub.Start(x =>
+            var subscribeTask = sub.Start(x =>
             {
-                received.AddRange(x.Events);
-                m.Set();
+                received.Add(x.Events[0]);
             }, DateTime.Now.AddSeconds(10), TimeSpan.FromMilliseconds(100), token.Token);
 
             //no events as subscription starts in the future.
+            subscribeTask.Wait(2000);
 
-            sub.SetSubscriptionTime(now.AddSeconds(-1), TimeSpan.FromSeconds(5)).Wait(token.Token);
+            sub.SetSubscriptionTime(now.AddSeconds(-5), TimeSpan.FromSeconds(5)).Wait(token.Token);
 
-            m.WaitOne(5000);
-
-
-            Assert.AreEqual(1, received.Count);
+            EventInStorage e;
+            Assert.IsTrue(received.TryTake(out e, 5000));
         }
+
+
+        [Test]
+        //Kept to ensure nasty race condition doesn't come up.
+        public void ShouldSetSubscriptionTime2()
+        {
+            var received = new BlockingCollection<EventInStorage>();
+            var token = new CancellationTokenSource();
+            var sub = _harness.CreateSubscription("res-tests", "test-context", "*");
+            var client = _harness.CreateClient();
+
+            var now = DateTime.Now;
+
+            client.CommitAsync("test-context", "test-stream", new[]
+            {
+                new EventData("test", Guid.NewGuid(), "", "a bit more", now)
+            }, ExpectedVersion.Any).Wait(1000);
+
+            var subscribeTask = sub.Start(x =>
+            {
+                received.Add(x.Events[0]);
+            }, DateTime.Now.AddSeconds(10), TimeSpan.FromMilliseconds(100), token.Token);
+
+            //no events as subscription starts in the future.
+            subscribeTask.Wait(2000);
+
+            sub.SetSubscriptionTime(now.AddSeconds(-5), TimeSpan.FromSeconds(5)).Wait(token.Token);
+
+            EventInStorage e;
+            Assert.IsTrue(received.TryTake(out e, 5000));
+        }
+
+        
 
         private static readonly string ConnectionString = ConfigurationManager.ConnectionStrings["ResIntegrationTest"].ConnectionString;
 
-         void ClearResStore()
+        void ClearResStore()
         {
             using (var sqlConnection = new SqlConnection(ConnectionString))
             {
@@ -277,6 +320,7 @@ namespace Res.Core.Tests.Client
 
         public void Stop()
         {
+            Console.WriteLine("Disposing.");
             _engine.Dispose();
             _subEngine.Dispose();
             _process.Kill();

@@ -1,10 +1,12 @@
 using System.Linq;
+using Common.Logging;
 using Res.Client.Internal.Subscriptions.Messages;
 
 namespace Res.Client.Internal.Subscriptions
 {
     public class FetchingState : SubscriptionProcessState
     {
+        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
         public SubscriptionProcessState Work(SubscriptionState state)
         {
             while (state.CancellationToken.IsCancellationRequested == false)
@@ -24,7 +26,10 @@ namespace Res.Client.Internal.Subscriptions
                     }
 
                     if (result.Events.Length == 0)
+                    {
+                        Log.Debug("[Fetching State] No new events. Transitioning to Waiting State.");
                         return new WaitingState();
+                    }
 
                     return new ProcessingState(result);
                 }

@@ -19,7 +19,7 @@ namespace Res.Client.Internal.Subscriptions
                 Handler = handler,
                 SubscriptionId = subscriptionId,
                 Acceptor = acceptor,
-                WaitBeforeRetryingFetch = TimeSpan.FromSeconds(10)
+                WaitBeforeRetryingFetch = TimeSpan.FromSeconds(0.5)
             };
         }
 
@@ -30,8 +30,20 @@ namespace Res.Client.Internal.Subscriptions
 
             while (_state.CancellationToken.IsCancellationRequested == false && _state != null)
             {
-                subState = subState.Work(_state);
-                Log.Debug("[SubscriptionProcess] State transition.");
+                try
+                {
+                    subState = subState.Work(_state);
+                    Log.DebugFormat("[SubscriptionProcess] State transition to {0}", subState.GetType().Name);
+                }
+                catch (OperationCanceledException)
+                {
+                    Log.Debug("[SubscriptionProcess] Operation cancelled. Exiting mainloop.");
+                    return;
+                }
+                catch (Exception e)
+                {
+                    Log.ErrorFormat("[SubscriptionProcess] Global error in subscription mainloop.", e);
+                }
             }
         }
     }

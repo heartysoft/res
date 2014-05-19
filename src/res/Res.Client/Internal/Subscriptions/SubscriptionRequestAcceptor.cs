@@ -15,8 +15,8 @@ namespace Res.Client.Internal.Subscriptions
 
         public Task<SubscribeResponse> SubscribeAsync(string subscriberId, SubscriptionDefinition[] subscriptions, DateTime startTime, TimeSpan timeout)
         {
-            var commitRequest = new SubscribeRequest(subscriberId, subscriptions, startTime);
-            var task = _buffer.Enqueue<SubscribeResponse>(commitRequest, DateTime.Now.Add(timeout));
+            var subscribeRequest = new SubscribeRequest(subscriberId, subscriptions, startTime);
+            var task = _buffer.Enqueue<SubscribeResponse>(subscribeRequest, DateTime.Now.Add(timeout));
             return task;
         }
 
