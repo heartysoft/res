@@ -23,9 +23,9 @@ namespace Res.Client
             _acceptor = acceptor;
         }
 
-        public Task Start(Action<SubscribedEvents> handler, DateTime startTime, TimeSpan timeout, CancellationToken token)
+        public Task Start(Action<SubscribedEvents> handler, DateTime startTime, TimeSpan timeout, TimeSpan retryDelay, CancellationToken token)
         {
-            return Task.Factory.StartNew(() => run(handler, startTime, timeout, token), token, TaskCreationOptions.None, TaskScheduler.Default);
+            return Task.Factory.StartNew(() => run(handler, startTime, timeout, retryDelay, token), token, TaskCreationOptions.None, TaskScheduler.Default);
         }
 
         public Task SetSubscriptionTime(DateTime setTo, TimeSpan timeout)
@@ -34,7 +34,7 @@ namespace Res.Client
             return _acceptor.SetAsync(setSubs, timeout);
         }
 
-        private void run(Action<SubscribedEvents> handler, DateTime startTime, TimeSpan timeout, CancellationToken token)
+        private void run(Action<SubscribedEvents> handler, DateTime startTime, TimeSpan timeout, TimeSpan retryDelay, CancellationToken token)
         {
             while (token.IsCancellationRequested == false)
             {
@@ -44,7 +44,7 @@ namespace Res.Client
                     foreach (var subscriptionId in result.SubscriptionIds)
                     {
                         long id = subscriptionId;
-                        Task.Factory.StartNew(() => startProcess(id, handler, _acceptor, timeout, token), token,
+                        Task.Factory.StartNew(() => startProcess(id, handler, _acceptor, timeout, retryDelay, token), token,
                             TaskCreationOptions.LongRunning, TaskScheduler.Default);
                     }
 
@@ -58,9 +58,9 @@ namespace Res.Client
             }
         }
 
-        private void startProcess(long subscriptionId, Action<SubscribedEvents> handler, SubscriptionRequestAcceptor acceptor, TimeSpan timeout, CancellationToken token)
+        private void startProcess(long subscriptionId, Action<SubscribedEvents> handler, SubscriptionRequestAcceptor acceptor, TimeSpan timeout, TimeSpan retryDelay, CancellationToken token)
         {
-            var subscription = new SubscriptionProcess(subscriptionId, handler, acceptor, timeout, token);
+            var subscription = new SubscriptionProcess(subscriptionId, handler, acceptor, timeout, retryDelay, token);
             subscription.Work();
         }
     }

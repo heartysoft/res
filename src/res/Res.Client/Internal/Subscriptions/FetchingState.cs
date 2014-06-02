@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using Common.Logging;
 using Res.Client.Internal.Subscriptions.Messages;

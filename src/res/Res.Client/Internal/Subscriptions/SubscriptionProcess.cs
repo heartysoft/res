@@ -1,4 +1,5 @@
 using System;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using Common.Logging;
 
@@ -9,7 +10,7 @@ namespace Res.Client.Internal.Subscriptions
         private readonly SubscriptionState _state;
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
-        public SubscriptionProcess(long subscriptionId, Action<SubscribedEvents> handler, SubscriptionRequestAcceptor acceptor, TimeSpan timeout, CancellationToken token)
+        public SubscriptionProcess(long subscriptionId, Action<SubscribedEvents> handler, SubscriptionRequestAcceptor acceptor, TimeSpan timeout, TimeSpan retryDelay, CancellationToken token)
         {
             _state = new SubscriptionState
             {
@@ -19,7 +20,7 @@ namespace Res.Client.Internal.Subscriptions
                 Handler = handler,
                 SubscriptionId = subscriptionId,
                 Acceptor = acceptor,
-                WaitBeforeRetryingFetch = TimeSpan.FromSeconds(0.5)
+                WaitBeforeRetryingFetch = retryDelay
             };
         }
 

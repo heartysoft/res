@@ -162,7 +162,7 @@ namespace Res.Core.Tests.Client
         {
             var token = new CancellationTokenSource();
             var sub = _harness.CreateSubscription("res-tests", "test-context", "*");
-            var task = sub.Start(_ => { }, DateTime.UtcNow, TimeSpan.FromSeconds(10), token.Token);
+            var task = sub.Start(_ => { }, DateTime.UtcNow, TimeSpan.FromSeconds(10), TimeSpan.FromSeconds(0.5), token.Token);
             token.Cancel();
             Task.WhenAll(task);
         }
@@ -184,7 +184,7 @@ namespace Res.Core.Tests.Client
             {
                 received.AddRange(x.Events);
                 m.Set();
-            }, DateTime.Now.AddSeconds(-10), TimeSpan.FromSeconds(10), token.Token);
+            }, DateTime.Now.AddSeconds(-10), TimeSpan.FromSeconds(10), TimeSpan.FromSeconds(0.5), token.Token);
 
 
             m.WaitOne();
@@ -214,7 +214,7 @@ namespace Res.Core.Tests.Client
             var subscribeTask = sub.Start(x =>
             {
                 received.Add(x.Events[0]);
-            }, DateTime.Now.AddSeconds(10), TimeSpan.FromMilliseconds(100), token.Token);
+            }, DateTime.Now.AddSeconds(10), TimeSpan.FromMilliseconds(100), TimeSpan.FromSeconds(0.5), token.Token);
 
             //no events as subscription starts in the future.
             subscribeTask.Wait(2000);
@@ -245,7 +245,7 @@ namespace Res.Core.Tests.Client
             var subscribeTask = sub.Start(x =>
             {
                 received.Add(x.Events[0]);
-            }, DateTime.Now.AddSeconds(10), TimeSpan.FromMilliseconds(100), token.Token);
+            }, DateTime.Now.AddSeconds(10), TimeSpan.FromMilliseconds(100), TimeSpan.FromSeconds(0.5), token.Token);
 
             //no events as subscription starts in the future.
             subscribeTask.Wait(2000);

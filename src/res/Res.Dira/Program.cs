@@ -111,7 +111,7 @@ namespace Res.Dira
             var filter = param["filter"];
             var startTime = param["startTime"];
 
-            var start = startTime == "now" ? DateTime.Now : DateTime.ParseExact(startTime, "dd-MM-yyyy hh:mm:ss", null);
+            var start = startTime == "now" ? DateTime.UtcNow : DateTime.ParseExact(startTime, "dd-MM-yyyy hh:mm:ss", null);
 
             Action<SubscribedEvents> handler = evts =>
             {
@@ -120,7 +120,7 @@ namespace Res.Dira
             };
 
             var sub = engine.Subscribe(subscriberId, new[] {new SubscriptionDefinition(ctx, filter)});
-            sub.Start(handler, start, TimeSpan.FromSeconds(10), new CancellationToken());
+            sub.Start(handler, start, TimeSpan.FromSeconds(10), TimeSpan.FromSeconds(5), new CancellationToken());
 
             cmdR.State.CmdPrompt = "input>";
         }
