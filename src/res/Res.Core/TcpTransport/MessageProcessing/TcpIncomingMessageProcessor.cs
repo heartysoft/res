@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
+using System.Text;
 using NetMQ;
 using Res.Core.TcpTransport.Exceptions;
 using Res.Protocol;

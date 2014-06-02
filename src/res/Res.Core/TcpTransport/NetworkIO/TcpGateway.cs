@@ -52,7 +52,7 @@ namespace Res.Core.TcpTransport.NetworkIO
             while (true)
             {
                 Log.InfoFormat("[TcpGateway] Creating new socket. Thread Id: {0}", Thread.CurrentThread.ManagedThreadId);
-                var socket = _ctx.CreateDealerSocket();
+                var socket = _ctx.CreateRouterSocket();
                 socket.ReceiveReady += socket_ReceiveReady;
 
                 try
@@ -75,7 +75,7 @@ namespace Res.Core.TcpTransport.NetworkIO
         {
             var message = e.Socket.ReceiveMessage();
             Log.DebugFormat("[TcpGateway] Received a message. Thread Id: {0}", Thread.CurrentThread.ManagedThreadId);
-            _processor.ProcessMessage(message, _socket);
+            _processor.ProcessMessage(message, e.Socket);
         }
 
         public void Process(TaskCompleted completed)

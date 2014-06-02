@@ -34,7 +34,7 @@ namespace Res.Dira
             var engine = new ResEngine();
             engine.Start(endpoint);
 
-            var subscriptionEngine = new ResSubscriptionEngine();
+            var subscriptionEngine = new ResSubscriptionEngine();   
             subscriptionEngine.Start(ConfigurationManager.AppSettings["res-sub"]);
 
             GlobalHack.SetEngine(engine);
