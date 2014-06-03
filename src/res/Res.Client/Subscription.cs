@@ -52,7 +52,7 @@ namespace Res.Client
                 }
                 catch (RequestTimedOutPendingSendException)
                 {
-                    Log.InfoFormat("[Subscription - {0}] Timeout initialising subscription. Retring in {1} seconds.", _subscriberId, 5);
+                    Log.InfoFormat("[Subscription - {0}] Timeout initialising subscription. Retrying in {1} seconds.", _subscriberId, 5);
                     Task.Delay(5000, token).Wait(token);
                 }
             }
