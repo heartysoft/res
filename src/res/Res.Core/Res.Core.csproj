@@ -87,6 +87,7 @@
     <Compile Include="TcpTransport\MessageProcessing\MessageProcessor.cs" />
     <Compile Include="TcpTransport\NetMQExtensions.cs" />
     <Compile Include="TcpTransport\Endpoints\QueryEndpoint.cs" />
+    <Compile Include="TcpTransport\Queues\SubscribeHandler.cs" />
     <Compile Include="TcpTransport\ResConfiguration.cs" />
     <Compile Include="TcpTransport\NetworkIO\OutBuffer.cs" />
     <Compile Include="TcpTransport\MessageProcessing\TcpIncomingMessageProcessor.cs" />

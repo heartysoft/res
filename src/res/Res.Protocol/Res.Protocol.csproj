@@ -44,9 +44,13 @@
     <Compile Include="ResProtocol.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Protocol.Queues.md" />
     <None Include="Protocol.md" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Protocol - Copy.html">
+      <DependentUpon>Protocol.Queues.md</DependentUpon>
+    </Content>
     <Content Include="Protocol.html">
       <DependentUpon>Protocol.md</DependentUpon>
     </Content>
