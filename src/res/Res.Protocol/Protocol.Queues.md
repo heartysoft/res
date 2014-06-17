@@ -1,4 +1,4 @@
-﻿# Message Formats
+# Message Formats
 Request and Response message formats follow the same preambles as Protocol.md.
 
 Notably, requests start with:
@@ -86,7 +86,8 @@ real time push based subscriptions are introduced.)
 1. <code>**SubscriberId**</code>
 1. <code>**StartMarker**</code>
 1. <code>**EndMarker**</code>
-1. <code>**UtcNow** datetime</code>
+1. <code>**AllocationTimeInMilliseconds** int</code>
+	-  -1 to not allocate events.
 
 # 4. Acknowledge Queue response:
 Same as Subscribe Response.
