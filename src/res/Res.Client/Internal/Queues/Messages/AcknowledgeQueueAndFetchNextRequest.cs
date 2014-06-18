@@ -10,17 +10,15 @@ namespace Res.Client.Internal.Queues.Messages
     {
         private readonly string _queueId;
         private readonly string _subscriberId;
-        private readonly long _startMarker;
-        private readonly long _endMarker;
+        private readonly long? _allocationId;
         private readonly int _allocationBatchSize;
         private readonly int _allocationTimeoutInMilliseconds;
 
-        public AcknowledgeQueueAndFetchNextRequest(string queueId, string subscriberId, long startMarker, long endMarker, int allocationBatchSize, int allocationTimeoutInMilliseconds)
+        public AcknowledgeQueueAndFetchNextRequest(string queueId, string subscriberId, long? allocationId, int allocationBatchSize, int allocationTimeoutInMilliseconds)
         {
             _queueId = queueId;
             _subscriberId = subscriberId;
-            _startMarker = startMarker;
-            _endMarker = endMarker;
+            _allocationId = allocationId;
             _allocationBatchSize = allocationBatchSize;
             _allocationTimeoutInMilliseconds = allocationTimeoutInMilliseconds;
         }
@@ -37,8 +35,12 @@ namespace Res.Client.Internal.Queues.Messages
 
             msg.Append(_queueId);
             msg.Append(_subscriberId);
-            msg.Append(_startMarker.ToString(CultureInfo.InvariantCulture));
-            msg.Append(_endMarker.ToString(CultureInfo.InvariantCulture));
+
+            if(_allocationId.HasValue)
+                msg.Append(_allocationId.Value.ToString(CultureInfo.InvariantCulture));
+            else
+                msg.AppendEmptyFrame();
+            
             msg.Append(_allocationBatchSize.ToString(CultureInfo.InvariantCulture));
             msg.Append(_allocationTimeoutInMilliseconds.ToString(CultureInfo.InvariantCulture));
 
@@ -62,8 +64,13 @@ namespace Res.Client.Internal.Queues.Messages
                 var queueId = m.Pop().ConvertToString();
                 var subscriberId = m.Pop().ConvertToString();
                 var time = DateTime.FromBinary(long.Parse(m.Pop().ConvertToString()));
-                var startMarker = int.Parse(m.Pop().ConvertToString());
-                var endMarker = int.Parse(m.Pop().ConvertToString());
+
+                long? allocationId = null;
+                var allocationFrame = m.Pop();
+
+                if (allocationFrame.BufferSize != 0)
+                    allocationId = long.Parse(allocationFrame.ConvertToString());
+
                 var count = int.Parse(m.Pop().ConvertToString());
 
                 var events = new EventInStorage[count];
@@ -82,7 +89,7 @@ namespace Res.Client.Internal.Queues.Messages
                     events[i] = new EventInStorage(context, streamId, sequence, type, id, headers, body, timestamp);
                 }
 
-                var result = new QueuedEventsResponse(queueId, subscriberId, time, startMarker, endMarker, events);
+                var result = new QueuedEventsResponse(queueId, subscriberId, time, allocationId, events);
                 pending.SetResult(result);
             };
         }

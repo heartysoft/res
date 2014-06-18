@@ -5,6 +5,7 @@ using System.Threading;
 using System.Xml.Linq;
 using Common.Logging;
 using NetMQ;
+using Res.Core.Storage;
 using Res.Core.TcpTransport.MessageProcessing;
 using Res.Core.TcpTransport.NetworkIO;
 using Res.Core.TcpTransport.Subscriptions;
@@ -12,14 +13,14 @@ using Res.Protocol;
 
 namespace Res.Core.TcpTransport.Queues
 {
-    public class SubscribeHandler : RequestHandler
+    public class AcknowledgeHandler : RequestHandler
     {
         private readonly QueueStorage _storage;
         private readonly OutBuffer _outBuffer;
         private static readonly ILog Logger = LogManager.GetCurrentClassLogger();
         private SpinWait _spin;
 
-        public SubscribeHandler(QueueStorage storage, OutBuffer outBuffer)
+        public AcknowledgeHandler(QueueStorage storage, OutBuffer outBuffer)
         {
             _storage = storage;
             _outBuffer = outBuffer;
@@ -28,28 +29,30 @@ namespace Res.Core.TcpTransport.Queues
 
         public void Handle(NetMQFrame[] sender, NetMQMessage message)
         {
-            Logger.Debug("[Queue_SubscribeHandler] Received subscribe request.");
+            Logger.Debug("[Queue_AcknowledgeHandler] Received an ack.");
 
             var requestId = message.Pop();
             var queueId = message.Pop().ConvertToString();
             var subscriberId = message.Pop().ConvertToString();
-            var context = message.Pop().ConvertToString();
-            var filter = message.Pop().ConvertToString();
-            var utcStartTime = DateTime.FromBinary(long.Parse(message.Pop().ConvertToString()));
+            
+            long? allocationId = null;
+            var allocationFrame = message.Pop();
+            
+            if (allocationFrame.BufferSize != 0)
+                allocationId = long.Parse(allocationFrame.ConvertToString());
+
             var allocationSize = int.Parse(message.Pop().ConvertToString());
             var allocationTimeInMilliseconds = int.Parse(message.Pop().ConvertToString());
 
-            var subscribe = new SubscribeToQueue(
+            var ack = new AcknowledgeQueue(
                 queueId,
                 subscriberId,
-                context,
-                filter,
-                utcStartTime,
+                allocationId,
                 allocationSize,
                 allocationTimeInMilliseconds
                 );
 
-            var queuedEvents = _storage.Subscribe(subscribe);
+            var queuedEvents = _storage.AcknowledgeAndFetchNext(ack);
             var events = queuedEvents.Events;
 
             var msg = new NetMQMessage();

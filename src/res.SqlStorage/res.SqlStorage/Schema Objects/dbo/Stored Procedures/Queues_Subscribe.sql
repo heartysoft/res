@@ -9,8 +9,10 @@
 AS
 	BEGIN TRAN
 		Declare @Now datetime2(4) = GetUtcDate()
+		Declare @AllocationId bigint = NULL
+
 		Exec Queues_Subscribe_CreateIfNotExists @QueueId, @Context, @Filter, @StartTime
-		Exec Queues_Subscribe_Allocate @QueueId, @SubscriberId, @Count, @AllocationTimeInMilliseconds, @Now
-		Exec Queues_Subscribe_FetchEvents @QueueId, @SubscriberId
+	    Exec Queues_Subscribe_Allocate @QueueId, @SubscriberId, @Count, @AllocationTimeInMilliseconds, @Now, @AllocationId
+		Exec Queues_Subscribe_FetchEvents @AllocationId
+		SELECT @AllocationId AS AllocationId
 	COMMIT
-RETURN 0

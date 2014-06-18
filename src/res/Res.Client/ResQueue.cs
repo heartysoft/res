@@ -15,8 +15,7 @@ namespace Res.Client
         private readonly QueueRequestAcceptor _acceptor;
 
         private bool _initial = true;
-        private long _startMarker;
-        private long _endMarker;
+        private long? _allocationId;
         public ResQueue(string queueId, string subscriberId, string context, string filter, DateTime startTime, QueueRequestAcceptor acceptor)
         {
             _queueId = queueId;
@@ -41,26 +40,25 @@ namespace Res.Client
             return subscribe(allocationSize, allocationTimeout, timeout);
         }
 
-        private async Task<QueuedEvents> acknowledgeAndProgress(int expectedMaxCount, TimeSpan allocationTimeout, TimeSpan timeout)
-        {
-            var request = new AcknowledgeQueueAndFetchNextRequest(_queueId, _subscriberId, _startMarker, _endMarker, expectedMaxCount, (int)allocationTimeout.TotalMilliseconds);
-            var events = await _acceptor.AcknowledgeAndFetchNext(request, timeout);
-
-            _startMarker = events.StartMarker;
-            _endMarker = events.EndMarker;
-            _initial = false;
-
-            return new QueuedEvents(events.QueueId, events.SubscriberId, events.Events, events.StartMarker, events.EndMarker, events.TimeOfResponse, this);
-        }
-
         private async Task<QueuedEvents> subscribe(int allocationSize, TimeSpan allocationTimeout, TimeSpan timeout)
         {
             var subscribeToQueueRequest = new SubscribeToQueueRequest(_queueId, _subscriberId, _context, _filter, _startTime, allocationSize, (int)allocationTimeout.TotalMilliseconds);
             var events = await _acceptor.Subscribe(subscribeToQueueRequest, timeout);
-            _startMarker = events.StartMarker;
-            _endMarker = events.EndMarker;
+            _allocationId = events.AllocationId;
 
-            return new QueuedEvents(events.QueueId, events.SubscriberId, events.Events, events.StartMarker, events.EndMarker, events.TimeOfResponse, this);
+            return new QueuedEvents(events.QueueId, events.SubscriberId, events.Events, events.AllocationId, events.TimeOfResponse, this);
+        }
+
+        private async Task<QueuedEvents> acknowledgeAndProgress(int expectedMaxCount, TimeSpan allocationTimeout, TimeSpan timeout)
+        {
+            var request = new AcknowledgeQueueAndFetchNextRequest(_queueId, _subscriberId, 
+                _allocationId, expectedMaxCount, (int)allocationTimeout.TotalMilliseconds);
+            var events = await _acceptor.AcknowledgeAndFetchNext(request, timeout);
+
+            _allocationId = events.AllocationId;
+            _initial = false;
+
+            return new QueuedEvents(events.QueueId, events.SubscriberId, events.Events, events.AllocationId, events.TimeOfResponse, this);
         }
     }
 }

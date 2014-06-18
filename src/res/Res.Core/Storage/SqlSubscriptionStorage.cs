@@ -93,19 +93,21 @@ namespace Res.Core.Storage
             const int streamIdOrdinal = 1;
             const int contextNameOrdinal = 2;
             const int sequenceOrdinal = 3;
-            const int timestampOrdinal = 4;
-            const int eventTypeOrdinal = 5;
-            const int bodyOrdinal = 6;
+            const int globalSequenceOrdinal = 4;
+            const int timestampOrdinal = 5;
+            const int eventTypeOrdinal = 6;
+            const int bodyOrdinal = 7;
 
             var eventId = reader.GetGuid(eventIdOrdinal + startingOrdinal);
             var stream = reader.GetString(streamIdOrdinal + startingOrdinal);
             var contextName = reader.GetString(contextNameOrdinal + startingOrdinal);
             var sequence = (long)reader.GetValue(sequenceOrdinal + startingOrdinal);
+            var globalSequence = (long)reader.GetValue(globalSequenceOrdinal + startingOrdinal);
             var timestamp = reader.GetDateTime(timestampOrdinal + startingOrdinal);
             var typeKey = reader.GetString(eventTypeOrdinal + startingOrdinal);
             var body = reader.GetString(bodyOrdinal + startingOrdinal);
 
-            var @event = new EventInStorage(eventId, contextName, stream, sequence, timestamp, typeKey, body,
+            var @event = new EventInStorage(eventId, contextName, stream, sequence, globalSequence, timestamp, typeKey, body,
                 null);
 
             return @event;

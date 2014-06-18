@@ -63,8 +63,8 @@ real time push based subscriptions are introduced.)
 1. <code>**QueueId**</code>
 1. <code>**SubscriberId**</code>
 1. <code>**UtcNow** datetime</code>
-1. <code>**StartMarker** int</code> ? Maybe string is better?
-1. <code>**EndMarker** int</code> ? Maybe string is better?
+1. <code>**AllocationId** long?</code> 
+	- Null if no allocation present
 1. <code>**Count** int </code>
 	- Number of events.
 1. One per event:
@@ -84,8 +84,7 @@ real time push based subscriptions are introduced.)
 
 1. <code>**QueueId**</code>
 1. <code>**SubscriberId**</code>
-1. <code>**StartMarker**</code>
-1. <code>**EndMarker**</code>
+1. <code>**AllocationId**</code>
 1. <code>**Count** </code>
 1. <code>**AllocationTimeInMilliseconds** int</code>
 	-  -1 to not allocate events.

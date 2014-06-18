@@ -65,8 +65,14 @@ namespace Res.Client.Internal.Queues.Messages
                 var queueId = m.Pop().ConvertToString();
                 var subscriberId = m.Pop().ConvertToString();
                 var time = DateTime.FromBinary(long.Parse(m.Pop().ConvertToString()));
-                var startMarker = int.Parse(m.Pop().ConvertToString());
-                var endMarker = int.Parse(m.Pop().ConvertToString());
+
+                var allocationFrame = m.Pop();
+
+                long? allocationId = null;
+
+                if (allocationFrame.BufferSize != 0)
+                    allocationId = long.Parse(allocationFrame.ConvertToString());
+
                 var count = int.Parse(m.Pop().ConvertToString());
 
                 var events = new EventInStorage[count];
@@ -85,7 +91,7 @@ namespace Res.Client.Internal.Queues.Messages
                     events[i] = new EventInStorage(context, streamId, sequence, type, id, headers, body, timestamp);
                 }
 
-                var result = new QueuedEventsResponse(queueId, subscriberId, time, startMarker, endMarker, events);
+                var result = new QueuedEventsResponse(queueId, subscriberId, time, allocationId, events);
                 pending.SetResult(result);
             };
         }
