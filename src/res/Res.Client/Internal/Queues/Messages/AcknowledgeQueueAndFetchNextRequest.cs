@@ -30,7 +30,7 @@ namespace Res.Client.Internal.Queues.Messages
             var msg = new NetMQMessage();
             msg.AppendEmptyFrame();
             msg.Append(ResProtocol.ResClient01);
-            msg.Append(ResCommands.SubscribeToQueue);
+            msg.Append(ResCommands.AcknowledgeQueue);
             msg.Append(requestId);
 
             msg.Append(_queueId);
