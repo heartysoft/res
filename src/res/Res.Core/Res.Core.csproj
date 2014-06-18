@@ -68,6 +68,7 @@
     <Compile Include="Storage\InMemoryEventStorage.cs" />
     <Compile Include="Storage\SetSubscriptionTimeRequest.cs" />
     <Compile Include="Storage\SqlEventStorage.cs" />
+    <Compile Include="Storage\SqlQueueStorage.cs" />
     <Compile Include="Storage\SqlSubscriptionStorage.cs" />
     <Compile Include="Storage\SubscribeRequest.cs" />
     <Compile Include="Storage\SubscribeResponse.cs" />
@@ -87,13 +88,13 @@
     <Compile Include="TcpTransport\MessageProcessing\MessageProcessor.cs" />
     <Compile Include="TcpTransport\NetMQExtensions.cs" />
     <Compile Include="TcpTransport\Endpoints\QueryEndpoint.cs" />
-    <Compile Include="TcpTransport\Queues\AcknowledgeQueue.cs" />
-    <Compile Include="TcpTransport\Queues\QueuedEvents.cs" />
+    <Compile Include="Storage\AcknowledgeQueue.cs" />
+    <Compile Include="Storage\QueuedEvents.cs" />
     <Compile Include="TcpTransport\Queues\QueuedMessagesFetched.cs" />
     <Compile Include="TcpTransport\Queues\AcknowledgeHandler.cs" />
-    <Compile Include="TcpTransport\Queues\QueueStorage.cs" />
+    <Compile Include="Storage\QueueStorage.cs" />
     <Compile Include="TcpTransport\Queues\SubscribeHandler.cs" />
-    <Compile Include="TcpTransport\Queues\SubscribeToQueue.cs" />
+    <Compile Include="Storage\SubscribeToQueue.cs" />
     <Compile Include="TcpTransport\ResConfiguration.cs" />
     <Compile Include="TcpTransport\NetworkIO\OutBuffer.cs" />
     <Compile Include="TcpTransport\MessageProcessing\TcpIncomingMessageProcessor.cs" />

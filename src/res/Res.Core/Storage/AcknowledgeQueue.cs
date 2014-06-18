@@ -1,4 +1,4 @@
-namespace Res.Core.TcpTransport.Queues
+namespace Res.Core.Storage
 {
     public class AcknowledgeQueue
     {

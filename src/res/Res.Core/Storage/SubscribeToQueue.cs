@@ -1,6 +1,6 @@
 using System;
 
-namespace Res.Core.TcpTransport.Queues
+namespace Res.Core.Storage
 {
     public class SubscribeToQueue
     {

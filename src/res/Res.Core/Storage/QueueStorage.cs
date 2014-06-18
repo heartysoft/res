@@ -1,4 +1,6 @@
-namespace Res.Core.TcpTransport.Queues
+using Res.Core.TcpTransport.Queues;
+
+namespace Res.Core.Storage
 {
     public interface QueueStorage
     {

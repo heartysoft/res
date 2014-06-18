@@ -1,6 +1,4 @@
-using Res.Core.Storage;
-
-namespace Res.Core.TcpTransport.Queues
+namespace Res.Core.Storage
 {
     public class QueuedEvents
     {
