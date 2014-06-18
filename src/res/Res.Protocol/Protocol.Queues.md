@@ -86,6 +86,7 @@ real time push based subscriptions are introduced.)
 1. <code>**SubscriberId**</code>
 1. <code>**StartMarker**</code>
 1. <code>**EndMarker**</code>
+1. <code>**Count** </code>
 1. <code>**AllocationTimeInMilliseconds** int</code>
 	-  -1 to not allocate events.
 
