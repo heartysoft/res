@@ -64,7 +64,8 @@ namespace Res.Core.Storage
                 command.CommandType = CommandType.StoredProcedure;
                 command.Parameters.AddWithValue("QueueId", request.QueueId);
                 command.Parameters.AddWithValue("SubscriberId", request.SubscriberId);
-                command.Parameters.AddWithValue("AllocationId", request.AllocationId);
+                if (request.AllocationId.HasValue)
+                    command.Parameters.AddWithValue("AllocationId", request.AllocationId.Value);
                 command.Parameters.AddWithValue("Count", request.AllocationSize);
                 command.Parameters.AddWithValue("AllocationTimeInMilliseconds", request.AllocationTimeInMilliseconds);
 
