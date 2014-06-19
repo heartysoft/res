@@ -13,8 +13,10 @@ AS
 
 	BEGIN TRAN	
 		Exec Queues_Subscribe_Allocate @QueueId, @SubscriberId, @Count, @AllocationTimeInMilliseconds, @Now, @AllocationId
-		Exec Queues_Subscribe_FetchEvents @NewAllocationId
-		SELECT @NewAllocationId AS AllocationId
 	COMMIT
+		
+	Exec Queues_Subscribe_FetchEvents @NewAllocationId
+	SELECT @NewAllocationId AS AllocationId
+	
 
 
