@@ -49,7 +49,10 @@ namespace Res.Core.Storage
                     long? allocationId = null;
 
                     if (reader.Read())
-                        allocationId = (long) reader.GetSqlInt64(0);
+                    {
+                        var sqlInt64 = reader.GetSqlInt64(0);
+                        allocationId = sqlInt64.IsNull?(long?)null:sqlInt64.Value;
+                    }
 
                     return new QueuedEvents(allocationId, events.ToArray());
                 }
@@ -85,10 +88,48 @@ namespace Res.Core.Storage
                     long? allocationId = null;
 
                     if (reader.Read())
-                        allocationId = (long)reader.GetSqlInt64(0);
+                    {
+                        var sqlInt64 = reader.GetSqlInt64(0);
+                        allocationId = sqlInt64.IsNull ? (long?)null : sqlInt64.Value;
+                    }
 
                     return new QueuedEvents(allocationId, events.ToArray());
                 }
+            }
+        }
+
+        public QueueStorageInfo[] GetAllByDecreasingNextMarker(int count, int skip)
+        {
+            const int queueIdOrdinal = 0;
+            const int contextOrdinal = 1;
+            const int filterOrdinal = 2;
+            const int nextMarkerOrdinal = 3;
+
+            var queues = new List<QueueStorageInfo>();
+
+            using (var connection = new SqlConnection(_connectionString))
+            using (var command = new SqlCommand("Queues_GetByDecreasingNextMarker", connection))
+            {
+                command.CommandType = CommandType.StoredProcedure;
+                command.Parameters.AddWithValue("Count", count);
+                command.Parameters.AddWithValue("Skip", skip);
+
+                command.Connection.Open();
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        var queueId = reader.GetString(queueIdOrdinal);
+                        var context = reader.GetString(contextOrdinal);
+                        var filter = reader.GetString(filterOrdinal);
+                        var nextMarker = reader.GetInt64(nextMarkerOrdinal);
+
+                        var queue = new QueueStorageInfo(queueId, context, filter, nextMarker);
+                        queues.Add(queue);
+                    }
+                }
+
+                return queues.ToArray();
             }
         }
 

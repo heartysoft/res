@@ -12,8 +12,9 @@ AS
 
 	BEGIN TRAN
 		Declare @Now datetime2(4) = GetUtcDate()		
-	    Exec Queues_Subscribe_Allocate @QueueId, @SubscriberId, @Count, @AllocationTimeInMilliseconds, @Now, @AllocationId	
+	    Exec Queues_Subscribe_Allocate @QueueId, @SubscriberId, @Count, @AllocationTimeInMilliseconds, @Now, @AllocationId = @AllocationId OUTPUT
+		Exec Queues_Subscribe_FetchEvents @AllocationId
+		SELECT @AllocationId AS AllocationId
 	COMMIT
 
-	Exec Queues_Subscribe_FetchEvents @AllocationId
-	SELECT @AllocationId AS AllocationId
+	

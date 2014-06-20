@@ -78,6 +78,7 @@
     <Build Include="Schema Objects\dbo\Stored Procedures\Queues_Subscribe_FetchEvents.sql" />
     <Build Include="Schema Objects\dbo\Stored Procedures\Queues_Acknowledge_Acknowledge.sql" />
     <Build Include="Schema Objects\dbo\Stored Procedures\Queues_Acknowledge.sql" />
+    <Build Include="Schema Objects\dbo\Stored Procedures\Queues_GetByDecreasingNextMarker.sql" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Schema Objects\dbo\User Defined Types\EventParameter.sql" />

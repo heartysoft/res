@@ -10,7 +10,7 @@ AS
 
 	SELECT top (1) @AllocationId = AllocationId FROM QueueAllocations
 		WHERE QueueId = @QueueId
-				AND SubscriberId = SubscriberId
+				AND SubscriberId = @SubscriberId
 				AND ExpiresAt > @Now
 	
 	IF @AllocationId IS NOT NULL

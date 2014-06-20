@@ -11,9 +11,11 @@ AS
 	IF @AllocationId IS NOT NULL
 		EXEC Queues_Acknowledge_Acknowledge @AllocationId
 
-	BEGIN TRAN	
-		Exec Queues_Subscribe_Allocate @QueueId, @SubscriberId, @Count, @AllocationTimeInMilliseconds, @Now, @AllocationId
-	COMMIT
+	IF @AllocationTimeInMilliseconds <> -1 BEGIN
+		BEGIN TRAN	
+			Exec Queues_Subscribe_Allocate @QueueId, @SubscriberId, @Count, @AllocationTimeInMilliseconds, @Now, @AllocationId = @NewAllocationId OUTPUT
+		COMMIT
+	END 
 		
 	Exec Queues_Subscribe_FetchEvents @NewAllocationId
 	SELECT @NewAllocationId AS AllocationId
