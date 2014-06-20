@@ -157,104 +157,104 @@ namespace Res.Core.Tests.Client
             commit2.Wait();
         }
 
-        [Test]
-        public void ShouldSubscribe()
-        {
-            var token = new CancellationTokenSource();
-            var sub = _harness.CreateSubscription("res-tests", "test-context", "*");
-            var task = sub.Start(_ => { }, DateTime.UtcNow, TimeSpan.FromSeconds(10), TimeSpan.FromSeconds(0.5), token.Token);
-            token.Cancel();
-            Task.WhenAll(task);
-        }
+        //[Test]
+        //public void ShouldSubscribe()
+        //{
+        //    var token = new CancellationTokenSource();
+        //    var sub = _harness.CreateSubscription("res-tests", "test-context", "*");
+        //    var task = sub.Start(_ => { }, DateTime.UtcNow, TimeSpan.FromSeconds(10), TimeSpan.FromSeconds(0.5), token.Token);
+        //    token.Cancel();
+        //    Task.WhenAll(task);
+        //}
 
-        [Test]
-        public void ShouldGetSubscribedEvents()
-        {
-            var m = new AutoResetEvent(false);
-            var received = new List<EventInStorage>();
-            var token = new CancellationTokenSource();
-            var sub = _harness.CreateSubscription("res-tests", "test-context", "*");
-            var client = _harness.CreateClient();
-            client.CommitAsync("test-context", "test-stream", new[]
-            {
-                new EventData("test", Guid.NewGuid(), "", "a bit more", DateTime.Now)
-            }, ExpectedVersion.Any).Wait(1000);
+        //[Test]
+        //public void ShouldGetSubscribedEvents()
+        //{
+        //    var m = new AutoResetEvent(false);
+        //    var received = new List<EventInStorage>();
+        //    var token = new CancellationTokenSource();
+        //    var sub = _harness.CreateSubscription("res-tests", "test-context", "*");
+        //    var client = _harness.CreateClient();
+        //    client.CommitAsync("test-context", "test-stream", new[]
+        //    {
+        //        new EventData("test", Guid.NewGuid(), "", "a bit more", DateTime.Now)
+        //    }, ExpectedVersion.Any).Wait(1000);
 
-            var task = sub.Start(x =>
-            {
-                received.AddRange(x.Events);
-                m.Set();
-            }, DateTime.Now.AddSeconds(-10), TimeSpan.FromSeconds(10), TimeSpan.FromSeconds(0.5), token.Token);
-
-
-            m.WaitOne();
-
-            token.Cancel();
-
-            Task.WhenAny(task);
-
-            Assert.AreEqual(1, received.Count);
-        }
-
-        [Test]
-        public void ShouldSetSubscriptionTime()
-        {
-            var received = new BlockingCollection<EventInStorage>();
-            var token = new CancellationTokenSource();
-            var sub = _harness.CreateSubscription("res-tests", "test-context", "*");
-            var client = _harness.CreateClient();
-
-            var now = DateTime.Now;
-
-            client.CommitAsync("test-context", "test-stream", new[]
-            {
-                new EventData("test", Guid.NewGuid(), "", "a bit more", now)
-            }, ExpectedVersion.Any).Wait(1000);
-
-            var subscribeTask = sub.Start(x =>
-            {
-                received.Add(x.Events[0]);
-            }, DateTime.Now.AddSeconds(10), TimeSpan.FromMilliseconds(100), TimeSpan.FromSeconds(0.5), token.Token);
-
-            //no events as subscription starts in the future.
-            subscribeTask.Wait(2000);
-
-            sub.SetSubscriptionTime(now.AddSeconds(-5), TimeSpan.FromSeconds(5)).Wait(token.Token);
-
-            EventInStorage e;
-            Assert.IsTrue(received.TryTake(out e, 5000));
-        }
+        //    var task = sub.Start(x =>
+        //    {
+        //        received.AddRange(x.Events);
+        //        m.Set();
+        //    }, DateTime.Now.AddSeconds(-10), TimeSpan.FromSeconds(10), TimeSpan.FromSeconds(0.5), token.Token);
 
 
-        [Test]
-        //Kept to ensure nasty race condition doesn't come up.
-        public void ShouldSetSubscriptionTime2()
-        {
-            var received = new BlockingCollection<EventInStorage>();
-            var token = new CancellationTokenSource();
-            var sub = _harness.CreateSubscription("res-tests", "test-context", "*");
-            var client = _harness.CreateClient();
+        //    m.WaitOne();
 
-            var now = DateTime.Now;
+        //    token.Cancel();
 
-            client.CommitAsync("test-context", "test-stream", new[]
-            {
-                new EventData("test", Guid.NewGuid(), "", "a bit more", now)
-            }, ExpectedVersion.Any).Wait(1000);
+        //    Task.WhenAny(task);
 
-            var subscribeTask = sub.Start(x =>
-            {
-                received.Add(x.Events[0]);
-            }, DateTime.Now.AddSeconds(10), TimeSpan.FromMilliseconds(100), TimeSpan.FromSeconds(0.5), token.Token);
+        //    Assert.AreEqual(1, received.Count);
+        //}
 
-            //no events as subscription starts in the future.
-            subscribeTask.Wait(2000);
+        //[Test]
+        //public void ShouldSetSubscriptionTime()
+        //{
+        //    var received = new BlockingCollection<EventInStorage>();
+        //    var token = new CancellationTokenSource();
+        //    var sub = _harness.CreateSubscription("res-tests", "test-context", "*");
+        //    var client = _harness.CreateClient();
 
-            sub.SetSubscriptionTime(now.AddSeconds(-5), TimeSpan.FromSeconds(5)).Wait(token.Token);
+        //    var now = DateTime.Now;
 
-            EventInStorage e;
-            Assert.IsTrue(received.TryTake(out e, 5000));
-        }
+        //    client.CommitAsync("test-context", "test-stream", new[]
+        //    {
+        //        new EventData("test", Guid.NewGuid(), "", "a bit more", now)
+        //    }, ExpectedVersion.Any).Wait(1000);
+
+        //    var subscribeTask = sub.Start(x =>
+        //    {
+        //        received.Add(x.Events[0]);
+        //    }, DateTime.Now.AddSeconds(10), TimeSpan.FromMilliseconds(100), TimeSpan.FromSeconds(0.5), token.Token);
+
+        //    //no events as subscription starts in the future.
+        //    subscribeTask.Wait(2000);
+
+        //    sub.SetSubscriptionTime(now.AddSeconds(-5), TimeSpan.FromSeconds(5)).Wait(token.Token);
+
+        //    EventInStorage e;
+        //    Assert.IsTrue(received.TryTake(out e, 5000));
+        //}
+
+
+        //[Test]
+        ////Kept to ensure nasty race condition doesn't come up.
+        //public void ShouldSetSubscriptionTime2()
+        //{
+        //    var received = new BlockingCollection<EventInStorage>();
+        //    var token = new CancellationTokenSource();
+        //    var sub = _harness.CreateSubscription("res-tests", "test-context", "*");
+        //    var client = _harness.CreateClient();
+
+        //    var now = DateTime.Now;
+
+        //    client.CommitAsync("test-context", "test-stream", new[]
+        //    {
+        //        new EventData("test", Guid.NewGuid(), "", "a bit more", now)
+        //    }, ExpectedVersion.Any).Wait(1000);
+
+        //    var subscribeTask = sub.Start(x =>
+        //    {
+        //        received.Add(x.Events[0]);
+        //    }, DateTime.Now.AddSeconds(10), TimeSpan.FromMilliseconds(100), TimeSpan.FromSeconds(0.5), token.Token);
+
+        //    //no events as subscription starts in the future.
+        //    subscribeTask.Wait(2000);
+
+        //    sub.SetSubscriptionTime(now.AddSeconds(-5), TimeSpan.FromSeconds(5)).Wait(token.Token);
+
+        //    EventInStorage e;
+        //    Assert.IsTrue(received.TryTake(out e, 5000));
+        //}
 
         
 
@@ -277,6 +277,16 @@ namespace Res.Core.Tests.Client
                 }
 
                 using (var cmd = new SqlCommand("truncate table Streams;", sqlConnection))
+                {
+                    cmd.ExecuteNonQuery();
+                }
+
+                using (var cmd = new SqlCommand("truncate table QueueAllocations;", sqlConnection))
+                {
+                    cmd.ExecuteNonQuery();
+                }
+                
+                using (var cmd = new SqlCommand("truncate table Queues;", sqlConnection))
                 {
                     cmd.ExecuteNonQuery();
                 }

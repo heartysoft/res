@@ -54,9 +54,14 @@
     <Compile Include="DummyResClient.cs" />
     <Compile Include="EventData.cs" />
     <Compile Include="EventObject.cs" />
+    <Compile Include="Internal\Queues\Messages\AcknowledgeQueueAndFetchNextRequest.cs" />
+    <Compile Include="Internal\Queues\Messages\QueuedEventsResponse.cs" />
+    <Compile Include="Internal\Queues\QueueRequestAcceptor.cs" />
+    <Compile Include="Internal\Queues\Messages\SubscribeToQueueRequest.cs" />
     <Compile Include="Internal\Subscriptions\Messages\SetSubscriptionEntry.cs" />
     <Compile Include="Internal\Subscriptions\Messages\SetSubscriptionTimesRequest.cs" />
     <Compile Include="Internal\Subscriptions\Messages\SetSubscriptionTimesResponse.cs" />
+    <Compile Include="QueuedEvents.cs" />
     <Compile Include="ResClientEventPublisher.cs" />
     <Compile Include="Exceptions\ConcurrencyException.cs" />
     <Compile Include="Exceptions\EventNotFoundException.cs" />
@@ -98,6 +103,8 @@
     <Compile Include="Internal\Subscriptions\ProcessingState.cs" />
     <Compile Include="Internal\Subscriptions\ProgressingState.cs" />
     <Compile Include="ResEventPublisher.cs" />
+    <Compile Include="ResQueue.cs" />
+    <Compile Include="ResQueueEngine.cs" />
     <Compile Include="SubscribedEvents.cs" />
     <Compile Include="Subscription.cs" />
     <Compile Include="SubscriptionDefinition.cs" />

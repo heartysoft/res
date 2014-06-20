@@ -8,6 +8,7 @@ namespace Res.Core.Storage
     public class InMemoryEventStorage : EventStorage
     {
         readonly List<EventInStorage> _events = new List<EventInStorage>();
+        private long _globalSequence = long.MinValue;
 
         public long WriteCount { get; private set; }
         public long ReadCount { get; set; }
@@ -36,7 +37,12 @@ namespace Res.Core.Storage
 
                     var version = e.Sequence == -1 ? expectedVersion + index : e.Sequence;
 
-                    _events.Add(new EventInStorage(e.EventId, commit.Context, commit.Stream, version, e.Timestamp,
+                    _globalSequence++;
+
+                    _events.Add(new EventInStorage(e.EventId, commit.Context, commit.Stream, 
+                        version,
+                        _globalSequence,
+                        e.Timestamp,
                         e.TypeKey, e.Body, e.Headers));
                 }
             }

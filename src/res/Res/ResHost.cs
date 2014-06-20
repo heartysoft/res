@@ -15,8 +15,9 @@ namespace Res
     {
         private static readonly ILog Logger = LogManager.GetCurrentClassLogger();
         private CancellationTokenSource _cancellationToken;
-        private QueryEndpoint _queryEndpoint;
+        //private QueryEndpoint _queryEndpoint;
         private CommitEndpoint _commitEndpoint;
+        private QueueEndpoint _queueEndpoint;
 
         public void Start(ResConfiguration config)
         {
@@ -31,9 +32,14 @@ namespace Res
             _commitEndpoint = new CommitEndpoint(storageWriter, config);
             _commitEndpoint.Start(_cancellationToken.Token);
 
-            var subscriptionStorage = new SqlSubscriptionStorage(connectionString);
-            _queryEndpoint = new QueryEndpoint(subscriptionStorage, config);
-            _queryEndpoint.Start(_cancellationToken.Token);
+            //var subscriptionStorage = new SqlSubscriptionStorage(connectionString);
+            //_queryEndpoint = new QueryEndpoint(subscriptionStorage, config);
+            //_queryEndpoint.Start(_cancellationToken.Token);
+
+            var queueStorage = new SqlQueueStorage(connectionString);
+            _queueEndpoint = new QueueEndpoint(queueStorage, config);
+            _queueEndpoint.Start(_cancellationToken.Token);
+
 
             Logger.Info("[ResHost] Started. All systems go...");
         }
@@ -42,7 +48,8 @@ namespace Res
         {
             Logger.Info("[ResHost] Stopping. Deploying airbrakes...");
             _cancellationToken.Cancel();
-            _queryEndpoint.Dispose();
+            _queueEndpoint.Dispose();
+            //_queryEndpoint.Dispose();
             _commitEndpoint.Dispose();
             Logger.Info("[ResHost] Stopped. My work is done; it's in your hands now...");
         }

@@ -20,5 +20,8 @@ namespace Res.Protocol
         public const string SubscriptionsProgressed = "SP";
         public const string SetSubscriptions = "SS";
         public const string SubscriptionsSet = "ST";
+        public const string SubscribeToQueue = "SQ";
+        public const string QueuedEvents = "QE";
+        public const string AcknowledgeQueue = "AQ";
     }
 }
