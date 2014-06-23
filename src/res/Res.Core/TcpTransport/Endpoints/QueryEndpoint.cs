@@ -6,7 +6,6 @@ using NetMQ;
 using Res.Core.Storage;
 using Res.Core.TcpTransport.MessageProcessing;
 using Res.Core.TcpTransport.NetworkIO;
-using Res.Core.TcpTransport.Subscriptions;
 using Res.Protocol;
 
 namespace Res.Core.TcpTransport.Endpoints
@@ -18,7 +17,7 @@ namespace Res.Core.TcpTransport.Endpoints
         private readonly Transceiver _transceiver;
         private Task _transceiverTask;
 
-        public QueryEndpoint(SubscriptionStorage subscriptionStorage, ResConfiguration config)
+        public QueryEndpoint(ResConfiguration config)
         {
             var ctx = NetMQContext.Create();
             _ctx = ctx;
@@ -26,11 +25,6 @@ namespace Res.Core.TcpTransport.Endpoints
             var outBuffer = new OutBuffer(config.QueryEndpoint.BufferSize);
             var dispatcher = new TcpMessageDispatcher();
 
-            dispatcher.Register(ResCommands.RegisterSubscriptions, new SubscribeHandler(subscriptionStorage, outBuffer));
-            dispatcher.Register(ResCommands.FetchEvents, new FetchEventsHandler(subscriptionStorage, outBuffer));
-            dispatcher.Register(ResCommands.ProgressSubscriptions, new ProgressSubscriptionHandler(subscriptionStorage, outBuffer));
-            dispatcher.Register(ResCommands.SetSubscriptions,new SetSubscriptionTimesHandler(subscriptionStorage, outBuffer));
-            
             MessageProcessor messageProcessor = new TcpIncomingMessageProcessor(dispatcher);
             messageProcessor = new ErrorHandlingMessageProcessor(messageProcessor);
 

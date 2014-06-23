@@ -301,7 +301,6 @@ namespace Res.Core.Tests.Client
         public static string ResExePath = ConfigurationManager.AppSettings["resExePath"];
         private Process _process;
         private ResEngine _engine;
-        private ResSubscriptionEngine _subEngine;
 
         public void Start()
         {          
@@ -311,28 +310,17 @@ namespace Res.Core.Tests.Client
             
             _engine = new ResEngine();
             _engine.Start(Endpoint);
-
-            _subEngine = new ResSubscriptionEngine();
-            _subEngine.Start(SubscriptionEndpoint);
         }
 
         public ResClient CreateClient()
         {
             return _engine.CreateClient(TimeSpan.FromSeconds(10));      
-        }
-
-
-        public Subscription CreateSubscription(string subscriberId, string context, string filter)
-        {
-            return _subEngine.Subscribe(subscriberId, new[] {new SubscriptionDefinition(context, filter)});
-        }
-        
+        }        
 
         public void Stop()
         {
             Console.WriteLine("Disposing.");
             _engine.Dispose();
-            _subEngine.Dispose();
             _process.Kill();
         }
     }

@@ -4,7 +4,7 @@ using NetMQ;
 using Res.Client.Exceptions;
 using Res.Protocol;
 
-namespace Res.Client.Internal
+namespace Res.Client.Internal.Commits.Messages
 {
     public class CommitRequest : ResRequest
     {

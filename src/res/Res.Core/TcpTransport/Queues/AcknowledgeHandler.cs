@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Globalization;
-using System.Linq;
 using System.Threading;
-using System.Xml.Linq;
 using Common.Logging;
 using NetMQ;
 using Res.Core.Storage;
 using Res.Core.TcpTransport.MessageProcessing;
 using Res.Core.TcpTransport.NetworkIO;
-using Res.Core.TcpTransport.Subscriptions;
 using Res.Protocol;
 
 namespace Res.Core.TcpTransport.Queues

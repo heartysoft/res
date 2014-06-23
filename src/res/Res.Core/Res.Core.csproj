@@ -66,13 +66,8 @@
     <Compile Include="Storage\EventStoreConnectionException.cs" />
     <Compile Include="Storage\FetchEventRequest.cs" />
     <Compile Include="Storage\InMemoryEventStorage.cs" />
-    <Compile Include="Storage\SetSubscriptionTimeRequest.cs" />
     <Compile Include="Storage\SqlEventStorage.cs" />
     <Compile Include="Storage\SqlQueueStorage.cs" />
-    <Compile Include="Storage\SqlSubscriptionStorage.cs" />
-    <Compile Include="Storage\SubscribeRequest.cs" />
-    <Compile Include="Storage\SubscribeResponse.cs" />
-    <Compile Include="Storage\SubscriptionStorage.cs" />
     <Compile Include="TcpTransport\Commits\CommitContinuationContext.cs" />
     <Compile Include="TcpTransport\Commits\CommitResult.cs" />
     <Compile Include="TcpTransport\Endpoints\CommitEndpoint.cs" />
@@ -101,14 +96,6 @@
     <Compile Include="TcpTransport\MessageProcessing\TcpIncomingMessageProcessor.cs" />
     <Compile Include="TcpTransport\NetworkIO\TcpGateway.cs" />
     <Compile Include="TcpTransport\NetworkIO\Transceiver.cs" />
-    <Compile Include="TcpTransport\Subscriptions\EventsFetched.cs" />
-    <Compile Include="TcpTransport\Subscriptions\FetchEventsHandler.cs" />
-    <Compile Include="TcpTransport\Subscriptions\ProgressSubscriptionHandler.cs" />
-    <Compile Include="TcpTransport\Subscriptions\SetSubscriptionTimesHandler.cs" />
-    <Compile Include="TcpTransport\Subscriptions\SubscribeCompleted.cs" />
-    <Compile Include="TcpTransport\Subscriptions\SubscribeHandler.cs" />
-    <Compile Include="TcpTransport\Subscriptions\SubscriptionsProgressed.cs" />
-    <Compile Include="TcpTransport\Subscriptions\SubscriptionsSet.cs" />
     <Compile Include="TcpTransport\TaskCompleted.cs" />
   </ItemGroup>
   <ItemGroup>

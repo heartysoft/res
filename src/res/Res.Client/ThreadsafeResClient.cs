@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Res.Client.Internal;
+using Res.Client.Internal.Commits;
 
 namespace Res.Client
 {

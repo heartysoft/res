@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Common.Logging;
 using NetMQ;
 using Res.Client.Internal;
+using Res.Client.Internal.Commits;
 
 namespace Res.Client
 {

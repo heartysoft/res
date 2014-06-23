@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Res.Client.Internal.Subscriptions;
+using Res.Client.Internal.Commits.Messages;
 
-namespace Res.Client.Internal
+namespace Res.Client.Internal.Commits
 {
     public class CommitRequestAcceptor
     {
