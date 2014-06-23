@@ -75,7 +75,7 @@ namespace Res.Core.Storage
                 .ToArray();
         }
 
-        public EventInStorage[] LoadEvents(string context, object streamId, long fromVersion = 0, long? maxVersion = null)
+        public EventInStorage[] LoadEvents(string context, string streamId, long fromVersion = 0, long? maxVersion = null)
         {
             return _events.Where(x => x.Context.Equals(context) && x.Stream.Equals(streamId)
                                       && x.Sequence >= fromVersion && (!maxVersion.HasValue || x.Sequence <= maxVersion.Value)

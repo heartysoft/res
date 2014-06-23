@@ -36,7 +36,7 @@ namespace Res.Core.Storage
         }
 
 
-        public EventInStorage[] LoadEvents(string context, object streamId, long fromVersion = 0, long? maxVersion = null)
+        public EventInStorage[] LoadEvents(string context, string streamId, long fromVersion = 0, long? maxVersion = null)
         {
             try
             {

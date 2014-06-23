@@ -29,33 +29,20 @@ namespace Res.Core.StorageBuffering
             return Task.Factory.StartNew(() => run(token), token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
         }
 
-        private void run(CancellationToken token)
+        public Task<EventInStorage> Fetch(FetchEventRequest request)
         {
-            while (token.IsCancellationRequested == false)
-            {
-                var list = new List<Entry>();
+            if (_queue.Count >= _maxSize)
+                throw new StorageReaderBusyException(_maxSize);
 
-                while (list.Count < _maxBatchSize)
-                {
-                    Entry entry;
+            var entry = new Entry(request, _maxAgeBeforeDrop);
+            _queue.Enqueue(entry);
 
-                    if (_queue.TryDequeue(out entry) == false)
-                        break;
+            return entry.Task;
+        }
 
-                    if (entry.ShouldDrop())
-                    {
-                        entry.Harikiri();
-                    }
-
-                    list.Add(entry);
-                }
-
-                if (list.Count > 0)
-                {
-                    fetch(list.ToArray());
-                    list.Clear();
-                }
-            }
+        public EventInStorage[] Load(string streamId, string contextId, long fromVersion = 0)
+        {
+            return _storage.LoadEvents(contextId, streamId, fromVersion);
         }
 
         private void fetch(Entry[] entries)
@@ -83,20 +70,33 @@ namespace Res.Core.StorageBuffering
             }
         }
 
-        public Task<EventInStorage> Fetch(FetchEventRequest request)
+        private void run(CancellationToken token)
         {
-            if (_queue.Count >= _maxSize)
-                throw new StorageReaderBusyException(_maxSize);
+            while (token.IsCancellationRequested == false)
+            {
+                var list = new List<Entry>();
 
-            var entry = new Entry(request, _maxAgeBeforeDrop);
-            _queue.Enqueue(entry);
+                while (list.Count < _maxBatchSize)
+                {
+                    Entry entry;
 
-            return entry.Task;
-        }
+                    if (_queue.TryDequeue(out entry) == false)
+                        break;
 
-        public EventInStorage[] Load(object streamId, string contextId, long fromVersion = 0)
-        {
-            return _storage.LoadEvents(contextId, streamId, fromVersion);
+                    if (entry.ShouldDrop())
+                    {
+                        entry.Harikiri();
+                    }
+
+                    list.Add(entry);
+                }
+
+                if (list.Count > 0)
+                {
+                    fetch(list.ToArray());
+                    list.Clear();
+                }
+            }
         }
 
         public class StorageReaderBusyException : Exception

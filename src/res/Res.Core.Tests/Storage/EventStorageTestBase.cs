@@ -318,7 +318,12 @@ namespace Res.Core.Tests.Storage
         }
 
 
-        private object storeEvent(string context, string typeKey, string body, string stream)
+        private string storeEvent(string context, string typeKey, string body)
+        {
+            return storeEvent(context, typeKey, body, Guid.NewGuid().ToString());
+        }
+
+        private string storeEvent(string context, string typeKey, string body, string stream)
         {
             var @event = new EventForStorage(Guid.NewGuid(), 1, DateTime.UtcNow, typeKey, body, null);
             var commit = new CommitForStorage(Guid.NewGuid(), context, stream, @event);
@@ -326,11 +331,6 @@ namespace Res.Core.Tests.Storage
             _storage.Store(commits);
 
             return stream;
-        }
-
-        private object storeEvent(string context, string typeKey, string body)
-        {
-            return storeEvent(context, typeKey, body, Guid.NewGuid().ToString());
         }
 
 
