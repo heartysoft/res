@@ -1,20 +1,21 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Res.Protocol;
 
 namespace Res.Client
 {
     public class ResClientEventPublisher : ResEventPublisher
     {
         private readonly string _context;
-        private readonly ResClient _client;
+        private readonly ResPublisher _publisher;
         private readonly TypeTagResolver _typeTagResolver;
         private readonly Func<object, string> _serialiser;
 
-        public ResClientEventPublisher(string context, ResClient client, TypeTagResolver typeTagResolver, Func<object, string> serialiser)
+        public ResClientEventPublisher(string context, ResPublisher publisher, TypeTagResolver typeTagResolver, Func<object, string> serialiser)
         {
             _context = context;
-            _client = client;
+            _publisher = publisher;
             _typeTagResolver = typeTagResolver;
             _serialiser = serialiser;
         }
@@ -27,9 +28,9 @@ namespace Res.Client
                 .ToArray();
 
             if (timeout.HasValue)
-                return _client.CommitAsync(_context, stream, toPublish, expectedVersion, timeout.Value);
+                return _publisher.CommitAsync(_context, stream, toPublish, expectedVersion, timeout.Value);
 
-            return _client.CommitAsync(_context, stream, toPublish, expectedVersion);
+            return _publisher.CommitAsync(_context, stream, toPublish, expectedVersion);
         }
     }
 }

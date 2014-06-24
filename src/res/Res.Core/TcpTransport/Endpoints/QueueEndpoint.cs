@@ -22,7 +22,7 @@ namespace Res.Core.TcpTransport.Endpoints
             var ctx = NetMQContext.Create();
             _ctx = ctx;
 
-            var outBuffer = new OutBuffer(config.QueryEndpoint.BufferSize);
+            var outBuffer = new OutBuffer(config.QueueEndpoint.BufferSize);
             var dispatcher = new TcpMessageDispatcher();
 
             dispatcher.Register(ResCommands.SubscribeToQueue, new Queues.SubscribeHandler(storage, outBuffer));
@@ -32,8 +32,8 @@ namespace Res.Core.TcpTransport.Endpoints
             messageProcessor = new ErrorHandlingMessageProcessor(messageProcessor);
 
             //important...the factory method parameter must "create" the gateway, threading issue otherwise.
-            Logger.DebugFormat("[QueueEndpoint] Initialising Transceiver. Endpoint: {0}", config.QueryEndpoint.Endpoint);
-            _transceiver = new Transceiver(() => new TcpGateway(ctx, config.QueryEndpoint.Endpoint, messageProcessor), outBuffer);
+            Logger.DebugFormat("[QueueEndpoint] Initialising Transceiver. Endpoint: {0}", config.QueueEndpoint.Endpoint);
+            _transceiver = new Transceiver(() => new TcpGateway(ctx, config.QueueEndpoint.Endpoint, messageProcessor), outBuffer);
         }
 
         public void Start(CancellationToken token)

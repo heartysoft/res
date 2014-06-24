@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
 using Common.Logging;
-using NetMQ;
 using Res.Client.Internal;
 using Res.Client.Internal.Commits;
 
 namespace Res.Client
 {
-    public class ResEngine : IDisposable
+    public class ResPublishEngine : IDisposable
     {
         private readonly bool _isDisabled;
         private CommitRequestAcceptor _acceptor;
@@ -16,7 +13,7 @@ namespace Res.Client
         private readonly ILog _log = LogManager.GetCurrentClassLogger();
 
         private RequestProcessor _processor;
-        public ResEngine(bool isDisabled = false)
+        public ResPublishEngine(bool isDisabled = false)
         {
             _isDisabled = isDisabled;
         }
@@ -25,11 +22,11 @@ namespace Res.Client
         {
             if (_isDisabled)
             {
-                _log.Warn("[ResEngine] ResEngine is disabled. Requested clients will be dummies, and will immediately return default values instead of committing events.");
+                _log.Warn("[ResPublishEngine] ResPublishEngine is disabled. Requested clients will be dummies, and will immediately return default values instead of committing events.");
                 return;
             }
 
-            _log.Info("[ResEngine] Starting...");
+            _log.Info("[ResPublishEngine] Starting...");
 
             const int bufferSize = 11;
 
@@ -43,25 +40,25 @@ namespace Res.Client
             _processor = new RequestProcessor(gatewayFactory, buffer);
             _processor.Start();
             
-            _log.Info("[ResEngine] Started.");
+            _log.Info("[ResPublishEngine] Started.");
         }
 
-        public ResClient CreateClient(TimeSpan defaultTimeout)
+        public ResPublisher CreatePublisher(TimeSpan defaultTimeout)
         {
             if(_isDisabled)
-                return new DummyResClient();
+                return new DummyResPublisher();
 
-            return new ThreadsafeResClient(_acceptor, defaultTimeout);
+            return new ThreadsafeResPublisher(_acceptor, defaultTimeout);
         }
 
         public ResClientEventPublisher CreatePublisher(string context, TimeSpan defaultTimeout, TypeTagResolver typeTagResolver, Func<object, string> serialiser)
         {
-            return CreatePublisher(context, CreateClient(defaultTimeout), typeTagResolver, serialiser);
+            return CreatePublisher(context, CreatePublisher(defaultTimeout), typeTagResolver, serialiser);
         }
 
-        public ResClientEventPublisher CreatePublisher(string context, ResClient client, TypeTagResolver typeTagResolver, Func<object, string> serialiser)
+        public ResClientEventPublisher CreatePublisher(string context, ResPublisher publisher, TypeTagResolver typeTagResolver, Func<object, string> serialiser)
         {
-            return new ResClientEventPublisher(context, client, typeTagResolver, serialiser);
+            return new ResClientEventPublisher(context, publisher, typeTagResolver, serialiser);
         }
 
         protected virtual void Dispose(bool disposing)
@@ -71,13 +68,13 @@ namespace Res.Client
 
             if (_isDisabled)
             {
-                _log.Info("[ResEngine] Created as disabled. Disposing.");
+                _log.Info("[ResPublishEngine] Created as disabled. Disposing.");
                 return;
             }
 
-            _log.Info("[ResEngine] Stopping...");
+            _log.Info("[ResPublishEngine] Stopping...");
             _processor.Stop();
-            _log.Info("[ResEngine] Processor stopped. Bye bye.");
+            _log.Info("[ResPublishEngine] Processor stopped. Bye bye.");
         }
 
         public void Dispose()

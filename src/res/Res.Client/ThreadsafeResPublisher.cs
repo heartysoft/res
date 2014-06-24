@@ -5,12 +5,12 @@ using Res.Client.Internal.Commits;
 
 namespace Res.Client
 {
-    public class ThreadsafeResClient : ResClient
+    public class ThreadsafeResPublisher : ResPublisher
     {
         private readonly CommitRequestAcceptor _acceptor;
         private readonly TimeSpan _defaultTimeout;
 
-        public ThreadsafeResClient(CommitRequestAcceptor acceptor, TimeSpan defaultTimeout)
+        public ThreadsafeResPublisher(CommitRequestAcceptor acceptor, TimeSpan defaultTimeout)
         {
             _acceptor = acceptor;
             _defaultTimeout = defaultTimeout;

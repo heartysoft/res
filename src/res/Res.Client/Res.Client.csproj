@@ -51,9 +51,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CommitResponse.cs" />
-    <Compile Include="DummyResClient.cs" />
+    <Compile Include="DummyResPublisher.cs" />
     <Compile Include="EventData.cs" />
     <Compile Include="EventObject.cs" />
+    <Compile Include="EventsForStream.cs" />
     <Compile Include="Internal\Queries\Messages\QueryEventsForStreamRequest.cs" />
     <Compile Include="Internal\Queries\Messages\QueryEventsForStreamResponse.cs" />
     <Compile Include="Internal\Queries\QueryRequestAcceptor.cs" />
@@ -76,7 +77,6 @@
     <Compile Include="Exceptions\UnexpectedServerErrorException.cs" />
     <Compile Include="Exceptions\UnsupportedCommandException.cs" />
     <Compile Include="Exceptions\UnsupportedProtocolException.cs" />
-    <Compile Include="ExpectedVersion.cs" />
     <Compile Include="Internal\Commits\Messages\CommitRequest.cs" />
     <Compile Include="Internal\ErrorResolver.cs" />
     <Compile Include="Internal\MultiWriterSingleReaderBuffer.cs" />
@@ -90,12 +90,13 @@
     <Compile Include="Internal\SingleThreadedZeroMqGateway.cs" />
     <Compile Include="EventInStorage.cs" />
     <Compile Include="ResEventPublisher.cs" />
+    <Compile Include="ResQueryEngine.cs" />
     <Compile Include="ResQueue.cs" />
     <Compile Include="ResQueueEngine.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ResClient.cs" />
-    <Compile Include="ResEngine.cs" />
-    <Compile Include="ThreadsafeResClient.cs" />
+    <Compile Include="ResPublisher.cs" />
+    <Compile Include="ResPublishEngine.cs" />
+    <Compile Include="ThreadsafeResPublisher.cs" />
     <Compile Include="TypeRegistry.cs" />
     <Compile Include="TypeTagResolver.cs" />
   </ItemGroup>

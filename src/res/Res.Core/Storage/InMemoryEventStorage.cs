@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Res.Client;
+using Res.Protocol;
 
 namespace Res.Core.Storage
 {

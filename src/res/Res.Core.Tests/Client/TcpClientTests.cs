@@ -12,6 +12,7 @@ using Res.Client;
 using Res.Client.Exceptions;
 using Res.Client.Internal;
 using Res.Core.Storage;
+using Res.Protocol;
 using EventInStorage = Res.Client.EventInStorage;
 
 namespace Res.Core.Tests.Client
@@ -52,13 +53,13 @@ namespace Res.Core.Tests.Client
         [Test]
         public void ShouldBootUpAndTeardown()
         {
-            var client = _harness.CreateClient();
+            var client = _harness.CreatePublisher();
         }
 
         [Test]
         public void ShouldStoreAnEvent()
         {
-            var client = _harness.CreateClient();
+            var client = _harness.CreatePublisher();
             var commit = client.CommitAsync("test-context", Guid.NewGuid().ToString(), new[]
             {
                 new EventData("test", Guid.NewGuid(), "", "some body", DateTime.Now) 
@@ -70,7 +71,7 @@ namespace Res.Core.Tests.Client
         [Test]
         public void ShouldStoreMultiplEvents()
         {
-            var client = _harness.CreateClient();
+            var client = _harness.CreatePublisher();
             var commit = client.CommitAsync("test-context", Guid.NewGuid().ToString(), new[]
             {
                 new EventData("test", Guid.NewGuid(), "", "some body", DateTime.Now),
@@ -85,7 +86,7 @@ namespace Res.Core.Tests.Client
         [Test]
         public void ShouldHandleMultipleNonConflictingCommits()
         {
-            var client = _harness.CreateClient();
+            var client = _harness.CreatePublisher();
             var commit = client.CommitAsync("test-context", Guid.NewGuid().ToString(), new[]
             {
                 new EventData("test", Guid.NewGuid(), "", "some body", DateTime.Now),
@@ -106,7 +107,7 @@ namespace Res.Core.Tests.Client
         [Test]
         public void ConflictingWritesShouldFail()
         {
-            var client = _harness.CreateClient();
+            var client = _harness.CreatePublisher();
             var stream = Guid.NewGuid().ToString();
 
             var commit = client.CommitAsync("test-context", stream, new[]
@@ -137,7 +138,7 @@ namespace Res.Core.Tests.Client
         [Test]
         public void ShouldHandleSerialisedWrites()
         {
-            var client = _harness.CreateClient();
+            var client = _harness.CreatePublisher();
             var commit = client.CommitAsync("test-context", Guid.NewGuid().ToString(), new[]
             {
                 new EventData("test", Guid.NewGuid(), "", "some body", DateTime.Now),
@@ -155,6 +156,38 @@ namespace Res.Core.Tests.Client
             }, ExpectedVersion.OnlyNew);
 
             commit2.Wait();
+        }
+
+        [Test]
+        public void ShouldLodEventsByStream()
+        {
+            var publisher = _harness.CreatePublisher();
+            var query = _harness.CreateQueryClient();
+
+            var stream = Guid.NewGuid().ToString();
+
+            var event1Id = Guid.NewGuid();
+            var event2Id = Guid.NewGuid();
+            var event3Id = Guid.NewGuid();
+
+            var commit = publisher.CommitAsync("test-context", stream, new[]
+            {
+                new EventData("test", event1Id, "", "some body", DateTime.Now),
+                new EventData("test1", event2Id, "", "something more", DateTime.Now),
+                new EventData("test", event3Id, "", "a bit more", DateTime.Now) 
+            }, ExpectedVersion.OnlyNew);
+
+            commit.Wait();
+
+            var events = query.LoadEvents("test-context", stream, 0, null, null)
+                .Result;
+
+            Assert.AreEqual("test-context", events.Context);
+            Assert.AreEqual(stream, events.Stream);
+            Assert.AreEqual(3, events.Events.Length);
+            Assert.AreEqual(event1Id, events.Events[0].EventId);
+            Assert.AreEqual(event2Id, events.Events[1].EventId);
+            Assert.AreEqual(event3Id, events.Events[2].EventId);
         }
 
         //[Test]
@@ -296,11 +329,12 @@ namespace Res.Core.Tests.Client
 
     public class ResHarness
     {
-        public static string Endpoint = ConfigurationManager.AppSettings["resEndpoint"];
-        public static string SubscriptionEndpoint = ConfigurationManager.AppSettings["resSubscriptionEndpoint"];
+        public static string Endpoint = ConfigurationManager.AppSettings["resPublishEndpoint"];
+        public static string QueryEndpoint = ConfigurationManager.AppSettings["resQueryEndpoint"];
         public static string ResExePath = ConfigurationManager.AppSettings["resExePath"];
         private Process _process;
-        private ResEngine _engine;
+        private ResPublishEngine _publishEngine;
+        private ResQueryEngine _queryEngine;
 
         public void Start()
         {          
@@ -308,19 +342,27 @@ namespace Res.Core.Tests.Client
 
             _process = Process.Start(start);
             
-            _engine = new ResEngine();
-            _engine.Start(Endpoint);
+            _publishEngine = new ResPublishEngine();
+            _publishEngine.Start(Endpoint);
+
+            _queryEngine = new ResQueryEngine(QueryEndpoint);
         }
 
-        public ResClient CreateClient()
+        public ResPublisher CreatePublisher()
         {
-            return _engine.CreateClient(TimeSpan.FromSeconds(10));      
-        }        
+            return _publishEngine.CreatePublisher(TimeSpan.FromSeconds(10));      
+        }
+
+        public ResQueryClient CreateQueryClient()
+        {
+            return _queryEngine.CreateClient(TimeSpan.FromSeconds(10));
+        }
 
         public void Stop()
         {
             Console.WriteLine("Disposing.");
-            _engine.Dispose();
+            _queryEngine.Dispose();
+            _publishEngine.Dispose();
             _process.Kill();
         }
     }

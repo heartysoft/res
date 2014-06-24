@@ -1,4 +1,4 @@
-﻿namespace Res.Client
+﻿namespace Res.Protocol
 {
     public class ExpectedVersion
     {

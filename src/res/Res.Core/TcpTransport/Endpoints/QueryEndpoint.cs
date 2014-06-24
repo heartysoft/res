@@ -4,8 +4,10 @@ using System.Threading.Tasks;
 using Common.Logging;
 using NetMQ;
 using Res.Core.Storage;
+using Res.Core.StorageBuffering;
 using Res.Core.TcpTransport.MessageProcessing;
 using Res.Core.TcpTransport.NetworkIO;
+using Res.Core.TcpTransport.Queries;
 using Res.Protocol;
 
 namespace Res.Core.TcpTransport.Endpoints
@@ -17,13 +19,15 @@ namespace Res.Core.TcpTransport.Endpoints
         private readonly Transceiver _transceiver;
         private Task _transceiverTask;
 
-        public QueryEndpoint(ResConfiguration config)
+        public QueryEndpoint(EventStorageReader reader, ResConfiguration config)
         {
             var ctx = NetMQContext.Create();
             _ctx = ctx;
 
             var outBuffer = new OutBuffer(config.QueryEndpoint.BufferSize);
             var dispatcher = new TcpMessageDispatcher();
+
+            dispatcher.Register(ResCommands.QueryEventsByStream, new LoadEventsByStreamHandler(reader, outBuffer));
 
             MessageProcessor messageProcessor = new TcpIncomingMessageProcessor(dispatcher);
             messageProcessor = new ErrorHandlingMessageProcessor(messageProcessor);

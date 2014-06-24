@@ -20,6 +20,4 @@ namespace Res.Client.Internal.Commits
             return task;
         }
     }
-
-    
 }

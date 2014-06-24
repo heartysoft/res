@@ -11,19 +11,19 @@ using Res.Protocol;
 
 namespace Res.Core.TcpTransport.Endpoints
 {
-    public class CommitEndpoint : IDisposable
+    public class PublishEndpoint : IDisposable
     {
         private readonly NetMQContext _ctx;
         private static readonly ILog Logger = LogManager.GetCurrentClassLogger();
         private readonly Transceiver _transceiver;
         private Task _transceiverTask;
 
-        public CommitEndpoint(EventStorageWriter eventStorageWriter, ResConfiguration config)
+        public PublishEndpoint(EventStorageWriter eventStorageWriter, ResConfiguration config)
         {
             var ctx = NetMQContext.Create();
             _ctx = ctx;
 
-            var outBuffer = new OutBuffer(config.QueryEndpoint.BufferSize);
+            var outBuffer = new OutBuffer(config.PublishEndpoint.BufferSize);
             var dispatcher = new TcpMessageDispatcher();
 
             dispatcher.Register(ResCommands.AppendCommit, new CommitHandler(eventStorageWriter, outBuffer));
@@ -32,8 +32,8 @@ namespace Res.Core.TcpTransport.Endpoints
             messageProcessor = new ErrorHandlingMessageProcessor(messageProcessor);
 
             //important...the factory method parameter must "create" the gateway, threading issue otherwise.
-            Logger.DebugFormat("[CommitEndpoint] Initialising Transceiver. Endpoint: {0}", config.TcpEndpoint);
-            _transceiver = new Transceiver(() => new TcpGateway(ctx, config.TcpEndpoint, messageProcessor), outBuffer);
+            Logger.DebugFormat("[CommitEndpoint] Initialising Transceiver. Endpoint: {0}", config.PublishEndpoint.Endpoint);
+            _transceiver = new Transceiver(() => new TcpGateway(ctx, config.PublishEndpoint.Endpoint, messageProcessor), outBuffer);
         }
 
         public void Start(CancellationToken token)

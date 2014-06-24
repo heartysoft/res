@@ -13,7 +13,6 @@ namespace Res.Client.Internal.Queries
             _buffer = buffer;
         }
 
-
         public Task<QueryEventsForStreamResponse> QueryByStream(
             string context, string stream, long minVersion,
             TimeSpan timeout)

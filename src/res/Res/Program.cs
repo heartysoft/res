@@ -31,7 +31,7 @@ namespace Res
                     if (string.IsNullOrWhiteSpace(endpoint) == false)
                     {
                         Console.WriteLine("setting endpoint...");
-                        config.TcpEndpoint = endpoint;
+                        config.PublishEndpoint.Endpoint = endpoint;
                     }
 
                     s.ConstructUsing(name => new ResHost());

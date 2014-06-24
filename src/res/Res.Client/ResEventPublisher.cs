@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Res.Protocol;
 
 namespace Res.Client
 {

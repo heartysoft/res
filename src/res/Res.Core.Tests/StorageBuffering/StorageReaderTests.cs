@@ -32,7 +32,7 @@ namespace Res.Core.Tests.StorageBuffering
             var storage = new InMemoryEventStorage();
             var reader = new EventStorageReader(2000, TimeSpan.FromMinutes(5), storage);
 
-            var events = reader.Load("stream", "foo");
+            var events = reader.LoadEventsForStream("foo", "stream");
 
             Assert.That(events.Length, Is.EqualTo(0), "events list should be empty as there is no events to laod!");
         }
@@ -106,7 +106,7 @@ namespace Res.Core.Tests.StorageBuffering
             var reader = new EventStorageReader(10, TimeSpan.FromMinutes(5), storage);
             for (var i = 1; i <= 6; i++)
             {
-                var events = reader.Load("stream" + i, "foo");
+                var events = reader.LoadEventsForStream("foo", "stream" + i);
                 Assert.That(events.Length, Is.EqualTo(2));
             }
 

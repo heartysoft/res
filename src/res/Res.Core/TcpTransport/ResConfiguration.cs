@@ -6,9 +6,6 @@ namespace Res.Core.TcpTransport
     [XmlType("res")]
     public class ResConfiguration
     {
-        [XmlElement("endpoint")]
-        public string TcpEndpoint { get; set; }
-
         [XmlElement("connectionStringName")]
         public string ConnectionStringName { get; set; }
 
@@ -18,6 +15,12 @@ namespace Res.Core.TcpTransport
         public StorageBufferConfiguration Writer { get; set; }
         [XmlElement("queryEndpoint")]
         public QueryEndpointConfiguration QueryEndpoint { get; set; }
+
+        [XmlElement("queueEndpoint")]
+        public QueueEndpointConfiguration QueueEndpoint { get; set; }
+        
+        [XmlElement("publishEndpoint")]
+        public PublishEndpointConfiguration PublishEndpoint { get; set; }
     }
 
     public class StorageBufferConfiguration
@@ -38,5 +41,23 @@ namespace Res.Core.TcpTransport
         [XmlElement("bufferSize")]
         public int BufferSize { get; set; }
 
+    }
+
+    public class QueueEndpointConfiguration
+    {
+        [XmlElement("endpoint")]
+        public string Endpoint { get; set; }
+
+        [XmlElement("bufferSize")]
+        public int BufferSize { get; set; }
+    }
+
+    public class PublishEndpointConfiguration
+    {
+        [XmlElement("endpoint")]
+        public string Endpoint { get; set; }
+
+        [XmlElement("bufferSize")]
+        public int BufferSize { get; set; }
     }
 }

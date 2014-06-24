@@ -57,7 +57,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
     <Compile Include="Client\TcpClientTests.cs" />
     <Compile Include="StorageBuffering\StorageWriterTests.cs" />
     <Compile Include="Storage\CommitModel.cs" />
@@ -85,6 +84,10 @@
     <ProjectReference Include="..\Res.Core\Res.Core.csproj">
       <Project>{0F39083E-B7B7-4777-B7BE-CFCDC0F0F6DC}</Project>
       <Name>Res.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Res.Protocol\Res.Protocol.csproj">
+      <Project>{8EDFF7F6-FFFA-489D-AEFA-75DFAA58899B}</Project>
+      <Name>Res.Protocol</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

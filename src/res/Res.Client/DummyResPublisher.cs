@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace Res.Client
 {
-    public class DummyResClient : ResClient
+    public class DummyResPublisher : ResPublisher
     {
         public Task<CommitResponse> CommitAsync(string context, string stream, EventData[] events, long expectedVersion)
         {

@@ -40,9 +40,9 @@ namespace Res.Core.StorageBuffering
             return entry.Task;
         }
 
-        public EventInStorage[] Load(string streamId, string contextId, long fromVersion = 0)
+        public EventInStorage[] LoadEventsForStream(string contextId, string streamId, long fromVersion = 0, long? maxVersion = null)
         {
-            return _storage.LoadEvents(contextId, streamId, fromVersion);
+            return _storage.LoadEvents(contextId, streamId, fromVersion, maxVersion);
         }
 
         private void fetch(Entry[] entries)

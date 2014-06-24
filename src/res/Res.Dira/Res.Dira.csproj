@@ -82,6 +82,10 @@
       <Project>{3CB0B093-182C-4FBA-AB25-3FD728E402E6}</Project>
       <Name>Res.Client</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Res.Protocol\Res.Protocol.csproj">
+      <Project>{8EDFF7F6-FFFA-489D-AEFA-75DFAA58899B}</Project>
+      <Name>Res.Protocol</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />

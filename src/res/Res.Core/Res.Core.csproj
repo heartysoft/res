@@ -70,7 +70,7 @@
     <Compile Include="Storage\SqlQueueStorage.cs" />
     <Compile Include="TcpTransport\Commits\CommitContinuationContext.cs" />
     <Compile Include="TcpTransport\Commits\CommitResult.cs" />
-    <Compile Include="TcpTransport\Endpoints\CommitEndpoint.cs" />
+    <Compile Include="TcpTransport\Endpoints\PublishEndpoint.cs" />
     <Compile Include="TcpTransport\Commits\CommitHandler.cs" />
     <Compile Include="TcpTransport\Endpoints\QueueEndpoint.cs" />
     <Compile Include="TcpTransport\ErrorEntry.cs" />
@@ -86,6 +86,8 @@
     <Compile Include="TcpTransport\Endpoints\QueryEndpoint.cs" />
     <Compile Include="Storage\AcknowledgeQueue.cs" />
     <Compile Include="Storage\QueuedEvents.cs" />
+    <Compile Include="TcpTransport\Queries\LoadEventsByStreamHandler.cs" />
+    <Compile Include="TcpTransport\Queries\QueryEventsForStreamLoaded.cs" />
     <Compile Include="TcpTransport\Queues\QueuedMessagesFetched.cs" />
     <Compile Include="TcpTransport\Queues\AcknowledgeHandler.cs" />
     <Compile Include="Storage\QueueStorage.cs" />
@@ -102,10 +104,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Res.Client\Res.Client.csproj">
-      <Project>{3CB0B093-182C-4FBA-AB25-3FD728E402E6}</Project>
-      <Name>Res.Client</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Res.Protocol\Res.Protocol.csproj">
       <Project>{8EDFF7F6-FFFA-489D-AEFA-75DFAA58899B}</Project>
       <Name>Res.Protocol</Name>

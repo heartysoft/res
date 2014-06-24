@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using cmdR;
 using Res.Client;
+using Res.Protocol;
 
 namespace Res.Dira
 {
@@ -30,7 +31,7 @@ namespace Res.Dira
             Console.WriteLine("Hello...shall we try out the res server?");
 
             Console.WriteLine("Starting client engine for {0}...", endpoint);
-            var engine = new ResEngine();
+            var engine = new ResPublishEngine();
             engine.Start(endpoint);
 
             GlobalHack.SetEngine(engine);
@@ -49,16 +50,16 @@ namespace Res.Dira
 
     public static class GlobalHack
     {
-        static private ResEngine _engine;
+        static private ResPublishEngine _publishEngine;
 
-        public static void SetEngine(ResEngine engine)
+        public static void SetEngine(ResPublishEngine publishEngine)
         {
-            _engine = engine;
+            _publishEngine = publishEngine;
         }
 
-        public static ResClient GetClient()
+        public static ResPublisher GetClient()
         {
-            return _engine.CreateClient(TimeSpan.FromSeconds(10));
+            return _publishEngine.CreatePublisher(TimeSpan.FromSeconds(10));
         }
     }
 
@@ -84,11 +85,11 @@ namespace Res.Dira
 
     public class Appender
     {
-        private readonly ResClient _client;
+        private readonly ResPublisher _publisher;
 
-        public Appender(ResClient client)
+        public Appender(ResPublisher publisher)
         {
-            _client = client;
+            _publisher = publisher;
         }
 
         public void AppendEvents(int n)
@@ -122,7 +123,7 @@ namespace Res.Dira
                         {
                             try
                             {
-                                var task = _client.CommitAsync("res.dira", "test-stream", events, ExpectedVersion.Any,
+                                var task = _publisher.CommitAsync("res.dira", "test-stream", events, ExpectedVersion.Any,
                                     TimeSpan.FromSeconds(10));
                                 return task;
                             }
