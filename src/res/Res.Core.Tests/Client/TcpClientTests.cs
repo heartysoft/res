@@ -244,6 +244,22 @@ namespace Res.Core.Tests.Client
 
             Assert.AreEqual(0, queue1Events.Events.Length);
             Assert.AreEqual(0, queue2Events.Events.Length);
+
+            var event6Id = Guid.NewGuid();
+            var commit2 = publisher.CommitAsync("test-context", stream, new[]
+            {
+                new EventData("test", event6Id, "", "some body", DateTime.Now),
+            }, 6);
+
+            commit2.Wait();
+
+            queue1Events = queue1.Next(1, TimeSpan.FromDays(1), TimeSpan.FromSeconds(10)).Result;
+            queue2Events = queue2.Next(1, TimeSpan.FromDays(1), TimeSpan.FromSeconds(10)).Result;
+
+            Assert.AreEqual(1, queue1Events.Events.Length);
+            Assert.AreEqual(0, queue2Events.Events.Length);
+
+            Assert.AreEqual(event6Id, queue1Events.Events[0].EventId);
         }
 
         //[Test]
