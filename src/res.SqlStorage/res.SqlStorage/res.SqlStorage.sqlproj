@@ -69,7 +69,6 @@
     <PreDeploy Include="Scripts\CreateDatabase.sql" />
   </ItemGroup>
   <ItemGroup>
-    <Build Include="Schema Objects\dbo\Stored Procedures\SetSubscription.sql" />
     <Build Include="Schema Objects\dbo\Stored Procedures\Queues_Subscribe.sql" />
     <Build Include="Schema Objects\dbo\Stored Procedures\Queues_Subscribe_CreateIfNotExists.sql" />
     <Build Include="Schema Objects\dbo\Tables\Queues.sql" />
@@ -85,13 +84,8 @@
     <Build Include="Schema Objects\dbo\User Defined Types\EventRequestParameter.sql" />
     <Build Include="Schema Objects\dbo\Tables\EventWrappers.sql" />
     <Build Include="Schema Objects\dbo\Tables\Streams.sql" />
-    <Build Include="Schema Objects\dbo\Tables\Subscriptions.sql" />
     <Build Include="Schema Objects\dbo\Stored Procedures\AppendEvents.sql" />
-    <Build Include="Schema Objects\dbo\Stored Procedures\CreateSubscriptionIdempotent.sql" />
     <Build Include="Schema Objects\dbo\Stored Procedures\FetchEvent.sql" />
-    <Build Include="Schema Objects\dbo\Stored Procedures\FetchEventLinks.sql" />
-    <Build Include="Schema Objects\dbo\Stored Procedures\FetchEvents.sql" />
     <Build Include="Schema Objects\dbo\Stored Procedures\LoadEvents.sql" />
-    <Build Include="Schema Objects\dbo\Stored Procedures\ProgressSubscription.sql" />
   </ItemGroup>
 </Project>

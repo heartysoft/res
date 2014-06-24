@@ -54,6 +54,9 @@
     <Compile Include="DummyResClient.cs" />
     <Compile Include="EventData.cs" />
     <Compile Include="EventObject.cs" />
+    <Compile Include="Internal\Queries\Messages\QueryEventsForStreamRequest.cs" />
+    <Compile Include="Internal\Queries\Messages\QueryEventsForStreamResponse.cs" />
+    <Compile Include="Internal\Queries\QueryRequestAcceptor.cs" />
     <Compile Include="Internal\Queues\Messages\AcknowledgeQueueAndFetchNextRequest.cs" />
     <Compile Include="Internal\Queues\Messages\QueuedEventsResponse.cs" />
     <Compile Include="Internal\Queues\QueueRequestAcceptor.cs" />
