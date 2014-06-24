@@ -45,6 +45,7 @@ namespace Res.Client
             var subscribeToQueueRequest = new SubscribeToQueueRequest(_queueId, _subscriberId, _context, _filter, _startTime, allocationSize, (int)allocationTimeout.TotalMilliseconds);
             var events = await _acceptor.Subscribe(subscribeToQueueRequest, timeout);
             _allocationId = events.AllocationId;
+            _initial = false;
 
             return new QueuedEvents(events.QueueId, events.SubscriberId, events.Events, events.AllocationId, events.TimeOfResponse, this);
         }
@@ -56,7 +57,6 @@ namespace Res.Client
             var events = await _acceptor.AcknowledgeAndFetchNext(request, timeout);
 
             _allocationId = events.AllocationId;
-            _initial = false;
 
             return new QueuedEvents(events.QueueId, events.SubscriberId, events.Events, events.AllocationId, events.TimeOfResponse, this);
         }

@@ -20,7 +20,4 @@ BEGIN
 
 END
 
-
-
-
 GO

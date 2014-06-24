@@ -190,6 +190,57 @@ namespace Res.Core.Tests.Client
             Assert.AreEqual(event3Id, events.Events[2].EventId);
         }
 
+        [Test]
+        public void ShouldGetQueuedMessages()
+        {
+            var publisher = _harness.CreatePublisher();
+            var queueEngine = _harness.QueueEngine;
+
+            var stream = Guid.NewGuid().ToString();
+
+            var event1Id = Guid.NewGuid();
+            var event2Id = Guid.NewGuid();
+            var event3Id = Guid.NewGuid();
+            var event4Id = Guid.NewGuid();
+            var event5Id = Guid.NewGuid();
+
+
+            var commit = publisher.CommitAsync("test-context", stream, new[]
+            {
+                new EventData("test", event1Id, "", "some body", DateTime.Now),
+                new EventData("test1", event2Id, "", "something more", DateTime.Now),
+                new EventData("test", event3Id, "", "a bit more", DateTime.Now), 
+                new EventData("test", event4Id, "", "a bit more", DateTime.Now), 
+                new EventData("test", event5Id, "", "a bit more", DateTime.Now) 
+            }, ExpectedVersion.OnlyNew);
+
+            commit.Wait();
+
+            var queue1 = queueEngine.Declare("test-queue", "queue1", "test-context", "*", DateTime.Now.AddDays(-1));
+            var queue1Events = queue1.Next(2, TimeSpan.FromDays(1), TimeSpan.FromSeconds(10)).Result;
+
+            var queue2 = queueEngine.Declare("test-queue", "queue2", "test-context", "*", DateTime.Now.AddDays(-1));
+            var queue2Events = queue2.Next(1, TimeSpan.FromDays(1), TimeSpan.FromSeconds(10)).Result;
+
+            Assert.AreEqual(2, queue1Events.Events.Length);
+            Assert.AreEqual(1, queue2Events.Events.Length);
+
+            Assert.AreEqual(event1Id, queue1Events.Events[0].EventId);
+            Assert.AreEqual(event2Id, queue1Events.Events[1].EventId);
+
+            Assert.AreEqual(event3Id, queue2Events.Events[0].EventId);
+
+            queue1Events = queue1.Next(1, TimeSpan.FromDays(1), TimeSpan.FromSeconds(10)).Result;
+            queue2Events = queue2.Next(1, TimeSpan.FromDays(1), TimeSpan.FromSeconds(10)).Result;
+
+            Assert.AreEqual(1, queue1Events.Events.Length);
+            Assert.AreEqual(1, queue2Events.Events.Length);
+
+            Assert.AreEqual(event4Id, queue1Events.Events[0].EventId);
+            Assert.AreEqual(event5Id, queue2Events.Events[0].EventId);
+
+        }
+
         //[Test]
         //public void ShouldSubscribe()
         //{
@@ -331,10 +382,12 @@ namespace Res.Core.Tests.Client
     {
         public static string Endpoint = ConfigurationManager.AppSettings["resPublishEndpoint"];
         public static string QueryEndpoint = ConfigurationManager.AppSettings["resQueryEndpoint"];
+        public static string QueueEndpoint = ConfigurationManager.AppSettings["resQueueEndpoint"];
         public static string ResExePath = ConfigurationManager.AppSettings["resExePath"];
         private Process _process;
         private ResPublishEngine _publishEngine;
         private ResQueryEngine _queryEngine;
+        private ResQueueEngine _queueEngine;
 
         public void Start()
         {          
@@ -346,6 +399,7 @@ namespace Res.Core.Tests.Client
             _publishEngine.Start(Endpoint);
 
             _queryEngine = new ResQueryEngine(QueryEndpoint);
+            _queueEngine = new ResQueueEngine(QueueEndpoint);
         }
 
         public ResPublisher CreatePublisher()
@@ -361,9 +415,12 @@ namespace Res.Core.Tests.Client
         public void Stop()
         {
             Console.WriteLine("Disposing.");
+            _queueEngine.Dispose();
             _queryEngine.Dispose();
             _publishEngine.Dispose();
             _process.Kill();
         }
+
+        public ResQueueEngine QueueEngine { get { return _queueEngine; } }
     }
 }
