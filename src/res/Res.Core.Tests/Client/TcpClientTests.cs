@@ -239,6 +239,11 @@ namespace Res.Core.Tests.Client
             Assert.AreEqual(event4Id, queue1Events.Events[0].EventId);
             Assert.AreEqual(event5Id, queue2Events.Events[0].EventId);
 
+            queue1Events = queue1.Next(1, TimeSpan.FromDays(1), TimeSpan.FromSeconds(10)).Result;
+            queue2Events = queue2.Next(1, TimeSpan.FromDays(1), TimeSpan.FromSeconds(10)).Result;
+
+            Assert.AreEqual(0, queue1Events.Events.Length);
+            Assert.AreEqual(0, queue2Events.Events.Length);
         }
 
         //[Test]
