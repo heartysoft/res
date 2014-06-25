@@ -16,17 +16,22 @@ namespace Res.Core.Tests.Storage
             {
                 sqlConnection.Open();
                 
-                using (var cmd = new SqlCommand("truncate table Subscriptions;", sqlConnection))
-                {
-                    cmd.ExecuteNonQuery();
-                }
-                
                 using (var cmd = new SqlCommand("truncate table EventWrappers;", sqlConnection))
                 {
                     cmd.ExecuteNonQuery();
                 }
 
                 using (var cmd = new SqlCommand("truncate table Streams;", sqlConnection))
+                {
+                    cmd.ExecuteNonQuery();
+                }
+
+                using (var cmd = new SqlCommand("truncate table Queues;", sqlConnection))
+                {
+                    cmd.ExecuteNonQuery();
+                }
+
+                using (var cmd = new SqlCommand("truncate table QueueAllocations;", sqlConnection))
                 {
                     cmd.ExecuteNonQuery();
                 }

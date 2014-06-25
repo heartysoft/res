@@ -16,6 +16,7 @@ properties {
 }
 
 task default -depends local
+task deploy-server -depends package-server, install-server
 
 task package -depends package-server, package-client {    
     echo "Server and client packaged successfully. Bye bye."
@@ -59,18 +60,24 @@ task prepare -depends compile {
     }
 }
 
-task tokenize {
+task tokenize -depends tokenize-server, tokenize-tests
+
+task tokenize-server {
     $env_dir = "$base_dir\env\$env"
-    #Res server
+    
     exec {
         & "$tools_dir\config-transform\config-transform.exe" "$out_dir\res\res.exe.config" "$env_dir\res\App.$config.config"
     }
+}
+
+task tokenize-tests {
+    $env_dir = "$base_dir\env\$env"
     
-    #Tests       
     exec {
         & "$tools_dir\config-transform\config-transform.exe" "$test_dir\res.core.tests\res.core.tests.dll.config" "$env_dir\res.tests\App.$config.config"
     }
 }
+
 
 task test {    
     $testassemblies = get-childitem "$test_dir\res.core.tests" -recurse -include *tests*.dll
@@ -80,7 +87,7 @@ task test {
     }
 }
 
-task package-server -depends tokenize {  
+task package-server -depends tokenize-server {  
     mkdir "$package_dir\res" -ErrorAction SilentlyContinue  | out-null
     echo "Target: $package_dir\res\"
     
@@ -89,7 +96,7 @@ task package-server -depends tokenize {
     }
     
     exec {
-        copy-item "$base_dir\env\$env\res-server-params.pson" "$package_dir\"
+        copy-item "$base_dir\env\$env\res\res-server-params.pson" "$package_dir\"
     }
 }
 

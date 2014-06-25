@@ -21,11 +21,6 @@ namespace Res.Core.Tests.Storage.Queues
             {
                 sqlConnection.Open();
 
-                using (var cmd = new SqlCommand("truncate table Subscriptions;", sqlConnection))
-                {
-                    cmd.ExecuteNonQuery();
-                }
-
                 using (var cmd = new SqlCommand("truncate table EventWrappers;", sqlConnection))
                 {
                     cmd.ExecuteNonQuery();
