@@ -14,7 +14,7 @@ namespace Res.Client
 
         public ResQueryEngine(string endpoint)
         {
-            _log.InfoFormat("[ResQueryEngine] Starting at {0}...", endpoint);
+            _log.DebugFormat("[ResQueryEngine] Starting at {0}...", endpoint);
 
             const int bufferSize = 11;
 
@@ -28,7 +28,7 @@ namespace Res.Client
             _processor = new RequestProcessor(gatewayFactory, buffer);
             _processor.Start();
 
-            _log.Info("[ResQueryEngine] Started.");
+            _log.Debug("[ResQueryEngine] Started.");
         }
 
         public ResQueryClient CreateClient(TimeSpan defaultTimeout)
@@ -47,9 +47,9 @@ namespace Res.Client
             if (!disposing)
                 return;
 
-            _log.Info("[ResQueryEngine] Stopping...");
+            _log.Debug("[ResQueryEngine] Stopping...");
             _processor.Stop();
-            _log.Info("[ResQueryEngine] Processor stopped. Bye bye.");
+            _log.Debug("[ResQueryEngine] Processor stopped. Bye bye.");
         }
     }
 

@@ -21,7 +21,7 @@ namespace Res.Client.Internal
 
         public SingleThreadedZeroMqGateway(string endpoint, TimeSpan reaperInterval)
         {
-            Log.InfoFormat("[STZMG] Starting. Thread Id: {0}", Thread.CurrentThread.ManagedThreadId);
+            Log.DebugFormat("[STZMG] Starting. Thread Id: {0}", Thread.CurrentThread.ManagedThreadId);
             _ctx = NetMQContext.Create();
             _endpoint = endpoint;
             _reaperInterval = reaperInterval;
@@ -53,7 +53,7 @@ namespace Res.Client.Internal
                 foreach (var callback in _callbacks.Values)
                     if (callback.ShouldDrop())
                     {
-                        Log.Info("[STZMG] Reaping dead request.");
+                        Log.Debug("[STZMG] Reaping dead request.");
                         callback.Drop();
                         toRemove.Add(callback.RequestId);
                     }
@@ -71,7 +71,7 @@ namespace Res.Client.Internal
             try
             {
                 var msg = e.Socket.ReceiveMessage();
-                Log.InfoFormat("[STZMG] Received a message. Thread Id: {0}", Thread.CurrentThread.ManagedThreadId);
+                Log.DebugFormat("[STZMG] Received a message. Thread Id: {0}", Thread.CurrentThread.ManagedThreadId);
 
                 //address frames
                 var count = msg.FrameCount;
@@ -84,7 +84,7 @@ namespace Res.Client.Internal
 
                 if (msg.FrameCount == 0)
                 {
-                    Log.Warn("[STZMG] Received a malformed message with not empty frames (signalling end of routing frames.");
+                    Log.Warn("[STZMG] Received a malformed message with non-empty frames (signalling end of routing frames.");
                     return;
                 }
 
@@ -102,7 +102,7 @@ namespace Res.Client.Internal
                 }
                 else
                 {
-                    Log.Warn(string.Format("Request Id {0} callback not found. This could be due to receiving a response after timeout has passed.", requestId));
+                    Log.Debug(string.Format("Request Id {0} callback not found. This could be due to receiving a response after timeout has passed.", requestId));
                 }
             }
             catch (Exception ex)
@@ -131,7 +131,7 @@ namespace Res.Client.Internal
         {
             if (_socket != null)
             {
-                Log.InfoFormat("[STZMG] Disposing old socket. Thread Id: {0}", Thread.CurrentThread.ManagedThreadId);
+                Log.DebugFormat("[STZMG] Disposing old socket. Thread Id: {0}", Thread.CurrentThread.ManagedThreadId);
                 _socket.ReceiveReady -= socket_ReceiveReady;
                 _socket.Options.Linger = TimeSpan.FromSeconds(0);
                 _socket.Dispose();
@@ -142,7 +142,7 @@ namespace Res.Client.Internal
 
             while (true)
             {
-                Log.InfoFormat("[STZMG] Creating new socket. Thread Id: {0}", Thread.CurrentThread.ManagedThreadId);
+                Log.DebugFormat("[STZMG] Creating new socket. Thread Id: {0}", Thread.CurrentThread.ManagedThreadId);
                 var socket = _ctx.CreateDealerSocket();
                 socket.ReceiveReady += socket_ReceiveReady;
                 
@@ -169,9 +169,9 @@ namespace Res.Client.Internal
                 _socket.ReceiveReady -= socket_ReceiveReady;
                 _socket.Options.Linger = TimeSpan.FromSeconds(0);
                 _socket.Dispose();
-                Log.InfoFormat("[STZMG] Socket disposed. Thread Id: {0}", Thread.CurrentThread.ManagedThreadId);
+                Log.DebugFormat("[STZMG] Socket disposed. Thread Id: {0}", Thread.CurrentThread.ManagedThreadId);
                 _ctx.Dispose();
-                Log.InfoFormat("[STZMG] Context disposed. Thread Id: {0}", Thread.CurrentThread.ManagedThreadId);
+                Log.DebugFormat("[STZMG] Context disposed. Thread Id: {0}", Thread.CurrentThread.ManagedThreadId);
             }
         }
 

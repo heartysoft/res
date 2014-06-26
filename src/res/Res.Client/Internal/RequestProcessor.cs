@@ -29,7 +29,7 @@ namespace Res.Client.Internal
                 if (!_started)
                 {
                     _token = new CancellationTokenSource();
-                    Log.Info("[RequestProcessor] Starting up.");
+                    Log.Debug("[RequestProcessor] Starting up.");
                     _started = true;
                     _task = Task.Factory.StartNew(() => run(_token.Token), _token.Token, TaskCreationOptions.LongRunning,
                         TaskScheduler.Default);
@@ -45,7 +45,7 @@ namespace Res.Client.Internal
 
             try
             {
-                Log.InfoFormat("[RequestProcessor] Entering mainloop. Thread Id: {0}", Thread.CurrentThread.ManagedThreadId);
+                Log.DebugFormat("[RequestProcessor] Entering mainloop. Thread Id: {0}", Thread.CurrentThread.ManagedThreadId);
 
                 while (token.IsCancellationRequested == false)
                 {
@@ -70,17 +70,17 @@ namespace Res.Client.Internal
                         spin.SpinOnce();
                 }
 
-                Log.InfoFormat("[RequestProcessor] Exiting mainloop. Thread ID: {0}", Thread.CurrentThread.ManagedThreadId);
+                Log.DebugFormat("[RequestProcessor] Exiting mainloop. Thread ID: {0}", Thread.CurrentThread.ManagedThreadId);
             }
             catch (Exception e)
             {
-                Log.InfoFormat("[RequestProcessor] Error in mainloop. Thread ID: {0}", e, Thread.CurrentThread.ManagedThreadId);
+                Log.DebugFormat("[RequestProcessor] Error in mainloop. Thread ID: {0}", e, Thread.CurrentThread.ManagedThreadId);
             }
             finally
             {
-                Log.InfoFormat("[RequestProcessor] Shutting down gateway. Thread ID: {0}", Thread.CurrentThread.ManagedThreadId);
+                Log.DebugFormat("[RequestProcessor] Shutting down gateway. Thread ID: {0}", Thread.CurrentThread.ManagedThreadId);
                 gateway.Shutdown();
-                Log.InfoFormat("[RequestProcessor] Gateway shutdown. Thread ID: {0}", Thread.CurrentThread.ManagedThreadId);
+                Log.DebugFormat("[RequestProcessor] Gateway shutdown. Thread ID: {0}", Thread.CurrentThread.ManagedThreadId);
             }
         }
 

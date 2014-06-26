@@ -26,7 +26,7 @@ namespace Res.Client
                 return;
             }
 
-            _log.Info("[ResPublishEngine] Starting...");
+            _log.Debug("[ResPublishEngine] Starting...");
 
             const int bufferSize = 11;
 
@@ -40,7 +40,7 @@ namespace Res.Client
             _processor = new RequestProcessor(gatewayFactory, buffer);
             _processor.Start();
             
-            _log.Info("[ResPublishEngine] Started.");
+            _log.Debug("[ResPublishEngine] Started.");
         }
 
         public ResPublisher CreatePublisher(TimeSpan defaultTimeout)
@@ -68,13 +68,13 @@ namespace Res.Client
 
             if (_isDisabled)
             {
-                _log.Info("[ResPublishEngine] Created as disabled. Disposing.");
+                _log.Debug("[ResPublishEngine] Created as disabled. Disposing.");
                 return;
             }
 
-            _log.Info("[ResPublishEngine] Stopping...");
+            _log.Debug("[ResPublishEngine] Stopping...");
             _processor.Stop();
-            _log.Info("[ResPublishEngine] Processor stopped. Bye bye.");
+            _log.Debug("[ResPublishEngine] Processor stopped. Bye bye.");
         }
 
         public void Dispose()
