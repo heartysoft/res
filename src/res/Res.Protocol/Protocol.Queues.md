@@ -7,7 +7,7 @@ Notably, requests start with:
 2. Empty Frame
 3. Protocol
 4. Command
-5. RequestId
+5. RequestId 
 
 Responses are of the form:
 

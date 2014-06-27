@@ -73,8 +73,6 @@ task version -depends clean {
 }
 
 task compile -depends version {
-    echo $config
-    echo $res_artefacts_dir
 	try{
 		exec { msbuild $res_dir\Res.sln /t:Clean /t:Build /p:Configuration=$config /v:q /nologo }
 	} finally{
@@ -149,6 +147,58 @@ task package-client -depends tokenize {
         copy-item "$out_dir\res.client\*" "$package_dir\res.client\"
     }
 
+}
+
+task nuget-client -depends build-client-nuget, publish-client-nuget
+
+task build-client-nuget -depends compile {
+	$commitHashAndTimestamp = Get-GitCommitHashAndTimestamp
+    $commitHash = Get-GitCommitHash
+    $timestamp = Get-GitTimestamp
+    $branchName = Get-GitBranchOrTag
+	
+	$assemblyInfos = Get-ChildItem -Path $base_dir -Recurse -Filter AssemblyInfo.cs
+
+	$assemblyInfo = gc "$base_dir\AssemblyInfo.pson" | Out-String | iex
+	$version = $assemblyInfo.Version
+	#$productName = $assemblyInfo.ProductName
+	$companyName = $assemblyInfo.CompanyName
+	$copyright = $assemblyInfo.Copyright
+
+	try {
+       foreach ($assemblyInfo in $assemblyInfos) {
+           $path = Resolve-Path $assemblyInfo.FullName -Relative
+           Write-Host "Patching $path with product information."
+           Patch-AssemblyInfo $path $Version $Version $branchName $commitHashAndTimestamp $companyName $copyright
+       }         
+    } catch {
+        foreach ($assemblyInfo in $assemblyInfos) {
+            $path = Resolve-Path $assemblyInfo.FullName -Relative
+            Write-Host "Reverting $path to original state."
+            & { git checkout --quiet $path }
+        }
+    }
+	
+	try{
+		Push-Location "$res_dir\Res.Client"
+		#exec { & "$res_dir\.nuget\NuGet.exe" "spec"}
+		exec { & "$res_dir\.nuget\nuget.exe" pack Res.Client.csproj -IncludeReferencedProjects}
+	} finally{
+		Pop-Location
+		$assemblyInfos = Get-ChildItem -Path $base_dir -Recurse -Filter AssemblyInfo.cs
+		foreach ($assemblyInfo in $assemblyInfos) {
+            $path = Resolve-Path $assemblyInfo.FullName -Relative
+            Write-Verbose "Reverting $path to original state."
+            & { git checkout --quiet $path }
+        }
+	}	
+}
+
+task publish-client-nuget -depends build-client-nuget {
+	$pkgPath = Get-ChildItem -Path "$res_dir\Res.Client" -Filter "*.nupkg" | select-object -first 1
+	echo $pkgPath
+	exec { & "$res_dir\.nuget\nuget.exe" push "$res_dir\Res.Client\$pkgPath" }
+	ri "$res_dir\Res.Client\$pkgPath"
 }
 
 task install-server {

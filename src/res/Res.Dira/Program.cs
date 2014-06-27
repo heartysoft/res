@@ -31,8 +31,7 @@ namespace Res.Dira
             Console.WriteLine("Hello...shall we try out the res server?");
 
             Console.WriteLine("Starting client engine for {0}...", endpoint);
-            var engine = new ResPublishEngine();
-            engine.Start(endpoint);
+            var engine = new ResPublishEngine(endpoint);
 
             GlobalHack.SetEngine(engine);
             

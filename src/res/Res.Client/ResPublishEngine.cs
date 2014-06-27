@@ -13,12 +13,13 @@ namespace Res.Client
         private readonly ILog _log = LogManager.GetCurrentClassLogger();
 
         private RequestProcessor _processor;
-        public ResPublishEngine(bool isDisabled = false)
+        public ResPublishEngine(string endpoint, bool isDisabled = false)
         {
             _isDisabled = isDisabled;
+            start(endpoint);
         }
 
-        public void Start(string endpoint)
+        private void start(string endpoint)
         {
             if (_isDisabled)
             {

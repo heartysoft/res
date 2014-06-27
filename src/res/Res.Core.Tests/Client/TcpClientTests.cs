@@ -411,8 +411,7 @@ namespace Res.Core.Tests.Client
 
             _process = Process.Start(start);
             
-            _publishEngine = new ResPublishEngine();
-            _publishEngine.Start(Endpoint);
+            _publishEngine = new ResPublishEngine(Endpoint);
 
             _queryEngine = new ResQueryEngine(QueryEndpoint);
             _queueEngine = new ResQueueEngine(QueueEndpoint);

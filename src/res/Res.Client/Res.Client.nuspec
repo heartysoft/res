@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Res.Client</id>
+    <version>$version$</version>
+    <title>Res.Client</title>
+    <authors>ashic</authors>
+    <owners>ashic</owners>
+    <licenseUrl>https://github.com/heartysoft/res/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/heartysoft/res</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>$description$</description>
+    <copyright>Copyright 2014 Heartysoft Solutions Limited</copyright>
+    <tags>res event-sourcing event-store</tags>
+  </metadata>
+</package>
