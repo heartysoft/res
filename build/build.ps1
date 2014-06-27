@@ -60,7 +60,7 @@ task version -depends clean {
 	 try {
         foreach ($assemblyInfo in $assemblyInfos) {
             $path = Resolve-Path $assemblyInfo.FullName -Relative
-            Write-Host "Patching $path with product information."
+            #Write-Host "Patching $path with product information."
             Patch-AssemblyInfo $path $Version $Version $branchName $commitHashAndTimestamp $companyName $copyright
         }         
     } catch {
@@ -168,7 +168,7 @@ task build-client-nuget -depends compile {
 	try {
        foreach ($assemblyInfo in $assemblyInfos) {
            $path = Resolve-Path $assemblyInfo.FullName -Relative
-           Write-Host "Patching $path with product information."
+           #Write-Host "Patching $path with product information."
            Patch-AssemblyInfo $path $Version $Version $branchName $commitHashAndTimestamp $companyName $copyright
        }         
     } catch {
@@ -188,7 +188,7 @@ task build-client-nuget -depends compile {
 		$assemblyInfos = Get-ChildItem -Path $base_dir -Recurse -Filter AssemblyInfo.cs
 		foreach ($assemblyInfo in $assemblyInfos) {
             $path = Resolve-Path $assemblyInfo.FullName -Relative
-            Write-Verbose "Reverting $path to original state."
+            #Write-Verbose "Reverting $path to original state."
             & { git checkout --quiet $path }
         }
 	}	
@@ -196,7 +196,6 @@ task build-client-nuget -depends compile {
 
 task publish-client-nuget -depends build-client-nuget {
 	$pkgPath = Get-ChildItem -Path "$res_dir\Res.Client" -Filter "*.nupkg" | select-object -first 1
-	echo $pkgPath
 	exec { & "$res_dir\.nuget\nuget.exe" push "$res_dir\Res.Client\$pkgPath" }
 	ri "$res_dir\Res.Client\$pkgPath"
 }
