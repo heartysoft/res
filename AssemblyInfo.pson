@@ -1,0 +1,6 @@
+@{
+    ProductName = 'Res';
+    CompanyName = 'Heartysoft Solutions Limited';
+    Copyright = "Copyright © 2014 Heartysoft Solutions Limited";
+    Version = "0.2.0";
+}

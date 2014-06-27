@@ -1,4 +1,6 @@
 $framework = '4.0'
+Include .\version.ps1
+
 properties {
     $config= if($config -eq $null) {'Debug' } else {$config}
     $base_dir = resolve-path .\..
@@ -17,6 +19,7 @@ properties {
 
 task default -depends local
 task deploy-server -depends package-server, install-server
+
 
 task package -depends package-server, package-client {    
     echo "Server and client packaged successfully. Bye bye."
@@ -40,10 +43,48 @@ task clean {
     mkdir "$package_dir" -ErrorAction SilentlyContinue  | out-null
 }
 
-task compile -depends clean {
+task version -depends clean {
+	 $commitHashAndTimestamp = Get-GitCommitHashAndTimestamp
+     $commitHash = Get-GitCommitHash
+     $timestamp = Get-GitTimestamp
+     $branchName = Get-GitBranchOrTag
+	 
+	 $assemblyInfos = Get-ChildItem -Path $base_dir -Recurse -Filter AssemblyInfo.cs
+
+	 $assemblyInfo = gc "$base_dir\AssemblyInfo.pson" | Out-String | iex
+	 $version = $assemblyInfo.Version
+	 #$productName = $assemblyInfo.ProductName
+	 $companyName = $assemblyInfo.CompanyName
+	 $copyright = $assemblyInfo.Copyright
+
+	 try {
+        foreach ($assemblyInfo in $assemblyInfos) {
+            $path = Resolve-Path $assemblyInfo.FullName -Relative
+            Write-Host "Patching $path with product information."
+            Patch-AssemblyInfo $path $Version $Version $branchName $commitHashAndTimestamp $companyName $copyright
+        }         
+    } catch {
+        foreach ($assemblyInfo in $assemblyInfos) {
+            $path = Resolve-Path $assemblyInfo.FullName -Relative
+            Write-Host "Reverting $path to original state."
+            & { git checkout --quiet $path }
+        }
+    }	
+}
+
+task compile -depends version {
     echo $config
     echo $res_artefacts_dir
-    exec { msbuild $res_dir\Res.sln /t:Clean /t:Build /p:Configuration=$config /v:q /nologo }
+	try{
+		exec { msbuild $res_dir\Res.sln /t:Clean /t:Build /p:Configuration=$config /v:q /nologo }
+	} finally{
+		$assemblyInfos = Get-ChildItem -Path $base_dir -Recurse -Filter AssemblyInfo.cs
+		foreach ($assemblyInfo in $assemblyInfos) {
+            $path = Resolve-Path $assemblyInfo.FullName -Relative
+            Write-Verbose "Reverting $path to original state."
+            & { git checkout --quiet $path }
+        }
+	}
 }
 
 task prepare -depends compile {       
