@@ -28,7 +28,6 @@ namespace Res.Core.TcpTransport.NetworkIO
             Log.Info("[Transceiver] Starting up.");
 
             var gateway = _gatewayFactory();
-            var spin = new SpinWait();
 
             while (token.IsCancellationRequested == false)
             {
@@ -38,7 +37,9 @@ namespace Res.Core.TcpTransport.NetworkIO
                     var newRequest = receiveMessage(gateway);
 
                     if (!resultSent && !newRequest)
-                        spin.SpinOnce();
+                    {
+                        Thread.Sleep(10);
+                    }
                 }
                 catch (OperationCanceledException)
                 {
