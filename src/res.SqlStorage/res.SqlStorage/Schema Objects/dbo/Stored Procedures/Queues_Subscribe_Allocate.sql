@@ -48,7 +48,7 @@ AS
 				SET @ExpiresAt = DateAdd(ms, @AllocationTimeInMilliseconds, @Now)
 
 				UPDATE Queues SET NextMarker = (@EndMark + 1)
-					WHERE @QueueId = @QueueId
+					WHERE QueueId = @QueueId
 
 				INSERT INTO QueueAllocations (QueueId, SubscriberId, ExpiresAt, StartMarker, EndMarker)
 					VALUES (@QueueId, @SubscriberId, @ExpiresAt, @StartMark, @EndMark)
