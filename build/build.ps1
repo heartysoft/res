@@ -107,6 +107,12 @@ task tokenize-server {
     exec {
         & "$tools_dir\config-transform\config-transform.exe" "$out_dir\res\res.exe.config" "$env_dir\res\App.$config.config"
     }
+
+    if(test-path ("$env_dir\res\Nlog.config")) {
+		exec {
+        	& "$tools_dir\config-transform\config-transform.exe" "$out_dir\res\Nlog.config" "$env_dir\res\Nlog.config"
+    	}    
+    }
 }
 
 task tokenize-tests {
