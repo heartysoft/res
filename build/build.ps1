@@ -19,7 +19,7 @@ properties {
 
 task default -depends local
 task deploy-server -depends package-server, install-server
-
+ 
 
 task package -depends package-server, package-client {    
     echo "Server and client packaged successfully. Bye bye."
