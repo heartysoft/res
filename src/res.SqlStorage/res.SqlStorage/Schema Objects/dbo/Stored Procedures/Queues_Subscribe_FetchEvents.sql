@@ -6,9 +6,8 @@ AS
 			on qa.QueueId = qs.QueueId
 		inner join EventWrappers ew on	
 			ew.ContextName = qs.Context AND
-			ew.GlobalSequence BETWEEN qa.StartMarker AND 
-			qa.EndMarker AND
-			qs.Filter = '*' OR ew.StreamId LIKE (qs.Filter + '%')
+			(ew.GlobalSequence BETWEEN qa.StartMarker AND qa.EndMarker) AND
+			(qs.Filter = '*' OR ew.StreamId LIKE (qs.Filter + '%'))
 	WHERE
 		qa.AllocationId = @AllocationId
 	Order By ew.TimeStamp
