@@ -133,8 +133,32 @@ namespace Res.Dira
                         }
                     }).ToList();
 
-            Task.WhenAll(tasks).Wait();
+            try
+            {
+                Task.WhenAll(tasks).Wait(); 
+            }
+            catch (AggregateException e)
+            {
+                var sb = new StringBuilder();
+                foreach (var ex in e.InnerExceptions)
+                {
+                    sb.AppendLine("===================");
+                    sb.AppendLine(ex.Message);
+                    sb.AppendLine("-------------------");
+                    sb.AppendLine(ex.ToString());
+                }
 
+                throw new DiraExecutionException(sb.ToString());
+            }
+
+        }
+
+        private class DiraExecutionException : Exception
+        {
+            public DiraExecutionException(string message)
+                : base(message)
+            {
+            }
         }
     }
 }
