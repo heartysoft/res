@@ -58,7 +58,7 @@ namespace Res.Dira
 
         public static ResPublisher GetClient()
         {
-            return _publishEngine.CreatePublisher(TimeSpan.FromSeconds(10));
+            return _publishEngine.CreateRawPublisher(TimeSpan.FromSeconds(10));
         }
     }
 

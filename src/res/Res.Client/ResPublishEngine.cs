@@ -44,7 +44,7 @@ namespace Res.Client
             _log.Debug("[ResPublishEngine] Started.");
         }
 
-        public ResPublisher CreatePublisher(TimeSpan defaultTimeout)
+        public ResPublisher CreateRawPublisher(TimeSpan defaultTimeout)
         {
             if(_isDisabled)
                 return new DummyResPublisher();
@@ -52,12 +52,12 @@ namespace Res.Client
             return new ThreadsafeResPublisher(_acceptor, defaultTimeout);
         }
 
-        public ResClientEventPublisher CreatePublisher(string context, TimeSpan defaultTimeout, TypeTagResolver typeTagResolver, Func<object, string> serialiser)
+        public ResClientEventPublisher CreateEventPublisher(string context, TimeSpan defaultTimeout, TypeTagResolver typeTagResolver, Func<object, string> serialiser)
         {
-            return CreatePublisher(context, CreatePublisher(defaultTimeout), typeTagResolver, serialiser);
+            return CreateEventPublisher(context, CreateRawPublisher(defaultTimeout), typeTagResolver, serialiser);
         }
 
-        public ResClientEventPublisher CreatePublisher(string context, ResPublisher publisher, TypeTagResolver typeTagResolver, Func<object, string> serialiser)
+        public ResClientEventPublisher CreateEventPublisher(string context, ResPublisher publisher, TypeTagResolver typeTagResolver, Func<object, string> serialiser)
         {
             return new ResClientEventPublisher(context, publisher, typeTagResolver, serialiser);
         }

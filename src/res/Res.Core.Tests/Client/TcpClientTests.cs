@@ -419,7 +419,7 @@ namespace Res.Core.Tests.Client
 
         public ResPublisher CreatePublisher()
         {
-            return _publishEngine.CreatePublisher(TimeSpan.FromSeconds(10));      
+            return _publishEngine.CreateRawPublisher(TimeSpan.FromSeconds(10));      
         }
 
         public ResQueryClient CreateQueryClient()
