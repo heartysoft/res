@@ -40,7 +40,10 @@ AS
 						on ew.ContextName = qs.Context
 						AND (qs.Filter = '*' OR ew.StreamId LIKE (qs.Filter + '%'))
 					WHERE
-						ew.GlobalSequence >= qs.NextMarker) AS T
+						ew.GlobalSequence >= qs.NextMarker
+						AND
+						qs.QueueId = @QueueId
+						) AS T
 		
 			IF @StartMark IS NULL -- No events for new allocation. Do Nothing.
 				RETURN 0
