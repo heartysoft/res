@@ -105,6 +105,24 @@ namespace Res.Core.Tests.Client
         }
 
         [Test]
+        [Ignore]
+        public void ShouldCommitRawEventWithNullHeader()
+        {
+            var client = _harness.CreatePublisher();
+            var commit = client.CommitAsync("test-context", Guid.NewGuid().ToString(), new[]
+            {
+                new EventData("test", Guid.NewGuid(), null, "some body", DateTime.Now),
+                new EventData("test1", Guid.NewGuid(), "", "something more", DateTime.Now),
+                new EventData("test", Guid.NewGuid(), null, "a bit more", DateTime.Now) 
+            }, ExpectedVersion.OnlyNew);
+
+
+            var task = Task.WhenAny(commit, Task.Delay(2000)).GetAwaiter().GetResult();
+
+            Assert.AreEqual(commit, task);
+        }
+
+        [Test]
         public void ConflictingWritesShouldFail()
         {
             var client = _harness.CreatePublisher();
