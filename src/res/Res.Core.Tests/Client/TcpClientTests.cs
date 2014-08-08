@@ -105,7 +105,6 @@ namespace Res.Core.Tests.Client
         }
 
         [Test]
-        [Ignore]
         public void ShouldCommitRawEventWithNullHeader()
         {
             var client = _harness.CreatePublisher();

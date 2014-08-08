@@ -40,9 +40,9 @@ namespace Res.Client.Internal.Commits.Messages
                 msg.Append(e.EventId.ToByteArray());
                 var timestamp = e.Timestamp.ToBinary().ToString(CultureInfo.InvariantCulture);
                 msg.Append(timestamp);
-                msg.Append(e.TypeTag);
-                msg.Append(e.Headers);
-                msg.Append(e.Body);
+                msg.Append(e.TypeTag ?? string.Empty);
+                msg.Append(e.Headers ?? string.Empty);
+                msg.Append(e.Body ?? string.Empty);
             }
 
             socket.SendMessage(msg);
