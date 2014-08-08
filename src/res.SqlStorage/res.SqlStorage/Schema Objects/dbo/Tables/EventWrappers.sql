@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[EventWrappers](
 	[EventId] [uniqueidentifier] NOT NULL,
-	[StreamId] [nvarchar](50) NOT NULL,
+	[StreamId] [nvarchar](256) NOT NULL,
 	[ContextName] [nvarchar](50) NOT NULL,
 	[Sequence] [bigint] NOT NULL,
 	[GlobalSequence] BIGINT NOT NULL IDENTITY(-9223372036854775808, 1),

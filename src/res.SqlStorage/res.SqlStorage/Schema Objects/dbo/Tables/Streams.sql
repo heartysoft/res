@@ -1,5 +1,5 @@
 ﻿CREATE TABLE [dbo].[Streams](
-	[StreamID] [nvarchar](50) NOT NULL,
+	[StreamID] [nvarchar](256) NOT NULL,
 	[CurrentSequence] [bigint] NOT NULL,
 	[Context] [nvarchar](50) NOT NULL,
  CONSTRAINT [PK_Streams_1] PRIMARY KEY CLUSTERED 

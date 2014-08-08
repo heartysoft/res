@@ -1,6 +1,6 @@
 ﻿CREATE TYPE [dbo].[EventRequestParameter] AS TABLE(
 	[EventId] [uniqueidentifier] NOT NULL,
-	[StreamId] [nvarchar](50) NOT NULL,
+	[StreamId] [nvarchar](256) NOT NULL,
 	[ContextName] [nvarchar](50) NOT NULL,
 	[RequestId] [uniqueidentifier] NOT NULL,
 	PRIMARY KEY CLUSTERED 

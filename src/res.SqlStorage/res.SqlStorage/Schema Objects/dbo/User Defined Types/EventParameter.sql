@@ -1,6 +1,6 @@
 ﻿CREATE TYPE [dbo].[EventParameter] AS TABLE(
 	[EventId] [uniqueidentifier] NOT NULL,
-	[StreamId] [nvarchar](50) NOT NULL,
+	[StreamId] [nvarchar](256) NOT NULL,
 	[ContextName] [nvarchar](50) NOT NULL,
 	[Sequence] [bigint] NULL,
 	[SequenceInCommit] [int],

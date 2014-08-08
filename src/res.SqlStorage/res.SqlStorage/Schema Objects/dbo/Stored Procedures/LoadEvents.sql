@@ -6,7 +6,7 @@
 CREATE PROCEDURE [dbo].[LoadEvents]
 	-- Add the parameters for the stored procedure here
 	@Context nvarchar(50),
-	@Stream nvarchar(50),
+	@Stream nvarchar(256),
 	@FromVersion bigint = 1,
 	@ToVersion bigint = NULL
 AS

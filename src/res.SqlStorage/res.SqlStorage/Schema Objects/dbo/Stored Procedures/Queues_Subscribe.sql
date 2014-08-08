@@ -2,7 +2,7 @@
 	@QueueId nvarchar(50),
 	@SubscriberId nvarchar(50),
 	@Context nvarchar(50),
-	@Filter nvarchar(200),
+	@Filter nvarchar(256),
 	@StartTime datetime2(4),
 	@Count int,
 	@AllocationTimeInMilliseconds int

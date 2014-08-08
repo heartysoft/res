@@ -20,7 +20,7 @@ BEGIN
 		MaxSequence bigint, 
 		EventCount int,
 		Context nvarchar(50), 
-		Stream nvarchar(50),
+		Stream nvarchar(256),
 		Timestamp datetime2(4),
 		Unique Clustered (CommitId, Context, Stream)
 		);

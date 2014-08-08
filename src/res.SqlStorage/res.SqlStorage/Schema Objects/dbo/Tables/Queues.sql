@@ -2,7 +2,7 @@
 (
 	[QueueId] NVARCHAR(50) NOT NULL , 
     [Context] NVARCHAR(50) NOT NULL, 
-    [Filter] NVARCHAR(50) NOT NULL,
+    [Filter] NVARCHAR(256) NOT NULL,
 	[NextMarker] BIGINT NOT NULL, 
     PRIMARY KEY ([QueueId])
 )

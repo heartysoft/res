@@ -1,7 +1,7 @@
 ﻿CREATE PROCEDURE [dbo].[Queues_Subscribe_CreateIfNotExists]
 	@QueueId nvarchar(50),
 	@Context nvarchar(50),
-	@Filter nvarchar(200),
+	@Filter nvarchar(256),
 	@StartTime datetime2(4)
 AS
 	-- create a new queue with queueid if it doesn't exist.
