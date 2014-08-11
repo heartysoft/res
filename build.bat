@@ -1,2 +1,2 @@
 @echo off
-powershell.exe -NoProfile -ExecutionPolicy unrestricted -Command "& { .\tools\psake\psake .\build\build.ps1 %*; if ($lastexitcode -ne 0) {write-host "ERROR: $lastexitcode" -fore RED; exit $lastexitcode} }" 
+powershell.exe -NoProfile -ExecutionPolicy unrestricted -Command "& { Import-Module .\tools\psake\psake.psm1; Invoke-psake .\build\build.ps1 %*; exit !($psake.build_success) }" 
