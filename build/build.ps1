@@ -114,6 +114,12 @@ task tokenize-server {
             copy-item "$env_dir\res\Nlog.config" "$out_dir\res\Nlog.config"
     	}   
     }
+
+	if(test-path ("$env_dir\res\bin")) {
+		exec {
+			copy-item "$env_dir\res\bin\*" "$out_dir\res\" -recurse
+		}
+	}
 }
 
 task tokenize-tests {
