@@ -52,7 +52,7 @@ namespace Res
             _queueEndpoint.Dispose();
             _queryEndpoint.Dispose();
             _publishEndpoint.Dispose();
-            Logger.Info("\"[ResHost] Stopped. My work is done, it's in your hands now...");
+            Logger.Info("[ResHost] Stopped. My work is done, it's in your hands now...");
         }
     }
 }
