@@ -32,14 +32,14 @@ namespace Res.Core.StorageBuffering
 
         public Task Store(CommitForStorage commit)
         {
-            Logger.Info("[StorageWriter] Received commit.");
+            Logger.Debug("[StorageWriter] Received commit.");
             if (_queue.Count >= _maxSize)
                 throw new StorageWriterBusyException(_maxSize);
 
-            Logger.Info("[StorageWriter] Have capacity, will accept.");
+            Logger.Debug("[StorageWriter] Have capacity, will accept.");
             var entry = new Entry(commit, _maxAgeBeforeDrop);
             _queue.Enqueue(entry);
-            Logger.InfoFormat("[StorageWriter] Commit queued. {0}", _queue.Count);
+            Logger.DebugFormat("[StorageWriter] Commit queued. {0}", _queue.Count);
             return entry.Task;
         }
 
@@ -69,11 +69,11 @@ namespace Res.Core.StorageBuffering
                             break;
                         }
 
-                        Logger.Info("[StorageWriter] Got something to write...");
+                        Logger.Debug("[StorageWriter] Got something to write...");
 
                         if (entry.ShouldDrop())
                         {
-                            Logger.Info("[StorageWriter] Dropping message....too old.");
+                            Logger.Debug("[StorageWriter] Dropping message....too old.");
                             entry.Harikiri();
                         }
                         else
@@ -103,15 +103,15 @@ namespace Res.Core.StorageBuffering
 
         private void store(Entry[] entries)
         {
-            Logger.Info("[StorageWriter] Writing entries.");
+            Logger.Debug("[StorageWriter] Writing entries.");
             var commits = entries.ToDictionary(x => x.Commit.CommitId, x => x);
             var commit = new CommitsForStorage(commits.Values.Select(x => x.Commit).ToArray());
 
             try
             {
-                Logger.InfoFormat("[StorageWriter] Storing {0} commits.", commit.Commits.Length);
+                Logger.DebugFormat("[StorageWriter] Storing {0} commits.", commit.Commits.Length);
                 var results = _storage.Store(commit);
-                Logger.Info("[StorageWriter] Entries stored.");
+                Logger.Debug("[StorageWriter] Entries stored.");
 
                 //these can't fail as they're try operations.
                 foreach (var c in results.SuccessfulCommits)

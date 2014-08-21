@@ -118,9 +118,9 @@ namespace Res.Core.Storage
 
                 try
                 {
-                    Log.Info("[SqlEventStorage] Opening connection.");
+                    Log.Debug("[SqlEventStorage] Opening connection.");
                     command.Connection.Open();
-                    Log.Info("[SqlEventStorage] Executing sproc to write events.");
+                    Log.Debug("[SqlEventStorage] Executing sproc to write events.");
                     using (var reader = command.ExecuteReader())
                     {
                         while (reader.Read())

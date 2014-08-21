@@ -30,6 +30,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Res.Client", "Res.Client\Re
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Res.Dira", "Res.Dira\Res.Dira.csproj", "{BC5CCFC3-00B6-42B2-AA96-548BEACCA5EA}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C00B03DA-44C2-4BE6-9743-9A7B7A8D7687}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\build\build.ps1 = ..\..\build\build.ps1
+		..\..\build\version.ps1 = ..\..\build\version.ps1
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

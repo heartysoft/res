@@ -29,24 +29,24 @@ namespace Res.Core.TcpTransport.Commits
 
         public void Handle(NetMQFrame[] sender, NetMQMessage message)
         {
-            Log.Info("[CommitHandler] Got a commit to write...");
+            Log.Debug("[CommitHandler] Got a commit to write...");
             var requestId = message.Pop();
             var commit = getCommit(message);
             var task = _writer.Store(commit);
             var commitContinuationContext = new CommitContinuationContext(sender, commit.CommitId, requestId);
             task.ContinueWith(onComplete, commitContinuationContext, TaskContinuationOptions.ExecuteSynchronously);
-            Log.Info("[CommitHandler] Commit queued up...");
+            Log.Debug("[CommitHandler] Commit queued up...");
         }
 
         private void onComplete(Task commitTask, object state)
         {
-            Log.Info("[CommitHandler] Write completed, sending back response.");
+            Log.Debug("[CommitHandler] Write completed, sending back response.");
             var c = (CommitContinuationContext)state;
-            Log.Info("[CommitHandler] Got continuation context.");
+            Log.Debug("[CommitHandler] Got continuation context.");
             var ready = new CommitResult(Protocol, c, _resolver.GetError(commitTask.Exception));
-            Log.Info("[CommitHandler] Here you go, out buffer.");
+            Log.Debug("[CommitHandler] Here you go, out buffer.");
             _outBuffer.OfferAndWaitUntilAccepted(ready);
-            Log.Info("[CommitHandler] Commit result queued up in out buffer.");
+            Log.Debug("[CommitHandler] Commit result queued up in out buffer.");
         }
 
         private CommitForStorage getCommit(NetMQMessage message)

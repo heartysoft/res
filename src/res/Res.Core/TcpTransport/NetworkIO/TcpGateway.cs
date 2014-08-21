@@ -40,7 +40,7 @@ namespace Res.Core.TcpTransport.NetworkIO
         {
             if (_socket != null)
             {
-                Log.InfoFormat("[TcpGateway] Disposing old socket. Thread Id: {0}", Thread.CurrentThread.ManagedThreadId);
+                Log.DebugFormat("[TcpGateway] Disposing old socket. Thread Id: {0}", Thread.CurrentThread.ManagedThreadId);
                 _socket.ReceiveReady -= socket_ReceiveReady;
                 _socket.Options.Linger = TimeSpan.FromSeconds(0);
                 _socket.Dispose();
@@ -103,7 +103,7 @@ namespace Res.Core.TcpTransport.NetworkIO
             }
             catch (Exception e)
             {
-                Log.Warn("[TcpGateway] Error from mainloop.", e);
+                Log.Warn("[TcpGateway] Error from mainloop...exiting", e);
                 throw;
             }
 

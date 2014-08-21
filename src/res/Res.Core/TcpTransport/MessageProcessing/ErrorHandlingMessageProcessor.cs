@@ -38,7 +38,7 @@ namespace Res.Core.TcpTransport.MessageProcessing
             }
             catch (Exception e)
             {
-                Log.Info("[EHMessageProcessor] Error processing message.", e);
+                Log.Warn("[EHMessageProcessor] Error processing message.", e);
                 var entry = _errorResolver.GetError(e);
 
                 if (entry != null)
