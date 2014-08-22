@@ -108,13 +108,6 @@ task tokenize-server {
         & "$tools_dir\config-transform\config-transform.exe" "$out_dir\res\res.exe.config" "$env_dir\res\App.$config.config"
     }
 
-    if(test-path ("$env_dir\res\Nlog.config")) {
-		       
-        exec {
-            copy-item "$env_dir\res\Nlog.config" "$out_dir\res\Nlog.config"
-    	}   
-    }
-
 	if(test-path ("$env_dir\res\bin")) {
 		exec {
 			copy-item "$env_dir\res\bin\*" "$out_dir\res\" -recurse
