@@ -17,6 +17,8 @@ namespace Res
         private static readonly ILog Logger = LogManager.GetCurrentClassLogger();
         static int Main(string[] args)
         {
+            System.IO.Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
+
             var result = HostFactory.Run(x =>
             {
                 string endpoint = null;
