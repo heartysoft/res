@@ -43,6 +43,7 @@ AS
 						ew.GlobalSequence >= qs.NextMarker
 						AND
 						qs.QueueId = @QueueId
+					Order By GlobalSequence
 						) AS T
 		
 			IF @StartMark IS NULL -- No events for new allocation. Do Nothing.
