@@ -98,6 +98,7 @@
     <Compile Include="ResPublishEngine.cs" />
     <Compile Include="ThreadsafeResPublisher.cs" />
     <Compile Include="TypeRegistry.cs" />
+    <Compile Include="TypeRegistryEntry.cs" />
     <Compile Include="TypeTagResolver.cs" />
   </ItemGroup>
   <ItemGroup>

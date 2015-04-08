@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Res.Client
 {
@@ -32,6 +33,11 @@ namespace Res.Client
                 throw new TagNotRegisteredException(tag);
 
             return _reverseRegistry[tag];
+        }
+
+        public TypeRegistryEntry[] GetRegisteredEvents()
+        {
+            return _registry.Select(x => new TypeRegistryEntry(x.Value, x.Key)).OrderBy(x => x.TypeTag).ToArray();
         }
 
         public class TagNotRegisteredException : Exception
