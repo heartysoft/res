@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Common.Logging;
 using NetMQ;
+using NLog;
 using Res.Core.Storage;
 using Res.Core.StorageBuffering;
 using Res.Core.TcpTransport.MessageProcessing;
@@ -19,7 +19,7 @@ namespace Res.Core.TcpTransport.Commits
         private const string Protocol = ResProtocol.ResClient01; //parsing based on this. Maybe move elsewhere when more protocols are present.
         SpinWait _spin = new SpinWait();
         
-        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+        private static readonly Logger Log = LogManager.GetCurrentClassLogger();
 
         public CommitHandler(EventStorageWriter writer, OutBuffer outBuffer)
         {

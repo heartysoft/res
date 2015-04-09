@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Common.Logging;
+using NLog;
 using Res.Core.Storage;
 using Res.Core.TcpTransport;
 
@@ -17,7 +17,7 @@ namespace Res.Core.StorageBuffering
         private readonly EventStorage _storage;
         private readonly int _maxBatchSize;
         SpinWait _spinwait = new SpinWait();
-        private static readonly ILog Logger = LogManager.GetCurrentClassLogger();
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
 
         readonly ConcurrentQueue<Entry> _queue = new ConcurrentQueue<Entry>();
@@ -39,7 +39,7 @@ namespace Res.Core.StorageBuffering
             Logger.Debug("[StorageWriter] Have capacity, will accept.");
             var entry = new Entry(commit, _maxAgeBeforeDrop);
             _queue.Enqueue(entry);
-            Logger.DebugFormat("[StorageWriter] Commit queued. {0}", _queue.Count);
+            Logger.Debug("[StorageWriter] Commit queued. {0}", _queue.Count);
             return entry.Task;
         }
 
@@ -52,7 +52,7 @@ namespace Res.Core.StorageBuffering
         private void run(CancellationToken token)
         {
             var list = new List<Entry>(_maxBatchSize);
-            Logger.InfoFormat("[StorageWriter] Entering main loop. {0}", _maxBatchSize);
+            Logger.Info("[StorageWriter] Entering main loop. {0}", _maxBatchSize);
 
 
             var spinWait = new SpinWait();
@@ -109,7 +109,7 @@ namespace Res.Core.StorageBuffering
 
             try
             {
-                Logger.DebugFormat("[StorageWriter] Storing {0} commits.", commit.Commits.Length);
+                Logger.Debug("[StorageWriter] Storing {0} commits.", commit.Commits.Length);
                 var results = _storage.Store(commit);
                 Logger.Debug("[StorageWriter] Entries stored.");
 

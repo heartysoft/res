@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using Common.Logging;
 using NetMQ;
+using NLog;
 using Res.Protocol;
 
 namespace Res.Core.TcpTransport.MessageProcessing
@@ -10,7 +10,7 @@ namespace Res.Core.TcpTransport.MessageProcessing
     public class ErrorHandlingMessageProcessor : MessageProcessor
     {
         private readonly MessageProcessor _processor;
-        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+        private static readonly Logger Log = LogManager.GetCurrentClassLogger();
         private readonly ErrorResolver _errorResolver;
 
         public ErrorHandlingMessageProcessor(MessageProcessor processor)

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Common.Logging;
+using Res.Client.Internal.Logging;
+using Logger = NLog.Logger;
+using Task = System.Threading.Tasks.Task;
 
 namespace Res.Client.Internal
 {
@@ -9,7 +11,7 @@ namespace Res.Client.Internal
     {
         private readonly Func<ResGateway> _gatewayFactory;
         private readonly MultiWriterSingleReaderBuffer _buffer;
-        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+        private static readonly ILog Log = LogProvider.GetCurrentClassLogger();
 
         public RequestProcessor(Func<ResGateway> gatewayFactory, MultiWriterSingleReaderBuffer buffer)
         {

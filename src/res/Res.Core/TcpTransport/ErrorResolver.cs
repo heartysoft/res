@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using Common.Logging;
+using NLog;
 using Res.Core.Storage;
 using Res.Core.StorageBuffering;
 using Res.Core.TcpTransport.Exceptions;
@@ -9,7 +9,7 @@ namespace Res.Core.TcpTransport
 {
     public class ErrorResolver
     {
-        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+        private static readonly Logger Log = LogManager.GetCurrentClassLogger();
 
 
         private static readonly Dictionary<Type, Func<Exception, ErrorEntry>> Registry = new Dictionary<Type, Func<Exception, ErrorEntry>>

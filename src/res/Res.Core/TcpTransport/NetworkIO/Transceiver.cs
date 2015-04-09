@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Common.Logging;
 using NetMQ;
+using NLog;
 
 namespace Res.Core.TcpTransport.NetworkIO
 {
@@ -10,7 +10,7 @@ namespace Res.Core.TcpTransport.NetworkIO
     {
         private readonly Func<TcpGateway> _gatewayFactory;
         private readonly OutBuffer _buffer;
-        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+        private static readonly Logger Log = LogManager.GetCurrentClassLogger();
 
         public Transceiver(Func<TcpGateway> gatewayFactory, OutBuffer buffer)
         {

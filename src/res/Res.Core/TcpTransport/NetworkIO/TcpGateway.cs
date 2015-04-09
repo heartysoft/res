@@ -1,7 +1,7 @@
 using System;
 using System.Threading;
-using Common.Logging;
 using NetMQ;
+using NLog;
 using Res.Core.TcpTransport.MessageProcessing;
 
 namespace Res.Core.TcpTransport.NetworkIO
@@ -12,7 +12,7 @@ namespace Res.Core.TcpTransport.NetworkIO
         private readonly string _endpoint;
         private readonly MessageProcessor _processor;
         private NetMQSocket _socket;
-        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+        private static readonly Logger Log = LogManager.GetCurrentClassLogger();
 
         public TcpGateway(NetMQContext ctx, string endpoint, MessageProcessor processor)
         {
@@ -40,7 +40,7 @@ namespace Res.Core.TcpTransport.NetworkIO
         {
             if (_socket != null)
             {
-                Log.DebugFormat("[TcpGateway] Disposing old socket. Thread Id: {0}", Thread.CurrentThread.ManagedThreadId);
+                Log.Debug("[TcpGateway] Disposing old socket. Thread Id: {0}", Thread.CurrentThread.ManagedThreadId);
                 _socket.ReceiveReady -= socket_ReceiveReady;
                 _socket.Options.Linger = TimeSpan.FromSeconds(0);
                 _socket.Dispose();
@@ -51,19 +51,19 @@ namespace Res.Core.TcpTransport.NetworkIO
 
             while (true)
             {
-                Log.InfoFormat("[TcpGateway] Creating new socket. Thread Id: {0}", Thread.CurrentThread.ManagedThreadId);
+                Log.Info("[TcpGateway] Creating new socket. Thread Id: {0}", Thread.CurrentThread.ManagedThreadId);
                 var socket = _ctx.CreateRouterSocket();
                 socket.ReceiveReady += socket_ReceiveReady;
 
                 try
                 {
                     socket.Bind(_endpoint);
-                    Log.DebugFormat("[TcpGateway] Socket connected at {0}. Thread Id: {1}", _endpoint, Thread.CurrentThread.ManagedThreadId);
+                    Log.Debug("[TcpGateway] Socket connected at {0}. Thread Id: {1}", _endpoint, Thread.CurrentThread.ManagedThreadId);
                     return socket;
                 }
                 catch (NetMQException e)
                 {
-                    Log.WarnFormat("[TcpGateway] Error binding to socket at {0}. Retrying in 500ms... Thread ID: {1}", e, _endpoint, Thread.CurrentThread.ManagedThreadId);
+                    Log.Warn("[TcpGateway] Error binding to socket at {0}. Retrying in 500ms... Thread ID: {1}", e, _endpoint, Thread.CurrentThread.ManagedThreadId);
                     socket.Options.Linger = TimeSpan.FromSeconds(0);
                     socket.Dispose();
                     Thread.Sleep(500);
@@ -75,7 +75,7 @@ namespace Res.Core.TcpTransport.NetworkIO
         void socket_ReceiveReady(object sender, NetMQSocketEventArgs e)
         {
             var message = e.Socket.ReceiveMessage();
-            Log.DebugFormat("[TcpGateway] Received a message. Thread Id: {0}", Thread.CurrentThread.ManagedThreadId);
+            Log.Debug("[TcpGateway] Received a message. Thread Id: {0}", Thread.CurrentThread.ManagedThreadId);
             _processor.ProcessMessage(message, e.Socket);
         }
 

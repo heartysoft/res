@@ -32,14 +32,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Common.Logging">
-      <HintPath>..\packages\Common.Logging.2.2.0\lib\net40\Common.Logging.dll</HintPath>
-    </Reference>
-    <Reference Include="Common.Logging.Core">
-      <HintPath>..\packages\Common.Logging.Core.2.2.0\lib\net40\Common.Logging.Core.dll</HintPath>
-    </Reference>
+    <Reference Include="Microsoft.Build.Utilities.v4.0" />
     <Reference Include="NetMQ">
       <HintPath>..\packages\NetMQ.3.3.0.8\lib\net40\NetMQ.dll</HintPath>
+    </Reference>
+    <Reference Include="NLog">
+      <HintPath>..\packages\NLog.3.1.0.0\lib\net45\NLog.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -55,6 +53,7 @@
     <Compile Include="EventData.cs" />
     <Compile Include="EventObject.cs" />
     <Compile Include="EventsForStream.cs" />
+    <Compile Include="Internal\Logging\LibLog.cs" />
     <Compile Include="Internal\Queries\Messages\QueryEventsForStreamRequest.cs" />
     <Compile Include="Internal\Queries\Messages\QueryEventsForStreamResponse.cs" />
     <Compile Include="Internal\Queries\QueryRequestAcceptor.cs" />

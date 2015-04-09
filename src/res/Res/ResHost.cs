@@ -2,7 +2,7 @@
 using System.Configuration;
 using System.Threading;
 using System.Threading.Tasks;
-using Common.Logging;
+using NLog;
 using Res.Core.Storage;
 using Res.Core.StorageBuffering;
 using Res.Core.TcpTransport;
@@ -13,7 +13,7 @@ namespace Res
 {
     public class ResHost
     {
-        private static readonly ILog Logger = LogManager.GetCurrentClassLogger();
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private CancellationTokenSource _cancellationToken;
         private PublishEndpoint _publishEndpoint;
         private QueueEndpoint _queueEndpoint;

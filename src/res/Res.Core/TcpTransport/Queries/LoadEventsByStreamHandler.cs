@@ -1,8 +1,8 @@
 ﻿using System.Globalization;
 using System.Threading;
-using Common.Logging;
 using NetMQ;
 using NetMQ.zmq;
+using NLog;
 using Res.Core.Storage;
 using Res.Core.StorageBuffering;
 using Res.Core.TcpTransport.MessageProcessing;
@@ -16,7 +16,7 @@ namespace Res.Core.TcpTransport.Queries
         private readonly EventStorageReader _storage;
         private readonly OutBuffer _buffer;
         private SpinWait _spin;
-        private static readonly ILog Logger = LogManager.GetCurrentClassLogger();
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         public LoadEventsByStreamHandler(EventStorageReader storage, OutBuffer buffer)
         {
             _storage = storage;

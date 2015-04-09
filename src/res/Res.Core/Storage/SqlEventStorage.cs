@@ -4,13 +4,13 @@ using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
-using Common.Logging;
+using NLog;
 
 namespace Res.Core.Storage
 {
     public class SqlEventStorage : EventStorage
     {
-        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+        private static readonly Logger Log = LogManager.GetCurrentClassLogger();
 
         private readonly string _connectionString;
         private static readonly Dictionary<string, string> DatabaseChecks = new Dictionary<string, string> {

@@ -1,7 +1,7 @@
 ﻿using System;
-using Common.Logging;
 using Res.Client.Internal;
 using Res.Client.Internal.Commits;
+using Res.Client.Internal.Logging;
 
 namespace Res.Client
 {
@@ -10,7 +10,7 @@ namespace Res.Client
         private readonly bool _isDisabled;
         private CommitRequestAcceptor _acceptor;
 
-        private readonly ILog _log = LogManager.GetCurrentClassLogger();
+        private readonly ILog _log = LogProvider.GetCurrentClassLogger();
 
         private RequestProcessor _processor;
         public ResPublishEngine(string endpoint, bool isDisabled = false)

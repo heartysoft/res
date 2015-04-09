@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Common.Logging;
 using Res.Client.Internal;
+using Res.Client.Internal.Logging;
 using Res.Client.Internal.Queries;
 
 namespace Res.Client
 {
     public class ResQueryEngine : IDisposable
     {
-        private readonly ILog _log = LogManager.GetCurrentClassLogger();
+        private readonly ILog _log = LogProvider.GetCurrentClassLogger();
         private readonly RequestProcessor _processor;
         private readonly QueryRequestAcceptor _acceptor;
 

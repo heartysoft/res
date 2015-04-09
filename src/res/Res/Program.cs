@@ -3,18 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Common.Logging;
 using NetMQ.zmq;
+using NLog;
 using Res.Core.TcpTransport;
 using SimpleConfig;
 using Topshelf;
-using Topshelf.Common.Logging;
 
 namespace Res
 {
     class Program
     {
-        private static readonly ILog Logger = LogManager.GetCurrentClassLogger();
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         static int Main(string[] args)
         {
             System.IO.Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
@@ -41,7 +40,7 @@ namespace Res
                     s.WhenStopped(rh => rh.Stop());
                 });
 
-                x.UseCommonLogging();
+                x.UseNLog();
             });
 
             return (int) result;

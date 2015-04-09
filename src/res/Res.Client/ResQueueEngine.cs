@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Security.Cryptography.X509Certificates;
-using Common.Logging;
 using Res.Client.Internal;
+using Res.Client.Internal.Logging;
 using Res.Client.Internal.Queues;
 
 namespace Res.Client
 {
     public class ResQueueEngine : IDisposable
     {
-        private readonly ILog _log = LogManager.GetCurrentClassLogger();
+        private readonly ILog _log = LogProvider.GetCurrentClassLogger();
         private readonly RequestProcessor _processor;
         private readonly QueueRequestAcceptor _acceptor;
 

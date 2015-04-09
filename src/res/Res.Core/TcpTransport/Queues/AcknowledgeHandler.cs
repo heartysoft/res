@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Globalization;
 using System.Threading;
-using Common.Logging;
 using NetMQ;
+using NLog;
 using Res.Core.Storage;
 using Res.Core.TcpTransport.MessageProcessing;
 using Res.Core.TcpTransport.NetworkIO;
@@ -14,7 +14,7 @@ namespace Res.Core.TcpTransport.Queues
     {
         private readonly QueueStorage _storage;
         private readonly OutBuffer _outBuffer;
-        private static readonly ILog Logger = LogManager.GetCurrentClassLogger();
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private SpinWait _spin;
 
         public AcknowledgeHandler(QueueStorage storage, OutBuffer outBuffer)

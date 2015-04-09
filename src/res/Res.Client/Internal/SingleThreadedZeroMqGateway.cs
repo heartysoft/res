@@ -2,9 +2,9 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
-using Common.Logging;
 using NetMQ;
 using Res.Client.Exceptions;
+using Res.Client.Internal.Logging;
 using Res.Protocol;
 
 namespace Res.Client.Internal
@@ -16,7 +16,7 @@ namespace Res.Client.Internal
         private readonly NetMQContext _ctx;
         private NetMQSocket _socket;
         readonly ConcurrentDictionary<string, InflightEntry> _callbacks = new ConcurrentDictionary<string, InflightEntry>();
-        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+        private static readonly ILog Log = LogProvider.GetCurrentClassLogger();
         private DateTime _reapTime;
 
         public SingleThreadedZeroMqGateway(string endpoint, TimeSpan reaperInterval)
@@ -107,7 +107,7 @@ namespace Res.Client.Internal
             }
             catch (Exception ex)
             {
-                Log.Warn("[STZMG] Message dropped. Possibly due to protocol violation.", ex);
+                Log.WarnException("[STZMG] Message dropped. Possibly due to protocol violation.", ex);
             }
         }
 

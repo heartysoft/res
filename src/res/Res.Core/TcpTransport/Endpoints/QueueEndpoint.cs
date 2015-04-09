@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Common.Logging;
 using NetMQ;
+using NLog;
 using Res.Core.Storage;
 using Res.Core.TcpTransport.MessageProcessing;
 using Res.Core.TcpTransport.NetworkIO;
@@ -13,7 +13,7 @@ namespace Res.Core.TcpTransport.Endpoints
     public class QueueEndpoint : IDisposable
     {
         private readonly NetMQContext _ctx;
-        private static readonly ILog Logger = LogManager.GetCurrentClassLogger();
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private readonly Transceiver _transceiver;
         private Task _transceiverTask;
 
@@ -32,7 +32,7 @@ namespace Res.Core.TcpTransport.Endpoints
             messageProcessor = new ErrorHandlingMessageProcessor(messageProcessor);
 
             //important...the factory method parameter must "create" the gateway, threading issue otherwise.
-            Logger.DebugFormat("[QueueEndpoint] Initialising Transceiver. Endpoint: {0}", config.QueueEndpoint.Endpoint);
+            Logger.Debug("[QueueEndpoint] Initialising Transceiver. Endpoint: {0}", config.QueueEndpoint.Endpoint);
             _transceiver = new Transceiver(() => new TcpGateway(ctx, config.QueueEndpoint.Endpoint, messageProcessor), outBuffer);
         }
 
