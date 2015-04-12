@@ -6,5 +6,6 @@ namespace Res.Client
     {
         string GetTagFor(object o);
         Type GetTypeFor(string tag);
+        TypeRegistryEntry[] GetRegisteredEvents();
     }
 }
