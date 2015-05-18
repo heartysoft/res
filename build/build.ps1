@@ -72,7 +72,11 @@ task version -depends clean {
     }	
 }
 
-task compile -depends version {
+task pkgrestore -depends clean {
+    & "$base_dir/src/res/.nuget/nuget.exe" restore "$res_dir/Res.sln"
+}
+
+task compile -depends pkgrestore, version {
 	try{
 		exec { msbuild $res_dir\Res.sln /t:Clean /t:Build /p:Configuration=$config /v:q /nologo }
 	} finally{
