@@ -39,7 +39,7 @@ namespace Res.Core.Storage
 
                     _globalSequence++;
 
-                    _events.Add(new EventInStorage(e.EventId, commit.Context, commit.Stream, 
+                    _events.Add(new EventInStorage(e.EventId, commit.Context, commit.Stream,
                         version,
                         _globalSequence,
                         e.Timestamp,
@@ -97,6 +97,20 @@ namespace Res.Core.Storage
         public void Verify()
         {
 
+        }
+
+        public long? GetMinSequenceMatchingCriteriaOrNull(Func<EventInStorage, bool> criteria)
+        {
+            var filtered = _events.ToList().Where(criteria).ToList();
+            if (filtered.Count == 0)
+                return null;
+
+            return filtered.Min(x => x.GlobalSequence);
+        }
+
+        public IEnumerable<EventInStorage> GetEventsMatchingCriteria(Func<EventInStorage, bool> criteria)
+        {
+            return _events.ToList().Where(criteria);
         }
     }
 }

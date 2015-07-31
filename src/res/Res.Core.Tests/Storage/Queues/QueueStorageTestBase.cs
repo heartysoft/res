@@ -21,8 +21,8 @@ namespace Res.Core.Tests.Storage.Queues
         [SetUp]
         public void SetUp()
         {
-            _queueStorage = GetQueueStorage();
             _eventStorage = GetEventStorage();
+            _queueStorage = GetQueueStorage();
 
             SetUpPerTest(_queueStorage, _eventStorage);
         }

@@ -67,6 +67,7 @@
     <Compile Include="Storage\EventStoreConnectionException.cs" />
     <Compile Include="Storage\FetchEventRequest.cs" />
     <Compile Include="Storage\InMemoryEventStorage.cs" />
+    <Compile Include="Storage\InMemoryQueueStorage\InMemoryQueueStorage.cs" />
     <Compile Include="Storage\SqlEventStorage.cs" />
     <Compile Include="Storage\SqlQueueStorage.cs" />
     <Compile Include="TcpTransport\Commits\CommitContinuationContext.cs" />

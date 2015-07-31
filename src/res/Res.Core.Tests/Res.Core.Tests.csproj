@@ -59,6 +59,7 @@
     <Compile Include="Storage\InMemoryEventStorageTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StorageBuffering\StorageReaderTests.cs" />
+    <Compile Include="Storage\Queues\InMemoryQueueStorageTests.cs" />
     <Compile Include="Storage\Queues\QueueStorageTestBase.cs" />
     <Compile Include="Storage\Queues\SqlQeueStorageTests.cs" />
     <Compile Include="Storage\SqlEventStorageTests.cs" />
