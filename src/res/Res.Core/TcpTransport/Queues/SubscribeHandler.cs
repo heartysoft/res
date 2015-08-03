@@ -29,9 +29,9 @@ namespace Res.Core.TcpTransport.Queues
             Logger.Debug("[Queue_SubscribeHandler] Received subscribe request.");
 
             var requestId = message.Pop();
+            var context = message.Pop().ConvertToString();
             var queueId = message.Pop().ConvertToString();
             var subscriberId = message.Pop().ConvertToString();
-            var context = message.Pop().ConvertToString();
             var filter = message.Pop().ConvertToString();
             var utcStartTime = DateTime.FromBinary(long.Parse(message.Pop().ConvertToString()));
             var allocationSize = int.Parse(message.Pop().ConvertToString());
@@ -52,6 +52,7 @@ namespace Res.Core.TcpTransport.Queues
             msg.Append(ResProtocol.ResClient01);
             msg.Append(requestId);
             msg.Append(ResCommands.QueuedEvents);
+            msg.Append(context);
             msg.Append(queueId);
             msg.Append(subscriberId);
             msg.Append(DateTime.UtcNow.ToBinary().ToString(CultureInfo.InvariantCulture));

@@ -16,7 +16,7 @@ namespace Res.Client.Internal.Queues.Messages
         private readonly int _allocationBatchSize;
         private readonly int _allocationTimeInMilliseconds;
 
-        public SubscribeToQueueRequest(string queueId, string subscriberId, string context, string filter, DateTime utcStartTime, int allocationBatchSize, int allocationTimeInMilliseconds)
+        public SubscribeToQueueRequest(string context, string queueId, string subscriberId, string filter, DateTime utcStartTime, int allocationBatchSize, int allocationTimeInMilliseconds)
         {
             _queueId = queueId;
             _subscriberId = subscriberId;
@@ -40,7 +40,6 @@ namespace Res.Client.Internal.Queues.Messages
             msg.Append(_context);
             msg.Append(_queueId);
             msg.Append(_subscriberId);
-            msg.Append(_context);
             msg.Append(_filter);
             msg.Append(_utcStartTime.ToBinary().ToString(CultureInfo.InvariantCulture));
             msg.Append(_allocationBatchSize.ToString(CultureInfo.InvariantCulture));

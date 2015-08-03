@@ -42,14 +42,11 @@ namespace Res.Core.TcpTransport.Queues
             var allocationSize = int.Parse(message.Pop().ConvertToString());
             var allocationTimeInMilliseconds = int.Parse(message.Pop().ConvertToString());
 
-            var ack = new AcknowledgeQueue(
+            var ack = new AcknowledgeQueue(context,
                 queueId,
-                context,
                 subscriberId,
                 allocationId,
-                allocationSize,
-                allocationTimeInMilliseconds
-                );
+                allocationSize, allocationTimeInMilliseconds);
 
             var queuedEvents = _storage.AcknowledgeAndFetchNext(ack);
             var events = queuedEvents.Events;
@@ -60,6 +57,7 @@ namespace Res.Core.TcpTransport.Queues
             msg.Append(ResProtocol.ResClient01);
             msg.Append(requestId);
             msg.Append(ResCommands.QueuedEvents);
+            msg.Append(context);
             msg.Append(queueId);
             msg.Append(subscriberId);
             msg.Append(DateTime.UtcNow.ToBinary().ToString(CultureInfo.InvariantCulture));

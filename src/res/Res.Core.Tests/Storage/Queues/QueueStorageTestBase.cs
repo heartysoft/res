@@ -195,7 +195,7 @@ namespace Res.Core.Tests.Storage.Queues
             Assert.AreEqual(event1Id, queued.Events[0].EventId);
 
             var next =
-                _queueStorage.AcknowledgeAndFetchNext(new AcknowledgeQueue("foo", "test", "bar", queued.AllocationId, 1, 5000));
+                _queueStorage.AcknowledgeAndFetchNext(new AcknowledgeQueue("test", "foo", "bar", queued.AllocationId, 1, 5000));
 
             Assert.AreEqual(event2Id, next.Events[0].EventId);
         }

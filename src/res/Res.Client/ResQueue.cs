@@ -42,7 +42,7 @@ namespace Res.Client
 
         private async Task<QueuedEvents> subscribe(int allocationSize, TimeSpan allocationTimeout, TimeSpan timeout)
         {
-            var subscribeToQueueRequest = new SubscribeToQueueRequest(_queueId, _subscriberId, _context, _filter, _startTime, allocationSize, (int)allocationTimeout.TotalMilliseconds);
+            var subscribeToQueueRequest = new SubscribeToQueueRequest(_context, _queueId, _subscriberId, _filter, _startTime, allocationSize, (int)allocationTimeout.TotalMilliseconds);
             var events = await _acceptor.Subscribe(subscribeToQueueRequest, timeout);
             _allocationId = events.AllocationId;
             _initial = false;

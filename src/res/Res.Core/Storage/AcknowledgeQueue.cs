@@ -9,7 +9,7 @@ namespace Res.Core.Storage
         public int AllocationSize { get; private set; }
         public int AllocationTimeInMilliseconds { get; private set; }
 
-        public AcknowledgeQueue(string queueId, string context, string subscriberId, long? allocationId, int allocationSize, int allocationTimeInMilliseconds)
+        public AcknowledgeQueue(string context, string queueId, string subscriberId, long? allocationId, int allocationSize, int allocationTimeInMilliseconds)
         {
             QueueId = queueId;
             Context = context;
