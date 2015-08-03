@@ -12,7 +12,7 @@ namespace Res.Core.Storage
         public int AllocationSize { get; private set; }
         public int AllocationTimeoutInMilliseconds { get; private set; }
 
-        public SubscribeToQueue(string queueId, string subscriberId, string context, string filter, DateTime utcQueueStartTime, int allocationSize, int allocationTimeoutInMilliseconds)
+        public SubscribeToQueue(string context, string queueId, string subscriberId, string filter, DateTime utcQueueStartTime, int allocationSize, int allocationTimeoutInMilliseconds)
         {
             QueueId = queueId;
             SubscriberId = subscriberId;

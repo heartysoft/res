@@ -25,9 +25,9 @@ namespace Res.Core.Storage
             using (var command = new SqlCommand("Queues_Subscribe", connection))
             {
                 command.CommandType = CommandType.StoredProcedure;
+                command.Parameters.AddWithValue("Context", request.Context);
                 command.Parameters.AddWithValue("QueueId", request.QueueId);
                 command.Parameters.AddWithValue("SubscriberId", request.SubscriberId);
-                command.Parameters.AddWithValue("Context", request.Context);
                 command.Parameters.AddWithValue("Filter", request.Filter);
                 command.Parameters.AddWithValue("StartTime", request.UtcQueueStartTime);
                 command.Parameters.AddWithValue("Count", request.AllocationSize);
@@ -65,6 +65,7 @@ namespace Res.Core.Storage
             using (var command = new SqlCommand("Queues_Acknowledge", connection))
             {
                 command.CommandType = CommandType.StoredProcedure;
+                command.Parameters.AddWithValue("Context", request.Context);
                 command.Parameters.AddWithValue("QueueId", request.QueueId);
                 command.Parameters.AddWithValue("SubscriberId", request.SubscriberId);
                 if (request.AllocationId.HasValue)
@@ -100,8 +101,8 @@ namespace Res.Core.Storage
 
         public QueueStorageInfo[] GetAllByDecreasingNextMarker(int count, int skip)
         {
-            const int queueIdOrdinal = 0;
-            const int contextOrdinal = 1;
+            const int contextOrdinal = 0;
+            const int queueIdOrdinal = 1;
             const int filterOrdinal = 2;
             const int nextMarkerOrdinal = 3;
 
@@ -124,7 +125,7 @@ namespace Res.Core.Storage
                         var filter = reader.GetString(filterOrdinal);
                         var nextMarker = reader.GetInt64(nextMarkerOrdinal);
 
-                        var queue = new QueueStorageInfo(queueId, context, filter, nextMarker);
+                        var queue = new QueueStorageInfo(context, queueId, filter, nextMarker);
                         queues.Add(queue);
                     }
                 }
