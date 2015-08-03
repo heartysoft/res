@@ -23,7 +23,8 @@ namespace Res.Client.Internal
                 case "8": raise(new EventNotFoundException(message)); break;
                 case "9": raise(new StorageReaderTimeoutException(message)); break;
                 case "10": raise(new StorageReaderBusyException(message)); break;
-
+                case "11": raise(new QueueAlreadyExistsInContextWithDifferentFilterException(message));
+                    break;
                 default:
                     raise(new ResServerException(errorCode, message));
                     break;

@@ -34,27 +34,40 @@ namespace Res.Core.Storage
                 command.Parameters.AddWithValue("AllocationTimeInMilliseconds", request.AllocationTimeoutInMilliseconds);
 
                 command.Connection.Open();
-                using (var reader = command.ExecuteReader())
+                try
                 {
-                    var events = new List<EventInStorage>();
-
-                    while (reader.Read())
+                    using (var reader = command.ExecuteReader())
                     {
-                        var @event = readEventInStorage(reader, 0);
-                        events.Add(@event);
+                        var events = new List<EventInStorage>();
+
+                        while (reader.Read())
+                        {
+                            var @event = readEventInStorage(reader, 0);
+                            events.Add(@event);
+                        }
+
+                        reader.NextResult();
+
+                        long? allocationId = null;
+
+                        if (reader.Read())
+                        {
+                            var sqlInt64 = reader.GetSqlInt64(0);
+                            allocationId = sqlInt64.IsNull ? (long?) null : sqlInt64.Value;
+                        }
+
+                        return new QueuedEvents(allocationId, events.ToArray());
+                    }
+                }
+                catch (SqlException ex)
+                {
+                    if (ex.Number == 2627) //pk violation
+                    {
+                        throw new QueueAlreadyExistsInContextWithDifferentFilterException(request.Context,
+                            request.QueueId, request.Filter);
                     }
 
-                    reader.NextResult();
-
-                    long? allocationId = null;
-
-                    if (reader.Read())
-                    {
-                        var sqlInt64 = reader.GetSqlInt64(0);
-                        allocationId = sqlInt64.IsNull?(long?)null:sqlInt64.Value;
-                    }
-
-                    return new QueuedEvents(allocationId, events.ToArray());
+                    throw;
                 }
             }
         }

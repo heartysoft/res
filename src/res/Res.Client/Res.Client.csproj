@@ -53,6 +53,7 @@
     <Compile Include="EventData.cs" />
     <Compile Include="EventObject.cs" />
     <Compile Include="EventsForStream.cs" />
+    <Compile Include="Exceptions\QueueAlreadyExistsInContextWithDifferentFilterException.cs" />
     <Compile Include="Internal\Logging\LibLog.cs" />
     <Compile Include="Internal\Queries\Messages\QueryEventsForStreamRequest.cs" />
     <Compile Include="Internal\Queries\Messages\QueryEventsForStreamResponse.cs" />

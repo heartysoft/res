@@ -18,7 +18,7 @@ namespace Res.Core.TcpTransport.Endpoints
         private readonly Transceiver _transceiver;
         private Task _transceiverTask;
 
-        public PublishEndpoint(EventStorageWriter eventStorageWriter, ResConfiguration config)
+        public PublishEndpoint(EventStorageWriter eventStorageWriter, ResConfiguration config) 
         {
             var ctx = NetMQContext.Create();
             _ctx = ctx;

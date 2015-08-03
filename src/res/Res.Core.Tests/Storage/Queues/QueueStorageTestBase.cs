@@ -232,5 +232,25 @@ namespace Res.Core.Tests.Storage.Queues
             Assert.AreEqual(event3Id, queued2.Events[0].EventId);
             Assert.AreEqual(event4Id, queued2.Events[1].EventId);
         }
+
+        [Test]
+        [ExpectedException(typeof(QueueAlreadyExistsInContextWithDifferentFilterException))]
+        public void queue_names_within_context_are_unique()
+        {
+            var event1Id = Guid.NewGuid();
+            var event2Id = Guid.NewGuid();
+
+            _eventStorage.Store(new CommitsForStorage(new CommitForStorage(
+                Guid.NewGuid(),
+                "test",
+                "bar",
+                new EventForStorage(event1Id, 1, DateTime.UtcNow, "some-type", "body", ""),
+                new EventForStorage(event2Id, 2, DateTime.UtcNow, "some-type", "body", "")
+                )));
+
+            var queued = _queueStorage.Subscribe(new SubscribeToQueue("test", "foo", "sub1", "*", DateTime.UtcNow.AddMinutes(-5), 2, 60000));
+            var queued2 = _queueStorage.Subscribe(new SubscribeToQueue("test", "foo", "sub2", "bar", DateTime.UtcNow.AddMinutes(-5), 2, 60000));
+        }
+
     }
 }

@@ -14,6 +14,7 @@ using Res.Client.Internal;
 using Res.Core.Storage;
 using Res.Protocol;
 using EventInStorage = Res.Client.EventInStorage;
+using QueueAlreadyExistsInContextWithDifferentFilterException = Res.Client.Exceptions.QueueAlreadyExistsInContextWithDifferentFilterException;
 
 namespace Res.Core.Tests.Client
 {
@@ -233,10 +234,10 @@ namespace Res.Core.Tests.Client
 
             commit.Wait();
 
-            var queue1 = queueEngine.Declare("test-queue", "queue1", "test-context", "*", DateTime.Now.AddDays(-1));
+            var queue1 = queueEngine.Declare("test-context", "test-queue", "queue1", "*", DateTime.Now.AddDays(-1));
             var queue1Events = queue1.Next(2, TimeSpan.FromDays(1), TimeSpan.FromSeconds(10)).Result;
 
-            var queue2 = queueEngine.Declare("test-queue", "queue2", "test-context", "*", DateTime.Now.AddDays(-1));
+            var queue2 = queueEngine.Declare("test-context", "test-queue", "queue2", "*", DateTime.Now.AddDays(-1));
             var queue2Events = queue2.Next(1, TimeSpan.FromDays(1), TimeSpan.FromSeconds(10)).Result;
 
             Assert.AreEqual(2, queue1Events.Events.Length);
@@ -277,6 +278,73 @@ namespace Res.Core.Tests.Client
             Assert.AreEqual(0, queue2Events.Events.Length);
 
             Assert.AreEqual(event6Id, queue1Events.Events[0].EventId);
+        }
+
+        [Test]
+        [ExpectedException(typeof(QueueAlreadyExistsInContextWithDifferentFilterException))]
+        public async Task attempting_to_create_queue_with_same_name_in_context_should_fail_if_filter_is_different()
+        {
+            var publisher = _harness.CreatePublisher();
+            var queueEngine = _harness.QueueEngine;
+
+            var stream = Guid.NewGuid().ToString();
+
+            var event1Id = Guid.NewGuid();
+            var event2Id = Guid.NewGuid();
+            var event3Id = Guid.NewGuid();
+            var event4Id = Guid.NewGuid();
+            var event5Id = Guid.NewGuid();
+
+
+            var commit = publisher.CommitAsync("test-context", stream, new[]
+            {
+                new EventData("test", event1Id, "", "some body", DateTime.Now),
+                new EventData("test1", event2Id, "", "something more", DateTime.Now),
+                new EventData("test", event3Id, "", "a bit more", DateTime.Now),
+                new EventData("test", event4Id, "", "a bit more", DateTime.Now),
+                new EventData("test", event5Id, "", "a bit more", DateTime.Now)
+            }, ExpectedVersion.OnlyNew);
+
+            commit.Wait();
+
+            var queue1 = queueEngine.Declare("test-context", "test-queue", "queue1", "*", DateTime.Now.AddDays(-1));
+            var queue2 = queueEngine.Declare("test-context", "test-queue", "queue1", "test-", DateTime.Now.AddDays(-1));
+
+            var queue1Events = await queue1.Next(1, TimeSpan.FromDays(1), TimeSpan.FromSeconds(100));
+            var queue2Events = await queue2.Next(1, TimeSpan.FromDays(1), TimeSpan.FromSeconds(100));
+        }
+
+        [Test]
+        public async Task attempting_to_create_queue_with_same_name_in_context_should_succeed_if_filter_is_same()
+        {
+            var publisher = _harness.CreatePublisher();
+            var queueEngine = _harness.QueueEngine;
+
+            var stream = Guid.NewGuid().ToString();
+
+            var event1Id = Guid.NewGuid();
+            var event2Id = Guid.NewGuid();
+            var event3Id = Guid.NewGuid();
+            var event4Id = Guid.NewGuid();
+            var event5Id = Guid.NewGuid();
+
+
+            var commit = publisher.CommitAsync("test-context", stream, new[]
+            {
+                new EventData("test", event1Id, "", "some body", DateTime.Now),
+                new EventData("test1", event2Id, "", "something more", DateTime.Now),
+                new EventData("test", event3Id, "", "a bit more", DateTime.Now),
+                new EventData("test", event4Id, "", "a bit more", DateTime.Now),
+                new EventData("test", event5Id, "", "a bit more", DateTime.Now)
+            }, ExpectedVersion.OnlyNew);
+
+            commit.Wait();
+
+            var queue1 = queueEngine.Declare("test-context", "test-queue", "queue1", "test-", DateTime.Now.AddDays(-1));
+            var queue2 = queueEngine.Declare("test-context", "test-queue", "queue1", "test-", DateTime.Now.AddDays(-1));
+
+            var queue1Events = await queue1.Next(1, TimeSpan.FromDays(1), TimeSpan.FromSeconds(100));
+            var queue2Events = await queue2.Next(1, TimeSpan.FromDays(1), TimeSpan.FromSeconds(100));
         }
 
         //[Test]
@@ -378,7 +446,7 @@ namespace Res.Core.Tests.Client
         //    Assert.IsTrue(received.TryTake(out e, 5000));
         //}
 
-        
+
 
         private static readonly string ConnectionString = ConfigurationManager.ConnectionStrings["ResIntegrationTest"].ConnectionString;
 

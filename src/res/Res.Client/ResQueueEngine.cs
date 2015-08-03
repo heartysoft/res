@@ -31,9 +31,9 @@ namespace Res.Client
             _log.Debug("[ResQueueEngine] Started.");
         }
 
-        public ResQueue Declare(string queueId, string subscriberId, string context, string filter, DateTime startTime)
+        public ResQueue Declare(string context, string queueId, string subscriberId, string filter, DateTime startTime)
         {
-            return new ResQueue(queueId, subscriberId, context, filter, startTime, _acceptor);
+            return new ResQueue(context, queueId, subscriberId, filter, startTime, _acceptor);
         }
 
         public void Dispose()

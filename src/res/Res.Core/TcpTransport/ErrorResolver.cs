@@ -24,6 +24,7 @@ namespace Res.Core.TcpTransport
             {typeof(EventStorageReader.EventNotFoundException), e => new ErrorEntry(8, e.ToString())},
             {typeof(EventStorageReader.StorageReaderTimeoutException), e => new ErrorEntry(9, e.ToString())},
             {typeof(EventStorageReader.StorageReaderBusyException), e => new ErrorEntry(10, e.ToString())},
+            {typeof(QueueAlreadyExistsInContextWithDifferentFilterException), e => new ErrorEntry(11, e.ToString())},
         }; 
 
         public ErrorEntry GetError(Exception e)

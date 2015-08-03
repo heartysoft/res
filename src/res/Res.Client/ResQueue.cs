@@ -16,7 +16,7 @@ namespace Res.Client
 
         private bool _initial = true;
         private long? _allocationId;
-        public ResQueue(string queueId, string subscriberId, string context, string filter, DateTime startTime, QueueRequestAcceptor acceptor)
+        public ResQueue(string context, string queueId, string subscriberId, string filter, DateTime startTime, QueueRequestAcceptor acceptor)
         {
             _queueId = queueId;
             _subscriberId = subscriberId;

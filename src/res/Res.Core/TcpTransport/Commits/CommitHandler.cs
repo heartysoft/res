@@ -17,7 +17,6 @@ namespace Res.Core.TcpTransport.Commits
         private readonly OutBuffer _outBuffer;
         readonly ErrorResolver _resolver = new ErrorResolver();
         private const string Protocol = ResProtocol.ResClient01; //parsing based on this. Maybe move elsewhere when more protocols are present.
-        SpinWait _spin = new SpinWait();
         
         private static readonly Logger Log = LogManager.GetCurrentClassLogger();
 

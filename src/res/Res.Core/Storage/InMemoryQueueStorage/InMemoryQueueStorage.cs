@@ -52,6 +52,9 @@ namespace Res.Core.Storage.InMemoryQueueStorage
         {
             if (_queues.Values.Any(x => x.Matches(context, queueId, filter)))
                 return;
+            if(_queues.ContainsKey(getQueuePrimaryKey(queueId, context)))
+                throw new QueueAlreadyExistsInContextWithDifferentFilterException(context, queueId, filter);
+
             var nextMarker = _eventStorage.GetMinSequenceMatchingCriteriaOrNull(
                 x => x.Context == context
                         && x.Stream.StartsWith(filter)
