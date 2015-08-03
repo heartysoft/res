@@ -195,9 +195,42 @@ namespace Res.Core.Tests.Storage.Queues
             Assert.AreEqual(event1Id, queued.Events[0].EventId);
 
             var next =
-                _queueStorage.AcknowledgeAndFetchNext(new AcknowledgeQueue("foo", "bar", queued.AllocationId, 1, 5000));
+                _queueStorage.AcknowledgeAndFetchNext(new AcknowledgeQueue("foo", "test", "bar", queued.AllocationId, 1, 5000));
 
             Assert.AreEqual(event2Id, next.Events[0].EventId);
+        }
+
+        [Test]
+        public void can_declare_queues_with_same_name_in_different_contexts()
+        {
+            var event1Id = Guid.NewGuid();
+            var event2Id = Guid.NewGuid();
+            var event3Id = Guid.NewGuid();
+            var event4Id = Guid.NewGuid();
+        
+            _eventStorage.Store(new CommitsForStorage(new CommitForStorage(
+                Guid.NewGuid(),
+                "test",
+                "bar",
+                new EventForStorage(event1Id, 1, DateTime.UtcNow, "some-type", "body", ""),
+                new EventForStorage(event2Id, 2, DateTime.UtcNow, "some-type", "body", "")
+                )));
+
+            _eventStorage.Store(new CommitsForStorage(new CommitForStorage(
+                Guid.NewGuid(),
+                "test1",
+                "bar",
+                new EventForStorage(event3Id, 1, DateTime.UtcNow, "some-type", "body", ""),
+                new EventForStorage(event4Id, 2, DateTime.UtcNow, "some-type", "body", "")
+                )));
+
+            var queued = _queueStorage.Subscribe(new SubscribeToQueue("foo", "bar", "test", "*", DateTime.UtcNow.AddMinutes(-5), 2, 60000));
+            var queued2 = _queueStorage.Subscribe(new SubscribeToQueue("foo", "bar", "test1", "*", DateTime.UtcNow.AddMinutes(-5), 2, 60000));
+
+            Assert.AreEqual(event1Id, queued.Events[0].EventId);
+            Assert.AreEqual(event2Id, queued.Events[1].EventId);
+            Assert.AreEqual(event3Id, queued2.Events[0].EventId);
+            Assert.AreEqual(event4Id, queued2.Events[1].EventId);
         }
     }
 }

@@ -29,6 +29,7 @@ namespace Res.Core.TcpTransport.Queues
             Logger.Debug("[Queue_AcknowledgeHandler] Received an ack.");
 
             var requestId = message.Pop();
+            var context = message.Pop().ConvertToString();
             var queueId = message.Pop().ConvertToString();
             var subscriberId = message.Pop().ConvertToString();
             
@@ -43,6 +44,7 @@ namespace Res.Core.TcpTransport.Queues
 
             var ack = new AcknowledgeQueue(
                 queueId,
+                context,
                 subscriberId,
                 allocationId,
                 allocationSize,
