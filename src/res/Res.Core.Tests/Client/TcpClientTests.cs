@@ -310,8 +310,8 @@ namespace Res.Core.Tests.Client
             var queue1 = queueEngine.Declare("test-context", "test-queue", "queue1", "*", DateTime.Now.AddDays(-1));
             var queue2 = queueEngine.Declare("test-context", "test-queue", "queue1", "test-", DateTime.Now.AddDays(-1));
 
-            var queue1Events = await queue1.Next(1, TimeSpan.FromDays(1), TimeSpan.FromSeconds(100));
-            var queue2Events = await queue2.Next(1, TimeSpan.FromDays(1), TimeSpan.FromSeconds(100));
+            var queue1Events = await queue1.Next(1, TimeSpan.FromDays(1), TimeSpan.FromSeconds(10));
+            var queue2Events = await queue2.Next(1, TimeSpan.FromDays(1), TimeSpan.FromSeconds(10));
         }
 
         [Test]
@@ -343,8 +343,8 @@ namespace Res.Core.Tests.Client
             var queue1 = queueEngine.Declare("test-context", "test-queue", "queue1", "test-", DateTime.Now.AddDays(-1));
             var queue2 = queueEngine.Declare("test-context", "test-queue", "queue1", "test-", DateTime.Now.AddDays(-1));
 
-            var queue1Events = await queue1.Next(1, TimeSpan.FromDays(1), TimeSpan.FromSeconds(100));
-            var queue2Events = await queue2.Next(1, TimeSpan.FromDays(1), TimeSpan.FromSeconds(100));
+            var queue1Events = await queue1.Next(1, TimeSpan.FromDays(1), TimeSpan.FromSeconds(10));
+            var queue2Events = await queue2.Next(1, TimeSpan.FromDays(1), TimeSpan.FromSeconds(10));
         }
 
         //[Test]
