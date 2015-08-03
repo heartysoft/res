@@ -37,15 +37,11 @@ namespace Res.Core.TcpTransport.Queues
             var allocationSize = int.Parse(message.Pop().ConvertToString());
             var allocationTimeInMilliseconds = int.Parse(message.Pop().ConvertToString());
 
-            var subscribe = new SubscribeToQueue(
+            var subscribe = new SubscribeToQueue(context,
                 queueId,
                 subscriberId,
-                context,
                 filter,
-                utcStartTime,
-                allocationSize,
-                allocationTimeInMilliseconds
-                );
+                utcStartTime, allocationSize, allocationTimeInMilliseconds);
 
             var queuedEvents = _storage.Subscribe(subscribe);
             var events = queuedEvents.Events;

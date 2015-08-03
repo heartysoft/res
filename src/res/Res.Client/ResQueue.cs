@@ -52,7 +52,7 @@ namespace Res.Client
 
         private async Task<QueuedEvents> acknowledgeAndProgress(int expectedMaxCount, TimeSpan allocationTimeout, TimeSpan timeout)
         {
-            var request = new AcknowledgeQueueAndFetchNextRequest(_queueId, _subscriberId, 
+            var request = new AcknowledgeQueueAndFetchNextRequest(_context, _queueId, _subscriberId, 
                 _allocationId, expectedMaxCount, (int)allocationTimeout.TotalMilliseconds);
             var events = await _acceptor.AcknowledgeAndFetchNext(request, timeout);
 

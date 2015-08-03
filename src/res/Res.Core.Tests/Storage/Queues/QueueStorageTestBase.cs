@@ -30,7 +30,7 @@ namespace Res.Core.Tests.Storage.Queues
         [Test]
         public void should_create_queue_for_no_events()
         {
-            _queueStorage.Subscribe(new SubscribeToQueue("foo", "bar", "test", "*", DateTime.UtcNow, 100, 60000));
+            _queueStorage.Subscribe(new SubscribeToQueue("test", "foo", "bar", "*", DateTime.UtcNow, 100, 60000));
 
             var queues = _queueStorage.GetAllByDecreasingNextMarker(10, 0);
             
@@ -44,7 +44,7 @@ namespace Res.Core.Tests.Storage.Queues
         [Test]
         public void should_not_create_allocation_for_no_events()
         {
-            var queued = _queueStorage.Subscribe(new SubscribeToQueue("foo", "bar", "test", "*", DateTime.UtcNow, 100, 60000));
+            var queued = _queueStorage.Subscribe(new SubscribeToQueue("test", "foo", "bar", "*", DateTime.UtcNow, 100, 60000));
             Assert.IsNull(queued.AllocationId);
         }
 
@@ -58,7 +58,7 @@ namespace Res.Core.Tests.Storage.Queues
                 new EventForStorage(Guid.NewGuid(), 1, DateTime.UtcNow, "some-type", "body", "")
                 )));
 
-            var queued = _queueStorage.Subscribe(new SubscribeToQueue("foo", "bar", "test", "*", DateTime.UtcNow.AddMinutes(-5), 100, 60000));
+            var queued = _queueStorage.Subscribe(new SubscribeToQueue("test", "foo", "test-subscriber1", "*", DateTime.UtcNow.AddMinutes(-5), 100, 60000));
 
             Assert.IsTrue(queued.AllocationId.HasValue);
             Assert.AreEqual("test", queued.Events[0].Context);
@@ -78,7 +78,7 @@ namespace Res.Core.Tests.Storage.Queues
                 new EventForStorage(event2Id, 2, DateTime.UtcNow, "some-type", "body", "")
                 )));
 
-            var queued = _queueStorage.Subscribe(new SubscribeToQueue("foo", "bar", "test", "*", DateTime.UtcNow.AddMinutes(-5), 1, 60000));
+            var queued = _queueStorage.Subscribe(new SubscribeToQueue("test", "foo", "bar", "*", DateTime.UtcNow.AddMinutes(-5), 1, 60000));
 
             Assert.AreEqual(1, queued.Events.Length);
             Assert.AreEqual(event1Id, queued.Events[0].EventId);
@@ -98,8 +98,8 @@ namespace Res.Core.Tests.Storage.Queues
                 new EventForStorage(event2Id, 2, DateTime.UtcNow, "some-type", "body", "")
                 )));
 
-            var queued = _queueStorage.Subscribe(new SubscribeToQueue("foo", "bar", "test", "*", DateTime.UtcNow.AddMinutes(-5), 2, 60000));
-            var queued2 = _queueStorage.Subscribe(new SubscribeToQueue("foo", "bar", "test", "*", DateTime.UtcNow.AddMinutes(-5), 2, 60000));
+            var queued = _queueStorage.Subscribe(new SubscribeToQueue("test", "foo", "bar", "*", DateTime.UtcNow.AddMinutes(-5), 2, 60000));
+            var queued2 = _queueStorage.Subscribe(new SubscribeToQueue("test", "foo", "bar", "*", DateTime.UtcNow.AddMinutes(-5), 2, 60000));
 
             Assert.AreEqual(queued.AllocationId.Value, queued2.AllocationId.Value);
             Assert.AreEqual(queued.Events[0].EventId, queued2.Events[0].EventId);
@@ -118,11 +118,11 @@ namespace Res.Core.Tests.Storage.Queues
                 new EventForStorage(event1Id, 1, DateTime.UtcNow, "some-type", "body", "")
                 )));
 
-            var queued = _queueStorage.Subscribe(new SubscribeToQueue("foo", "baz", "test", "*", DateTime.UtcNow.AddMinutes(-5), 1, 1));
+            var queued = _queueStorage.Subscribe(new SubscribeToQueue("test", "foo", "baz", "*", DateTime.UtcNow.AddMinutes(-5), 1, 1));
             var allocationId = queued.AllocationId.Value;
             
             Thread.Sleep(5);
-            queued = _queueStorage.Subscribe(new SubscribeToQueue("foo", "bar", "test", "*", DateTime.UtcNow.AddMinutes(-5), 1, 1));
+            queued = _queueStorage.Subscribe(new SubscribeToQueue("test", "foo", "bar", "*", DateTime.UtcNow.AddMinutes(-5), 1, 1));
 
             Assert.AreEqual(allocationId, queued.AllocationId.Value);
         }
@@ -141,8 +141,8 @@ namespace Res.Core.Tests.Storage.Queues
                 new EventForStorage(event2Id, 2, DateTime.UtcNow, "some-type", "body", "")
                 )));
 
-            var queued = _queueStorage.Subscribe(new SubscribeToQueue("foo", "baz", "test", "*", DateTime.UtcNow.AddMinutes(-5), 1, 60000));
-            var queued2 = _queueStorage.Subscribe(new SubscribeToQueue("foo", "bar", "test", "*", DateTime.UtcNow.AddMinutes(-5), 1, 60000));
+            var queued = _queueStorage.Subscribe(new SubscribeToQueue("test", "foo", "baz", "*", DateTime.UtcNow.AddMinutes(-5), 1, 60000));
+            var queued2 = _queueStorage.Subscribe(new SubscribeToQueue("test", "foo", "bar", "*", DateTime.UtcNow.AddMinutes(-5), 1, 60000));
 
             Assert.AreNotEqual(queued.AllocationId.Value, queued2.AllocationId.Value);
         }
@@ -167,7 +167,7 @@ namespace Res.Core.Tests.Storage.Queues
                 new EventForStorage(event2Id, 1, DateTime.UtcNow, "some-type", "body", "")
                 )));
 
-            var queued = _queueStorage.Subscribe(new SubscribeToQueue("foo", "bazSub", "test", "baz", DateTime.UtcNow.AddMinutes(-5), 10, 60000));
+            var queued = _queueStorage.Subscribe(new SubscribeToQueue("test", "foo", "bazSub", "baz", DateTime.UtcNow.AddMinutes(-5), 10, 60000));
 
             Assert.AreEqual(1, queued.Events.Length);
             Assert.AreEqual(event2Id, queued.Events[0].EventId);
@@ -190,7 +190,7 @@ namespace Res.Core.Tests.Storage.Queues
                 new EventForStorage(event2Id, 2, DateTime.UtcNow, "some-type", "body", "")
                 )));
 
-            var queued = _queueStorage.Subscribe(new SubscribeToQueue("foo", "bar", "test", "*", DateTime.UtcNow.AddMinutes(-5), 1, 60000));
+            var queued = _queueStorage.Subscribe(new SubscribeToQueue("test", "foo", "bar", "*", DateTime.UtcNow.AddMinutes(-5), 1, 60000));
 
             Assert.AreEqual(event1Id, queued.Events[0].EventId);
 
@@ -224,8 +224,8 @@ namespace Res.Core.Tests.Storage.Queues
                 new EventForStorage(event4Id, 2, DateTime.UtcNow, "some-type", "body", "")
                 )));
 
-            var queued = _queueStorage.Subscribe(new SubscribeToQueue("foo", "bar", "test", "*", DateTime.UtcNow.AddMinutes(-5), 2, 60000));
-            var queued2 = _queueStorage.Subscribe(new SubscribeToQueue("foo", "bar", "test1", "*", DateTime.UtcNow.AddMinutes(-5), 2, 60000));
+            var queued = _queueStorage.Subscribe(new SubscribeToQueue("test", "foo", "bar", "*", DateTime.UtcNow.AddMinutes(-5), 2, 60000));
+            var queued2 = _queueStorage.Subscribe(new SubscribeToQueue("test1", "foo", "bar", "*", DateTime.UtcNow.AddMinutes(-5), 2, 60000));
 
             Assert.AreEqual(event1Id, queued.Events[0].EventId);
             Assert.AreEqual(event2Id, queued.Events[1].EventId);

@@ -8,14 +8,16 @@ namespace Res.Client.Internal.Queues.Messages
 {
     public class AcknowledgeQueueAndFetchNextRequest : ResRequest
     {
+        private readonly string _context;
         private readonly string _queueId;
         private readonly string _subscriberId;
         private readonly long? _allocationId;
         private readonly int _allocationBatchSize;
         private readonly int _allocationTimeoutInMilliseconds;
 
-        public AcknowledgeQueueAndFetchNextRequest(string queueId, string subscriberId, long? allocationId, int allocationBatchSize, int allocationTimeoutInMilliseconds)
+        public AcknowledgeQueueAndFetchNextRequest(string context, string queueId, string subscriberId, long? allocationId, int allocationBatchSize, int allocationTimeoutInMilliseconds)
         {
+            _context = context;
             _queueId = queueId;
             _subscriberId = subscriberId;
             _allocationId = allocationId;
@@ -33,6 +35,7 @@ namespace Res.Client.Internal.Queues.Messages
             msg.Append(ResCommands.AcknowledgeQueue);
             msg.Append(requestId);
 
+            msg.Append(_context);
             msg.Append(_queueId);
             msg.Append(_subscriberId);
 
@@ -61,6 +64,7 @@ namespace Res.Client.Internal.Queues.Messages
                 if (command != ResCommands.QueuedEvents)
                     pending.SetException(new UnsupportedCommandException(command));
 
+                var queueContext = m.Pop().ConvertToString();
                 var queueId = m.Pop().ConvertToString();
                 var subscriberId = m.Pop().ConvertToString();
                 var time = DateTime.FromBinary(long.Parse(m.Pop().ConvertToString()));
@@ -89,7 +93,7 @@ namespace Res.Client.Internal.Queues.Messages
                     events[i] = new EventInStorage(context, streamId, sequence, type, id, headers, body, timestamp);
                 }
 
-                var result = new QueuedEventsResponse(queueId, subscriberId, time, allocationId, events);
+                var result = new QueuedEventsResponse(queueContext, queueId, subscriberId, time, allocationId, events);
                 pending.SetResult(result);
             };
         }

@@ -1,4 +1,5 @@
 ﻿CREATE PROCEDURE [dbo].[Queues_Subscribe_Allocate]
+    @Context nvarchar(50),
 	@QueueId nvarchar(50),
 	@SubscriberId nvarchar(50),
 	@Count int,
@@ -9,7 +10,9 @@ AS
 	Declare @ExpiresAt datetime2(4)
 
 	SELECT top (1) @AllocationId = AllocationId FROM QueueAllocations
-		WHERE QueueId = @QueueId
+		WHERE
+                Context = @Context 
+                AND QueueId = @QueueId
 				AND SubscriberId = @SubscriberId
 				AND ExpiresAt > @Now
 	
@@ -17,7 +20,9 @@ AS
 		RETURN 0
 	ELSE BEGIN
 		SELECT TOP(1) @AllocationId = AllocationId FROM QueueAllocations
-				WHERE QueueId = @QueueId 
+				WHERE 
+                    Context=  @Context
+                    AND QueueId = @QueueId 
 					AND ExpiresAt <= @Now	
 				Order By StartMarker
 
@@ -42,6 +47,8 @@ AS
 					WHERE
 						ew.GlobalSequence >= qs.NextMarker
 						AND
+                        qs.Context = @Context
+                        AND
 						qs.QueueId = @QueueId
 					Order By GlobalSequence
 						) AS T
@@ -52,10 +59,13 @@ AS
 				SET @ExpiresAt = DateAdd(ms, @AllocationTimeInMilliseconds, @Now)
 
 				UPDATE Queues SET NextMarker = (@EndMark + 1)
-					WHERE QueueId = @QueueId
+					WHERE
+                        Context = @Context 
+                        AND 
+                        QueueId = @QueueId
 
-				INSERT INTO QueueAllocations (QueueId, SubscriberId, ExpiresAt, StartMarker, EndMarker)
-					VALUES (@QueueId, @SubscriberId, @ExpiresAt, @StartMark, @EndMark)
+				INSERT INTO QueueAllocations (Context, QueueId, SubscriberId, ExpiresAt, StartMarker, EndMarker)
+					VALUES (@Context, @QueueId, @SubscriberId, @ExpiresAt, @StartMark, @EndMark)
 
 				SET @AllocationId = @@IDENTITY
 				RETURN 0

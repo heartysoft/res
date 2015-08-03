@@ -37,6 +37,7 @@ namespace Res.Client.Internal.Queues.Messages
             msg.Append(ResCommands.SubscribeToQueue);
             msg.Append(requestId);
 
+            msg.Append(_context);
             msg.Append(_queueId);
             msg.Append(_subscriberId);
             msg.Append(_context);
@@ -62,6 +63,7 @@ namespace Res.Client.Internal.Queues.Messages
                 if (command != ResCommands.QueuedEvents)
                     pending.SetException(new UnsupportedCommandException(command));
 
+                var queuecontext = m.Pop().ConvertToString();
                 var queueId = m.Pop().ConvertToString();
                 var subscriberId = m.Pop().ConvertToString();
                 var time = DateTime.FromBinary(long.Parse(m.Pop().ConvertToString()));
@@ -91,7 +93,7 @@ namespace Res.Client.Internal.Queues.Messages
                     events[i] = new EventInStorage(context, streamId, sequence, type, id, headers, body, timestamp);
                 }
 
-                var result = new QueuedEventsResponse(queueId, subscriberId, time, allocationId, events);
+                var result = new QueuedEventsResponse(queuecontext, queueId, subscriberId, time, allocationId, events);
                 pending.SetResult(result);
             };
         }

@@ -50,26 +50,26 @@ namespace Res.Core.Storage.InMemoryQueueStorage
 
         private void createQueueIfNotExists(string queueId, string context, string filter, DateTime utcQueueStartTime)
         {
-            if (_queues.Values.Any(x => x.Matches(queueId, context, filter)))
+            if (_queues.Values.Any(x => x.Matches(context, queueId, filter)))
                 return;
             var nextMarker = _eventStorage.GetMinSequenceMatchingCriteriaOrNull(
                 x => x.Context == context
                         && x.Stream.StartsWith(filter)
                         && x.Timestamp > utcQueueStartTime) ?? -9223372036854775808;
-            _queues[getQueuePrimaryKey(queueId, context)] = new QueueStorageInfo(queueId, context, filter, nextMarker);
+            _queues[getQueuePrimaryKey(queueId, context)] = new QueueStorageInfo(context, queueId, filter, nextMarker);
         }
 
         private long? subscribe_allocate(string queueId, string context, string subscriberId, int count, int allocationTimeInMilliseconds,
             DateTime utcNow)
         {
             var allocation =
-                _allocations.Values.FirstOrDefault(x => x.MatchesQueueAndSubscriber(queueId, context, subscriberId) && !x.HasExpired(utcNow));
+                _allocations.Values.FirstOrDefault(x => x.MatchesQueueAndSubscriber(context, queueId, subscriberId) && !x.HasExpired(utcNow));
 
             //allocation exists. do nothing.
             if (allocation != null) return allocation.AllocationId;
 
             var expiredAllocationForThisQueue =
-                _allocations.Values.Where(x => x.MatchesQueue(queueId, context) && x.HasExpired(utcNow))
+                _allocations.Values.Where(x => x.MatchesQueue(context, queueId) && x.HasExpired(utcNow))
                     .OrderBy(x => x.StartMarker)
                     .FirstOrDefault();
 

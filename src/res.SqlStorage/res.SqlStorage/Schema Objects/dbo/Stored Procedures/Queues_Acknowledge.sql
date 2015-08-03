@@ -1,4 +1,5 @@
 ﻿CREATE PROCEDURE [dbo].[Queues_Acknowledge]
+    @Context nvarchar(50),
 	@QueueId nvarchar(50),
 	@SubscriberId nvarchar(50),
 	@AllocationId bigint = NULL,
@@ -13,7 +14,7 @@ AS
 
 	IF @AllocationTimeInMilliseconds <> -1 BEGIN
 		BEGIN TRAN	
-			Exec Queues_Subscribe_Allocate @QueueId, @SubscriberId, @Count, @AllocationTimeInMilliseconds, @Now, @AllocationId = @NewAllocationId OUTPUT
+			Exec Queues_Subscribe_Allocate @Context, @QueueId, @SubscriberId, @Count, @AllocationTimeInMilliseconds, @Now, @AllocationId = @NewAllocationId OUTPUT
 		COMMIT
 	END 
 		

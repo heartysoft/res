@@ -17,7 +17,7 @@ namespace Res.Core.Storage
         public string Filter { get; private set; }
         public long NextMarker { get; private set; }
 
-        public QueueStorageInfo(string queueId, string context, string filter, long nextMarker)
+        public QueueStorageInfo(string context, string queueId, string filter, long nextMarker)
         {
             QueueId = queueId;
             Context = context;
@@ -25,7 +25,7 @@ namespace Res.Core.Storage
             NextMarker = nextMarker;
         }
 
-        public bool Matches(string queueId, string context, string filter)
+        public bool Matches(string context, string queueId, string filter)
         {
             return QueueId.Equals(queueId) && Context.Equals(context) && Filter.Equals(filter);
         }
@@ -45,7 +45,7 @@ namespace Res.Core.Storage
 
         public QueueStorageInfo WithNextMarker(long value)
         {
-            return new QueueStorageInfo(QueueId, Context, Filter, value);
+            return new QueueStorageInfo(Context, QueueId, Filter, value);
         }
 
         public bool MatchesContextAndFilter(string context, string stream)
@@ -77,12 +77,12 @@ namespace Res.Core.Storage
             EndMarker = endMarker;
         }
 
-        public bool MatchesQueueAndSubscriber(string queueId, string context, string subscriberId)
+        public bool MatchesQueueAndSubscriber(string context, string queueId, string subscriberId)
         {
             return QueueId.Equals(queueId) && Context.Equals(context) && SubscriberId.Equals(subscriberId);
         }
 
-        public bool MatchesQueue(string queueId, string context)
+        public bool MatchesQueue(string context, string queueId)
         {
             return QueueId.Equals(queueId) && Context.Equals(context);
         }

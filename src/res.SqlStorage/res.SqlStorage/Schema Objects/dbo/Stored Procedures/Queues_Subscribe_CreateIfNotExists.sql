@@ -1,6 +1,6 @@
 ﻿CREATE PROCEDURE [dbo].[Queues_Subscribe_CreateIfNotExists]
-	@QueueId nvarchar(50),
 	@Context nvarchar(50),
+	@QueueId nvarchar(50),
 	@Filter nvarchar(256),
 	@StartTime datetime2(4)
 AS
@@ -9,11 +9,11 @@ AS
 	-- GlobalSequence number for events at time >= @StartTime
 
 	IF NOT EXISTS (SELECT * FROM Queues
-		WHERE QueueId = @QueueId 
-			AND Context = @Context
+		WHERE Context = @Context
+			AND QueueId = @QueueId
 			AND Filter = @Filter)
-	INSERT INTO Queues (QueueId, Context, Filter, NextMarker)
-	VALUES (@QueueId, @Context, @Filter, 
+	INSERT INTO Queues (Context, QueueId, Filter, NextMarker)
+	VALUES (@Context, @QueueId, @Filter, 
 		COALESCE(
 			(SELECT Min(GlobalSequence) FROM EventWrappers WHERE
 				ContextName = @Context 
