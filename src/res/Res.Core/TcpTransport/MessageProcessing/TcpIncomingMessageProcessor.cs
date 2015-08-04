@@ -28,24 +28,8 @@ namespace Res.Core.TcpTransport.MessageProcessing
             var protocol = protocolFrame.ConvertToString();
             ensureProtocol(protocol);
             var command = message.Pop().ConvertToString();
-            var requestId = message.First;
-            try
-            {
-                _dispatcher.Dispatch(command, sender, message);
-            }
-            catch (Exception e)
-            {
-                var msg = new NetMQMessage();
-                msg.Append(sender);
-                msg.AppendEmptyFrame();
-                msg.Append(protocolFrame);
-                msg.Append(requestId);
-                msg.Append(ResCommands.Error);
-                var error = ErrorResolver.GetError(e);
-                msg.Append(error.ErrorCode.ToString(CultureInfo.InvariantCulture));
-                msg.Append(error.Message);
-                socket.SendMessage(msg);
-            }
+
+            _dispatcher.Dispatch(command, sender, message);
         }
 
         private static void ensureProtocol(string protocol)

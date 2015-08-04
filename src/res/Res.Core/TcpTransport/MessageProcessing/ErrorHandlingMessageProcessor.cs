@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Net.Sockets;
 using NetMQ;
 using NLog;
 using Res.Protocol;
@@ -32,6 +33,10 @@ namespace Res.Core.TcpTransport.MessageProcessing
                 sender.Add(frame);
             }
 
+            var protocolFrame = message[sender.Count + 1];
+            var commandFrame = message[sender.Count + 2];
+            var requestId = message[sender.Count + 3];
+
             try
             {
                 _processor.ProcessMessage(message, socket);
@@ -52,10 +57,12 @@ namespace Res.Core.TcpTransport.MessageProcessing
 
                     msg.AppendEmptyFrame();
 
-                    msg.Append(ResProtocol.ResClient01);
+                    msg.Append(protocolFrame);
+                    msg.Append(requestId);
                     msg.Append(ResCommands.Error);
                     msg.Append(entry.ErrorCode.ToString(CultureInfo.InvariantCulture));
                     msg.Append(entry.Message);
+                    socket.SendMessage(msg);
                 }
             }
         }

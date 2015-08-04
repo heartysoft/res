@@ -52,7 +52,7 @@ namespace Res.Core.TcpTransport.Commits
         {
             var context = message.Pop().ConvertToString();
             var stream = message.Pop().ConvertToString();
-            var expectedVersion = int.Parse(message.Pop().ConvertToString());
+            var expectedVersion = Convert.ToInt32(message.Pop().ConvertToString());
             var eventCount = int.Parse(message.Pop().ConvertToString());
 
             var events = new EventForStorage[eventCount];
