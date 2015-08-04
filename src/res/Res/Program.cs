@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using NetMQ.zmq;
 using NLog;
+using Res.Core;
 using Res.Core.TcpTransport;
 using SimpleConfig;
 using Topshelf;
@@ -25,19 +26,18 @@ namespace Res
                 x.AddCommandLineDefinition("endpoint", s => endpoint = s);
                 x.ApplyCommandLine();
 
-                x.Service<ResHost>(s =>
+                x.Service<ResServer>(s =>
                 {
                     var config = Configuration.Load<ResConfiguration>();
-
                     if (string.IsNullOrWhiteSpace(endpoint) == false)
                     {
                         Console.WriteLine("setting endpoint...");
                         config.PublishEndpoint.Endpoint = endpoint;
                     }
 
-                    s.ConstructUsing(name => new ResHost());
+                    s.ConstructUsing(name => new ResServer());
                     s.WhenStarted(rh => rh.Start(config));
-                    s.WhenStopped(rh => rh.Stop());
+                    s.WhenStopped(rh => rh.Dispose());
                 });
 
                 x.UseNLog();

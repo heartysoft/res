@@ -49,7 +49,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Client\ResHarness.cs" />
     <Compile Include="Client\TcpClientTests.cs" />
+    <Compile Include="Client\TcpClientTestsWithExternalServer.cs" />
+    <Compile Include="Client\TcpClientTestsWithInMemoryStorage.cs" />
     <Compile Include="StorageBuffering\StorageWriterTests.cs" />
     <Compile Include="Storage\CommitModel.cs" />
     <Compile Include="Storage\CreateEventsMetaData.cs" />

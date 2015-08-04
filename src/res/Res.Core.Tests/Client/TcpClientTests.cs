@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Configuration;
-using System.Data.SqlClient;
-using System.Diagnostics;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -19,35 +16,38 @@ using QueueAlreadyExistsInContextWithDifferentFilterException = Res.Client.Excep
 namespace Res.Core.Tests.Client
 {
     [TestFixture]
-    public class TcpClientTests
+    public abstract class TcpClientTests
     {
-        private ResHarness _harness;
+        protected ResHarness _harness;
 
         [TestFixtureSetUp]
         public void Setup()
         {
-            _harness = new ResHarness();
-            _harness.Start();
+            FixtureSetup();
         }
+
+        protected abstract void FixtureSetup();
+        protected abstract void FixtureTeardown();
+        protected abstract void PerTestInit();
+        protected abstract void PerTestCleanup();
+
 
         [TestFixtureTearDown]
         public void Teardown()
         {
-            _harness.Stop();
+            FixtureTeardown();
         }
 
         [SetUp]
         public void PerTestSetup()
         {
-            //_harness = new ResHarness();
-            //_harness.Start();
-            ClearResStore();
+            PerTestInit();
         }
 
         [TearDown]
         public void PerTestTeardown()
         {
-            //_harness.Stop();
+            PerTestCleanup();
         }
 
 
@@ -343,184 +343,8 @@ namespace Res.Core.Tests.Client
             var queue1 = queueEngine.Declare("test-context", "test-queue", "queue1", "test-", DateTime.Now.AddDays(-1));
             var queue2 = queueEngine.Declare("test-context", "test-queue", "queue1", "test-", DateTime.Now.AddDays(-1));
 
-            var queue1Events = await queue1.Next(1, TimeSpan.FromDays(1), TimeSpan.FromSeconds(10));
-            var queue2Events = await queue2.Next(1, TimeSpan.FromDays(1), TimeSpan.FromSeconds(10));
+            var queue1Events = await queue1.Next(1, TimeSpan.FromDays(1), TimeSpan.FromSeconds(1000));
+            var queue2Events = await queue2.Next(1, TimeSpan.FromDays(1), TimeSpan.FromSeconds(1000));
         }
-
-        //[Test]
-        //public void ShouldSubscribe()
-        //{
-        //    var token = new CancellationTokenSource();
-        //    var sub = _harness.CreateSubscription("res-tests", "test-context", "*");
-        //    var task = sub.Start(_ => { }, DateTime.UtcNow, TimeSpan.FromSeconds(10), TimeSpan.FromSeconds(0.5), token.Token);
-        //    token.Cancel();
-        //    Task.WhenAll(task);
-        //}
-
-        //[Test]
-        //public void ShouldGetSubscribedEvents()
-        //{
-        //    var m = new AutoResetEvent(false);
-        //    var received = new List<EventInStorage>();
-        //    var token = new CancellationTokenSource();
-        //    var sub = _harness.CreateSubscription("res-tests", "test-context", "*");
-        //    var client = _harness.CreateClient();
-        //    client.CommitAsync("test-context", "test-stream", new[]
-        //    {
-        //        new EventData("test", Guid.NewGuid(), "", "a bit more", DateTime.Now)
-        //    }, ExpectedVersion.Any).Wait(1000);
-
-        //    var task = sub.Start(x =>
-        //    {
-        //        received.AddRange(x.Events);
-        //        m.Set();
-        //    }, DateTime.Now.AddSeconds(-10), TimeSpan.FromSeconds(10), TimeSpan.FromSeconds(0.5), token.Token);
-
-
-        //    m.WaitOne();
-
-        //    token.Cancel();
-
-        //    Task.WhenAny(task);
-
-        //    Assert.AreEqual(1, received.Count);
-        //}
-
-        //[Test]
-        //public void ShouldSetSubscriptionTime()
-        //{
-        //    var received = new BlockingCollection<EventInStorage>();
-        //    var token = new CancellationTokenSource();
-        //    var sub = _harness.CreateSubscription("res-tests", "test-context", "*");
-        //    var client = _harness.CreateClient();
-
-        //    var now = DateTime.Now;
-
-        //    client.CommitAsync("test-context", "test-stream", new[]
-        //    {
-        //        new EventData("test", Guid.NewGuid(), "", "a bit more", now)
-        //    }, ExpectedVersion.Any).Wait(1000);
-
-        //    var subscribeTask = sub.Start(x =>
-        //    {
-        //        received.Add(x.Events[0]);
-        //    }, DateTime.Now.AddSeconds(10), TimeSpan.FromMilliseconds(100), TimeSpan.FromSeconds(0.5), token.Token);
-
-        //    //no events as subscription starts in the future.
-        //    subscribeTask.Wait(2000);
-
-        //    sub.SetSubscriptionTime(now.AddSeconds(-5), TimeSpan.FromSeconds(5)).Wait(token.Token);
-
-        //    EventInStorage e;
-        //    Assert.IsTrue(received.TryTake(out e, 5000));
-        //}
-
-
-        //[Test]
-        ////Kept to ensure nasty race condition doesn't come up.
-        //public void ShouldSetSubscriptionTime2()
-        //{
-        //    var received = new BlockingCollection<EventInStorage>();
-        //    var token = new CancellationTokenSource();
-        //    var sub = _harness.CreateSubscription("res-tests", "test-context", "*");
-        //    var client = _harness.CreateClient();
-
-        //    var now = DateTime.Now;
-
-        //    client.CommitAsync("test-context", "test-stream", new[]
-        //    {
-        //        new EventData("test", Guid.NewGuid(), "", "a bit more", now)
-        //    }, ExpectedVersion.Any).Wait(1000);
-
-        //    var subscribeTask = sub.Start(x =>
-        //    {
-        //        received.Add(x.Events[0]);
-        //    }, DateTime.Now.AddSeconds(10), TimeSpan.FromMilliseconds(100), TimeSpan.FromSeconds(0.5), token.Token);
-
-        //    //no events as subscription starts in the future.
-        //    subscribeTask.Wait(2000);
-
-        //    sub.SetSubscriptionTime(now.AddSeconds(-5), TimeSpan.FromSeconds(5)).Wait(token.Token);
-
-        //    EventInStorage e;
-        //    Assert.IsTrue(received.TryTake(out e, 5000));
-        //}
-
-
-
-        private static readonly string ConnectionString = ConfigurationManager.ConnectionStrings["ResIntegrationTest"].ConnectionString;
-
-        void ClearResStore()
-        {
-            using (var sqlConnection = new SqlConnection(ConnectionString))
-            {
-                sqlConnection.Open();
-
-                using (var cmd = new SqlCommand("truncate table EventWrappers;", sqlConnection))
-                {
-                    cmd.ExecuteNonQuery();
-                }
-
-                using (var cmd = new SqlCommand("truncate table Streams;", sqlConnection))
-                {
-                    cmd.ExecuteNonQuery();
-                }
-
-                using (var cmd = new SqlCommand("truncate table QueueAllocations;", sqlConnection))
-                {
-                    cmd.ExecuteNonQuery();
-                }
-                
-                using (var cmd = new SqlCommand("truncate table Queues;", sqlConnection))
-                {
-                    cmd.ExecuteNonQuery();
-                }
-            }
-        }
-    }
-
-    public class ResHarness
-    {
-        public static string Endpoint = ConfigurationManager.AppSettings["resPublishEndpoint"];
-        public static string QueryEndpoint = ConfigurationManager.AppSettings["resQueryEndpoint"];
-        public static string QueueEndpoint = ConfigurationManager.AppSettings["resQueueEndpoint"];
-        public static string ResExePath = ConfigurationManager.AppSettings["resExePath"];
-        private Process _process;
-        private ResPublishEngine _publishEngine;
-        private ResQueryEngine _queryEngine;
-        private ResQueueEngine _queueEngine;
-
-        public void Start()
-        {          
-            var start = new ProcessStartInfo(ResExePath, "-endpoint:" + Endpoint);
-
-            _process = Process.Start(start);
-            
-            _publishEngine = new ResPublishEngine(Endpoint);
-
-            _queryEngine = new ResQueryEngine(QueryEndpoint);
-            _queueEngine = new ResQueueEngine(QueueEndpoint);
-        }
-
-        public ResPublisher CreatePublisher()
-        {
-            return _publishEngine.CreateRawPublisher(TimeSpan.FromSeconds(10));      
-        }
-
-        public ResQueryClient CreateQueryClient()
-        {
-            return _queryEngine.CreateClient(TimeSpan.FromSeconds(10));
-        }
-
-        public void Stop()
-        {
-            Console.WriteLine("Disposing.");
-            _queueEngine.Dispose();
-            _queryEngine.Dispose();
-            _publishEngine.Dispose();
-            _process.Kill();
-        }
-
-        public ResQueueEngine QueueEngine { get { return _queueEngine; } }
     }
 }
