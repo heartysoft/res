@@ -12,4 +12,4 @@
 
 GO
 
-CREATE INDEX [IX_QueueAllocations_QueueId_SubscriberId] ON [dbo].[QueueAllocations] ([Context], [QueueId], [SubscriberId])
+CREATE INDEX [IX_QueueAllocations_Context_QueueId_SubscriberId] ON [dbo].[QueueAllocations] ([Context], [QueueId], [SubscriberId])

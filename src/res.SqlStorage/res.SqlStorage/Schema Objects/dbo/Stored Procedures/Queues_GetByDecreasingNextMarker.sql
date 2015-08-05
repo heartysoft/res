@@ -2,5 +2,5 @@
 	@Count int,
 	@Skip int
 AS
-	SELECT TOP(@Count) * FROM Queues
+	SELECT TOP(@Count) Context, QueueId, Filter, NextMarker FROM Queues
 		Order By NextMarker DESC 
