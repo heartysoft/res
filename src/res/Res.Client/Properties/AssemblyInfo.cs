@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Heartysoft Solutions Limited")]
 [assembly: AssemblyProduct("Res.Client")]
-[assembly: AssemblyCopyright("Copyright © Heartysoft Solutions Limited")]
+[assembly: AssemblyCopyright("Copyright © 2015 Heartysoft Solutions Limited")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

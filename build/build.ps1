@@ -159,23 +159,26 @@ task package-client -depends tokenize {
 
 }
 
-task nuget-client -depends build-client-nuget, publish-client-nuget
+task nuget -depends nuget-client, nuget-core
 
-task build-client-nuget -depends compile {
-	$commitHashAndTimestamp = Get-GitCommitHashAndTimestamp
+task nuget-client -depends build-client-nuget, publish-client-nuget
+task nuget-core -depends build-core-nuget, publish-core-nuget 
+
+function tokenize-assemblyinfo {
+    $commitHashAndTimestamp = Get-GitCommitHashAndTimestamp
     $commitHash = Get-GitCommitHash
     $timestamp = Get-GitTimestamp
     $branchName = Get-GitBranchOrTag
-	
-	$assemblyInfos = Get-ChildItem -Path $base_dir -Recurse -Filter AssemblyInfo.cs
+    
+    $assemblyInfos = Get-ChildItem -Path $base_dir -Recurse -Filter AssemblyInfo.cs
 
-	$assemblyInfo = gc "$base_dir\AssemblyInfo.pson" | Out-String | iex
-	$version = $assemblyInfo.Version
-	#$productName = $assemblyInfo.ProductName
-	$companyName = $assemblyInfo.CompanyName
-	$copyright = $assemblyInfo.Copyright
+    $assemblyInfo = gc "$base_dir\AssemblyInfo.pson" | Out-String | iex
+    $version = $assemblyInfo.Version
+    #$productName = $assemblyInfo.ProductName
+    $companyName = $assemblyInfo.CompanyName
+    $copyright = $assemblyInfo.Copyright
 
-	try {
+    try {
        foreach ($assemblyInfo in $assemblyInfos) {
            $path = Resolve-Path $assemblyInfo.FullName -Relative
            #Write-Host "Patching $path with product information."
@@ -188,8 +191,11 @@ task build-client-nuget -depends compile {
             & { git checkout --quiet $path }
         }
     }
-	
-	try{
+}
+
+task build-client-nuget -depends compile {
+	tokenize-assemblyinfo
+    try{
 		Push-Location "$res_dir\Res.Client"
 		#exec { & "$res_dir\.nuget\NuGet.exe" "spec"}
 		exec { & "$res_dir\.nuget\nuget.exe" pack Res.Client.csproj -IncludeReferencedProjects}
@@ -204,10 +210,34 @@ task build-client-nuget -depends compile {
 	}	
 }
 
+task build-core-nuget -depends compile {
+    tokenize-assemblyinfo
+    try{
+        Push-Location "$res_dir\Res.Core"
+        #exec { & "$res_dir\.nuget\NuGet.exe" "spec"}
+        exec { & "$res_dir\.nuget\nuget.exe" pack Res.Core.csproj -IncludeReferencedProjects}
+    } finally{
+        Pop-Location
+        $assemblyInfos = Get-ChildItem -Path $base_dir -Recurse -Filter AssemblyInfo.cs
+        foreach ($assemblyInfo in $assemblyInfos) {
+            $path = Resolve-Path $assemblyInfo.FullName -Relative
+            #Write-Verbose "Reverting $path to original state."
+            & { git checkout --quiet $path }
+        }
+    }   
+}
+
+
 task publish-client-nuget -depends build-client-nuget {
-	$pkgPath = Get-ChildItem -Path "$res_dir\Res.Client" -Filter "*.nupkg" | select-object -first 1
-	exec { & "$res_dir\.nuget\nuget.exe" push "$res_dir\Res.Client\$pkgPath" }
-	ri "$res_dir\Res.Client\$pkgPath"
+    $pkgPath = Get-ChildItem -Path "$res_dir\Res.Client" -Filter "*.nupkg" | select-object -first 1
+    exec { & "$res_dir\.nuget\nuget.exe" push "$res_dir\Res.Client\$pkgPath" }
+    ri "$res_dir\Res.Client\$pkgPath"
+}
+
+task publish-core-nuget -depends build-client-nuget {
+    $pkgPath = Get-ChildItem -Path "$res_dir\Res.Core" -Filter "*.nupkg" | select-object -first 1
+    exec { & "$res_dir\.nuget\nuget.exe" push "$res_dir\Res.Core\$pkgPath" }
+    ri "$res_dir\Res.Core\$pkgPath"
 }
 
 task install-server {

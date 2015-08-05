@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <package >
   <metadata>
-    <id>Res.Client</id>
+    <id>Res.Core</id>
     <version>$version$</version>
-    <title>Res.Client</title>
+    <title>Res.Core</title>
     <authors>ashic</authors>
     <owners>ashic</owners>
     <licenseUrl>https://github.com/heartysoft/res/blob/master/LICENSE</licenseUrl>

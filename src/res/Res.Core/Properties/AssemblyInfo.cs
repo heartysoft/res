@@ -1,16 +1,15 @@
 ﻿using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Res.Core")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Res Server Library")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Heartysoft Solutions Limited")]
 [assembly: AssemblyProduct("Res.Core")]
-[assembly: AssemblyCopyright("Copyright © 2014 Heartysoft Solutions Limited")]
+[assembly: AssemblyCopyright("Copyright © 2015 Heartysoft Solutions Limited")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
