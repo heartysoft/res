@@ -32,13 +32,13 @@ namespace Res.Client.Internal.Commits.Messages
             msg.Append(requestId);
             msg.Append(Context);
             msg.Append(Stream);
-            msg.Append(ExpectedVersion.ToString(CultureInfo.InvariantCulture));
-            msg.Append(Events.Length.ToString(CultureInfo.InvariantCulture));
+            msg.Append(BitConverter.GetBytes(ExpectedVersion));
+            msg.Append(BitConverter.GetBytes(Events.Length));
 
             foreach (var e in Events)
             {
                 msg.Append(e.EventId.ToByteArray());
-                var timestamp = e.Timestamp.ToBinary().ToString(CultureInfo.InvariantCulture);
+                var timestamp = BitConverter.GetBytes(e.Timestamp.ToBinary());
                 msg.Append(timestamp);
                 msg.Append(e.TypeTag ?? string.Empty);
                 msg.Append(e.Headers ?? string.Empty);
