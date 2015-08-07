@@ -156,7 +156,8 @@ namespace Res.Core.Storage
             const int globalSequenceOrdinal = 4;
             const int timestampOrdinal = 5;
             const int eventTypeOrdinal = 6;
-            const int bodyOrdinal = 7;
+            const int headerOrdinal = 7;
+            const int bodyOrdinal = 8;
 
             var eventId = reader.GetGuid(eventIdOrdinal + startingOrdinal);
             var stream = reader.GetString(streamIdOrdinal + startingOrdinal);
@@ -165,10 +166,11 @@ namespace Res.Core.Storage
             var globalSequence = (long)reader.GetValue(globalSequenceOrdinal + startingOrdinal);
             var timestamp = reader.GetDateTime(timestampOrdinal + startingOrdinal);
             var typeKey = reader.GetString(eventTypeOrdinal + startingOrdinal);
+            var header = reader[headerOrdinal + startingOrdinal] as string;
             var body = reader.GetString(bodyOrdinal + startingOrdinal);
 
             var @event = new EventInStorage(eventId, contextName, stream, sequence, globalSequence, timestamp, typeKey,
-                null, body);
+                header, body);
 
             return @event;
         }

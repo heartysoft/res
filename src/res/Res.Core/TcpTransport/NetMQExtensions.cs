@@ -50,9 +50,26 @@ namespace Res.Core.TcpTransport
             return DateTime.FromBinary(PopInt64(msg));
         }
 
+        public static string PopStringOrNull(this NetMQMessage msg)
+        {
+            var frame = msg.Pop();
+            if (frame.BufferSize == 0) return null;
+            return frame.ConvertToString();
+        }
+
+        public static string PopString(this NetMQMessage msg)
+        {
+            return msg.Pop().ConvertToString();
+        }
+
         public static NetMQFrame ToNetMqFrame(this DateTime dateTime)
         {
             return new NetMQFrame(BitConverter.GetBytes(dateTime.ToBinary()));
+        }
+
+        public static NetMQFrame ToNetMqFrame(this string str)
+        {
+            return str == null ? NetMQFrame.Empty : new NetMQFrame(str);
         }
 
         public static NetMQFrame ToNetMqFrame(this long value)

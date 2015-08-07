@@ -58,6 +58,32 @@ namespace Res.Core.Tests.Client
         }
 
         [Test]
+        [ExpectedException(typeof(ArgumentException), ExpectedMessage = "typeTag")]
+        public async Task cant_store_events_without_typeTag()
+        {
+            var client = _harness.CreatePublisher();
+            var commit = client.CommitAsync("test-context", Guid.NewGuid().ToString(), new[]
+            {
+                new EventData("", Guid.NewGuid(), "", "some body", DateTime.Now)
+            }, ExpectedVersion.OnlyNew, TimeSpan.FromSeconds(1));
+
+            await commit;
+        }
+
+        [Test]
+        [ExpectedException(typeof(ArgumentException), ExpectedMessage = "body")]
+        public async Task cant_store_events_without_body()
+        {
+            var client = _harness.CreatePublisher();
+            var commit = client.CommitAsync("test-context", Guid.NewGuid().ToString(), new[]
+            {
+                new EventData("test", Guid.NewGuid(), "", "", DateTime.Now)
+            }, ExpectedVersion.OnlyNew, TimeSpan.FromSeconds(1));
+
+            await commit;
+        }
+
+        [Test]
         public async Task ShouldStoreAnEvent()
         {
             var client = _harness.CreatePublisher();
@@ -190,7 +216,7 @@ namespace Res.Core.Tests.Client
 
             var commit = publisher.CommitAsync("test-context", stream, new[]
             {
-                new EventData("test", event1Id, "", "some body", DateTime.Now),
+                new EventData("test", event1Id, null, "some body", DateTime.Now),
                 new EventData("test1", event2Id, "", "something more", DateTime.Now),
                 new EventData("test", event3Id, "myHeader:foo", "a bit more", DateTime.Now) 
             }, ExpectedVersion.OnlyNew);
@@ -207,7 +233,8 @@ namespace Res.Core.Tests.Client
             Assert.AreEqual(event2Id, events.Events[1].EventId);
             Assert.AreEqual(event3Id, events.Events[2].EventId);
 
-            Assert.AreEqual("", events.Events[1].Headers);
+            Assert.AreEqual(null, events.Events[0].Headers);
+            Assert.AreEqual(null, events.Events[1].Headers);
             Assert.AreEqual("myHeader:foo", events.Events[2].Headers);
         }
 
@@ -313,8 +340,8 @@ namespace Res.Core.Tests.Client
             var queue1 = queueEngine.Declare("test-context", "test-queue", "queue1", "*", DateTime.Now.AddDays(-1));
             var queue2 = queueEngine.Declare("test-context", "test-queue", "queue1", "test-", DateTime.Now.AddDays(-1));
 
-            var queue1Events = await queue1.Next(1, TimeSpan.FromDays(1), TimeSpan.FromSeconds(1000));
-            var queue2Events = await queue2.Next(1, TimeSpan.FromDays(1), TimeSpan.FromSeconds(1000));
+            var queue1Events = await queue1.Next(1, TimeSpan.FromDays(1), TimeSpan.FromSeconds(10));
+            var queue2Events = await queue2.Next(1, TimeSpan.FromDays(1), TimeSpan.FromSeconds(10));
         }
 
         [Test]
@@ -346,8 +373,8 @@ namespace Res.Core.Tests.Client
             var queue1 = queueEngine.Declare("test-context", "test-queue", "queue1", "test-", DateTime.Now.AddDays(-1));
             var queue2 = queueEngine.Declare("test-context", "test-queue", "queue1", "test-", DateTime.Now.AddDays(-1));
 
-            var queue1Events = await queue1.Next(1, TimeSpan.FromDays(1), TimeSpan.FromSeconds(1000));
-            var queue2Events = await queue2.Next(1, TimeSpan.FromDays(1), TimeSpan.FromSeconds(1000));
+            var queue1Events = await queue1.Next(1, TimeSpan.FromDays(1), TimeSpan.FromSeconds(10));
+            var queue2Events = await queue2.Next(1, TimeSpan.FromDays(1), TimeSpan.FromSeconds(10));
         }
     }
 }

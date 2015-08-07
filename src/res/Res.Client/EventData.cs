@@ -12,6 +12,8 @@ namespace Res.Client
 
         public EventData(string typeTag, Guid eventId, string headers, string body, DateTime timestamp)
         {
+            if (string.IsNullOrWhiteSpace(typeTag)) throw new ArgumentException("typeTag");
+            if (string.IsNullOrWhiteSpace(body)) throw new ArgumentException("body");
             TypeTag = typeTag;
             EventId = eventId;
             Headers = headers;

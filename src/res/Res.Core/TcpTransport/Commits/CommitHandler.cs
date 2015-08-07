@@ -61,9 +61,9 @@ namespace Res.Core.TcpTransport.Commits
             {
                 var eventId = new Guid(message.Pop().ToByteArray());
                 var timestamp = message.PopDateTime();
-                var typeKey = message.Pop().ConvertToString();
-                var headers = message.Pop().ConvertToString();
-                var body = message.Pop().ConvertToString();
+                var typeKey = message.PopString();
+                var headers = message.PopStringOrNull();
+                var body = message.PopString();
 
                 //-1 to override concurrency check. Being lazy and not using a constant.
                 var version = expectedVersion == -1 ? -1 : expectedVersion + i;

@@ -64,7 +64,7 @@ namespace Res.Core.Tests.Client
             _queryEngine.Dispose();
             _publishEngine.Dispose();
 
-            if(_process!= null)
+            if(_process != null)
                 _process.Kill();
 
             if(_server != null)

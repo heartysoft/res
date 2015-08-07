@@ -64,7 +64,7 @@ namespace Res.Client.Internal.Queues.Messages
                 var queueId = m.Pop().ConvertToString();
                 var subscriberId = m.Pop().ConvertToString();
                 var time = m.PopDateTime();
-                long? allocationId = m.PopNullableInt64();
+                var allocationId = m.PopNullableInt64();
                 var count = m.PopInt32();
 
                 var events = new EventInStorage[count];
@@ -76,9 +76,9 @@ namespace Res.Client.Internal.Queues.Messages
                     var context = m.Pop().ConvertToString();
                     var sequence = m.PopInt64();
                     var timestamp = m.PopDateTime();
-                    var type = m.Pop().ConvertToString();
-                    var headers = m.Pop().ConvertToString();
-                    var body = m.Pop().ConvertToString();
+                    var type = m.PopString();
+                    var headers = m.PopStringOrNull();
+                    var body = m.PopString();
 
                     events[i] = new EventInStorage(context, streamId, sequence, type, id, headers, body, timestamp);
                 }

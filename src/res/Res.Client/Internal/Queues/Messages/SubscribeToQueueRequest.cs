@@ -79,9 +79,9 @@ namespace Res.Client.Internal.Queues.Messages
                     var context = m.Pop().ConvertToString();
                     var sequence = m.PopInt64();
                     var timestamp = m.PopDateTime();
-                    var type = m.Pop().ConvertToString();
-                    var headers = m.Pop().ConvertToString();
-                    var body = m.Pop().ConvertToString();
+                    var type = m.PopString();
+                    var headers = m.PopStringOrNull();
+                    var body = m.PopString();
 
                     events[i] = new EventInStorage(context, streamId, sequence, type, id, headers, body, timestamp);
                 }

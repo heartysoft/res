@@ -40,9 +40,9 @@ namespace Res.Client.Internal.Commits.Messages
             {
                 msg.Append(e.EventId.ToByteArray());
                 msg.Append(e.Timestamp.ToNetMqFrame());
-                msg.Append(e.TypeTag ?? string.Empty);
-                msg.Append(e.Headers ?? string.Empty);
-                msg.Append(e.Body ?? string.Empty);
+                msg.Append(e.TypeTag);
+                msg.Append(e.Headers.ToNetMqFrame());
+                msg.Append(e.Body);
             }
 
             socket.SendMessage(msg);

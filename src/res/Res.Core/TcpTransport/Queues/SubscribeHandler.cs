@@ -68,9 +68,9 @@ namespace Res.Core.TcpTransport.Queues
                 msg.Append(e.Context);
                 msg.Append(e.Sequence.ToNetMqFrame());
                 msg.Append(e.Timestamp.ToNetMqFrame());
-                msg.Append(e.TypeKey ?? string.Empty);
-                msg.Append(e.Headers ?? string.Empty);
-                msg.Append(e.Body ?? string.Empty);
+                msg.Append(e.TypeKey);
+                msg.Append(e.Headers.ToNetMqFrame());
+                msg.Append(e.Body);
             }
 
             var result = new QueuedMessagesFetched(msg);
