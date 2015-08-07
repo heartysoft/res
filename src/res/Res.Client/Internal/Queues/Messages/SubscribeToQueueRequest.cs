@@ -2,6 +2,7 @@ using System;
 using System.Globalization;
 using NetMQ;
 using Res.Client.Exceptions;
+using Res.Client.Internal.NetMQ;
 using Res.Protocol;
 
 namespace Res.Client.Internal.Queues.Messages
@@ -41,9 +42,9 @@ namespace Res.Client.Internal.Queues.Messages
             msg.Append(_queueId);
             msg.Append(_subscriberId);
             msg.Append(_filter);
-            msg.Append(BitConverter.GetBytes(_utcStartTime.ToBinary()));
-            msg.Append(BitConverter.GetBytes(_allocationBatchSize));
-            msg.Append(BitConverter.GetBytes(_allocationTimeInMilliseconds));
+            msg.Append(_utcStartTime.ToNetMqFrame());
+            msg.Append(_allocationBatchSize.ToNetMqFrame());
+            msg.Append(_allocationTimeInMilliseconds.ToNetMqFrame());
 
             socket.SendMessage(msg);
 
@@ -65,16 +66,9 @@ namespace Res.Client.Internal.Queues.Messages
                 var queuecontext = m.Pop().ConvertToString();
                 var queueId = m.Pop().ConvertToString();
                 var subscriberId = m.Pop().ConvertToString();
-                var time = DateTime.FromBinary(BitConverter.ToInt64(m.Pop().Buffer, 0));
-
-                var allocationFrame = m.Pop();
-
-                long? allocationId = null;
-
-                if (allocationFrame.BufferSize != 0)
-                    allocationId = BitConverter.ToInt64(allocationFrame.Buffer, 0);
-
-                var count = BitConverter.ToInt32(m.Pop().Buffer, 0);
+                var time = m.PopDateTime();
+                var allocationId = m.PopNullableInt64();
+                var count = m.PopInt32();
 
                 var events = new EventInStorage[count];
 
@@ -83,8 +77,8 @@ namespace Res.Client.Internal.Queues.Messages
                     var id = new Guid(m.Pop().ToByteArray());
                     var streamId = m.Pop().ConvertToString();
                     var context = m.Pop().ConvertToString();
-                    var sequence = BitConverter.ToInt64(m.Pop().Buffer, 0);
-                    var timestamp = DateTime.FromBinary(BitConverter.ToInt64(m.Pop().Buffer, 0));
+                    var sequence = m.PopInt64();
+                    var timestamp = m.PopDateTime();
                     var type = m.Pop().ConvertToString();
                     var headers = m.Pop().ConvertToString();
                     var body = m.Pop().ConvertToString();
