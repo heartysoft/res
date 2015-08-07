@@ -32,9 +32,9 @@ namespace Res.Client.Internal.Queries.Messages
             msg.Append(requestId);
             msg.Append(_context);
             msg.Append(_stream);
-            msg.Append(_fromVersion.ToString(CultureInfo.InvariantCulture));
+            msg.Append(BitConverter.GetBytes(_fromVersion));
             if(_maxVersion.HasValue)
-                msg.Append(_maxVersion.Value.ToString(CultureInfo.InvariantCulture));
+                msg.Append(BitConverter.GetBytes(_maxVersion.Value));
             else
                 msg.AppendEmptyFrame();
 
@@ -56,7 +56,7 @@ namespace Res.Client.Internal.Queries.Messages
                     pending.SetException(new UnsupportedCommandException(command));
 
 
-                var count = int.Parse(m.Pop().ConvertToString());
+                var count = BitConverter.ToInt32(m.Pop().Buffer, 0);
 
                 var events = new EventInStorage[count];
 
@@ -65,8 +65,8 @@ namespace Res.Client.Internal.Queries.Messages
                     var id = new Guid(m.Pop().ToByteArray());
                     var streamId = m.Pop().ConvertToString();
                     var context = m.Pop().ConvertToString();
-                    var sequence = long.Parse(m.Pop().ConvertToString());
-                    var timestamp = DateTime.FromBinary(long.Parse(m.Pop().ConvertToString()));
+                    var sequence = BitConverter.ToInt64(m.Pop().Buffer, 0);
+                    var timestamp = DateTime.FromBinary(BitConverter.ToInt64(m.Pop().Buffer, 0));
                     var type = m.Pop().ConvertToString();
                     var headers = m.Pop().ConvertToString();
                     var body = m.Pop().ConvertToString();
