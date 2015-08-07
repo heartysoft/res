@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
 using System.Threading;
 using NetMQ;
 using NetMQ.zmq;
@@ -32,13 +33,9 @@ namespace Res.Core.TcpTransport.Queries
             var context = message.Pop().ConvertToString();
             var stream = message.Pop().ConvertToString();
 
-            var fromVersion = long.Parse(message.Pop().ConvertToString());
+            var fromVersion = message.PopInt64();
 
-            long? maxVersion = null;
-            var maxVersionFrame = message.Pop();
-
-            if (maxVersionFrame.BufferSize != 0)
-                maxVersion = long.Parse(maxVersionFrame.ConvertToString());
+            var maxVersion = message.PopNullableInt64();
 
             var events = _storage.LoadEventsForStream(context, stream, fromVersion, maxVersion);
 
@@ -51,15 +48,15 @@ namespace Res.Core.TcpTransport.Queries
 
             var count = events.Length;
 
-            msg.Append(count.ToString(CultureInfo.InvariantCulture));
+            msg.Append(count.ToNetMqFrame());
 
             foreach (var e in events)
             {
                 msg.Append(e.EventId.ToByteArray());
                 msg.Append(e.Stream);
                 msg.Append(e.Context);
-                msg.Append(e.Sequence.ToString(CultureInfo.InvariantCulture));
-                msg.Append(e.Timestamp.ToBinary().ToString(CultureInfo.InvariantCulture));
+                msg.Append(e.Sequence.ToNetMqFrame());
+                msg.Append(e.Timestamp.ToNetMqFrame());
                 msg.Append(e.TypeKey ?? string.Empty);
                 msg.Append(e.Headers ?? string.Empty);
                 msg.Append(e.Body ?? string.Empty);

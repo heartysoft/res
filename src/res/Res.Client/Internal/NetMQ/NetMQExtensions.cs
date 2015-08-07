@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using NetMQ;
 
-namespace Res.Core.TcpTransport
+namespace Res.Client.Internal.NetMQ
 {
     public static class NetMqExtensions
     {
@@ -36,13 +36,18 @@ namespace Res.Core.TcpTransport
         {
             var buffer = msg.Pop().Buffer;
             if (buffer.Length == 0) return null;
-           
+
             return BitConverter.ToInt64(buffer, 0);
         }
 
         public static int PopInt32(this NetMQMessage msg)
         {
             return BitConverter.ToInt32(msg.Pop().Buffer, 0);
+        }
+
+        public static Guid PopGuid(this NetMQMessage msg)
+        {
+            return new Guid(msg.Pop().Buffer);
         }
 
         public static DateTime PopDateTime(this NetMQMessage msg)
@@ -73,6 +78,5 @@ namespace Res.Core.TcpTransport
         {
             return value.HasValue ? new NetMQFrame(BitConverter.GetBytes(value.Value)) : NetMQFrame.Empty;
         }
-
     }
 }

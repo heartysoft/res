@@ -2,6 +2,7 @@
 using System.Globalization;
 using NetMQ;
 using Res.Client.Exceptions;
+using Res.Client.Internal.NetMQ;
 using Res.Protocol;
 
 namespace Res.Client.Internal.Commits.Messages
@@ -21,7 +22,7 @@ namespace Res.Client.Internal.Commits.Messages
             Events = events;
         }
 
-        public Action<NetMQMessage> Send(NetMQSocket socket, PendingResRequest pendingRequest, string requestId)
+        public Action<NetMQMessage> Send(NetMQSocket socket, PendingResRequest pendingRequest, Guid requestId)
         {
             var pending = (PendingResRequest<CommitResponse>) pendingRequest;
 
@@ -29,17 +30,16 @@ namespace Res.Client.Internal.Commits.Messages
             msg.AppendEmptyFrame();
             msg.Append(ResProtocol.ResClient01);
             msg.Append(ResCommands.AppendCommit);
-            msg.Append(requestId);
+            msg.Append(requestId.ToByteArray());
             msg.Append(Context);
             msg.Append(Stream);
-            msg.Append(ExpectedVersion.ToString(CultureInfo.InvariantCulture));
-            msg.Append(Events.Length.ToString(CultureInfo.InvariantCulture));
+            msg.Append(ExpectedVersion.ToNetMqFrame());
+            msg.Append(Events.Length.ToNetMqFrame());
 
             foreach (var e in Events)
             {
                 msg.Append(e.EventId.ToByteArray());
-                var timestamp = e.Timestamp.ToBinary().ToString(CultureInfo.InvariantCulture);
-                msg.Append(timestamp);
+                msg.Append(e.Timestamp.ToNetMqFrame());
                 msg.Append(e.TypeTag ?? string.Empty);
                 msg.Append(e.Headers ?? string.Empty);
                 msg.Append(e.Body ?? string.Empty);

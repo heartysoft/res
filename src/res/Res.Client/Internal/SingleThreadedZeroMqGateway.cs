@@ -5,6 +5,7 @@ using System.Threading;
 using NetMQ;
 using Res.Client.Exceptions;
 using Res.Client.Internal.Logging;
+using Res.Client.Internal.NetMQ;
 using Res.Protocol;
 
 namespace Res.Client.Internal
@@ -15,7 +16,7 @@ namespace Res.Client.Internal
         private readonly TimeSpan _reaperInterval;
         private readonly NetMQContext _ctx;
         private NetMQSocket _socket;
-        readonly ConcurrentDictionary<string, InflightEntry> _callbacks = new ConcurrentDictionary<string, InflightEntry>();
+        readonly ConcurrentDictionary<Guid, InflightEntry> _callbacks = new ConcurrentDictionary<Guid, InflightEntry>();
         private static readonly ILog Log = LogProvider.GetCurrentClassLogger();
         private DateTime _reapTime;
 
@@ -48,7 +49,7 @@ namespace Res.Client.Internal
             {
                 _reapTime = DateTime.Now.Add(_reaperInterval);
 
-                var toRemove = new List<string>();
+                var toRemove = new List<Guid>();
 
                 foreach (var callback in _callbacks.Values)
                     if (callback.ShouldDrop())
@@ -93,7 +94,7 @@ namespace Res.Client.Internal
                 if (protocol != ResProtocol.ResClient01)
                     throw new UnsupportedProtocolException(protocol);
 
-                var requestId = msg.Pop().ConvertToString();
+                var requestId = msg.PopGuid();
 
                 InflightEntry callback;
                 if (_callbacks.TryRemove(requestId, out callback))
@@ -113,7 +114,7 @@ namespace Res.Client.Internal
 
         public void SendRequest(PendingResRequest pendingRequest)
         {
-            var requestId = Guid.NewGuid().ToString();
+            var requestId = Guid.NewGuid();
 
             try
             {
@@ -178,11 +179,11 @@ namespace Res.Client.Internal
 
         private class InflightEntry
         {
-            public string RequestId { get; private set; }
+            public Guid RequestId { get; private set; }
             private readonly PendingResRequest _request;
             private readonly Action<NetMQMessage> _resultProcessor;
 
-            public InflightEntry(string requestId, PendingResRequest request, Action<NetMQMessage> resultProcessor)
+            public InflightEntry(Guid requestId, PendingResRequest request, Action<NetMQMessage> resultProcessor)
             {
                 RequestId = requestId;
                 _request = request;

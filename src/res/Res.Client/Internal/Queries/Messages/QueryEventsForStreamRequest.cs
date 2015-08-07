@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using NetMQ;
 using Res.Client.Exceptions;
+using Res.Client.Internal.NetMQ;
 using Res.Protocol;
 
 namespace Res.Client.Internal.Queries.Messages
@@ -22,21 +23,18 @@ namespace Res.Client.Internal.Queries.Messages
             _maxVersion = maxVersion;
         }
 
-        public Action<NetMQMessage> Send(NetMQSocket socket, PendingResRequest pendingRequest, string requestId)
+        public Action<NetMQMessage> Send(NetMQSocket socket, PendingResRequest pendingRequest, Guid requestId)
         {
             var pending = (PendingResRequest<QueryEventsForStreamResponse>) pendingRequest;
             var msg = new NetMQMessage();
             msg.AppendEmptyFrame();
             msg.Append(ResProtocol.ResClient01);
             msg.Append(ResCommands.QueryEventsByStream);
-            msg.Append(requestId);
+            msg.Append(requestId.ToByteArray());
             msg.Append(_context);
             msg.Append(_stream);
-            msg.Append(_fromVersion.ToString(CultureInfo.InvariantCulture));
-            if(_maxVersion.HasValue)
-                msg.Append(_maxVersion.Value.ToString(CultureInfo.InvariantCulture));
-            else
-                msg.AppendEmptyFrame();
+            msg.Append(_fromVersion.ToNetMqFrame());
+            msg.Append(_maxVersion.ToNetMqFrame());
 
             socket.SendMessage(msg);
 
@@ -56,7 +54,7 @@ namespace Res.Client.Internal.Queries.Messages
                     pending.SetException(new UnsupportedCommandException(command));
 
 
-                var count = int.Parse(m.Pop().ConvertToString());
+                var count = m.PopInt32();
 
                 var events = new EventInStorage[count];
 
@@ -65,8 +63,8 @@ namespace Res.Client.Internal.Queries.Messages
                     var id = new Guid(m.Pop().ToByteArray());
                     var streamId = m.Pop().ConvertToString();
                     var context = m.Pop().ConvertToString();
-                    var sequence = long.Parse(m.Pop().ConvertToString());
-                    var timestamp = DateTime.FromBinary(long.Parse(m.Pop().ConvertToString()));
+                    var sequence = m.PopInt64();
+                    var timestamp = m.PopDateTime();;
                     var type = m.Pop().ConvertToString();
                     var headers = m.Pop().ConvertToString();
                     var body = m.Pop().ConvertToString();

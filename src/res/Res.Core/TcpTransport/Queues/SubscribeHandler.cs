@@ -33,9 +33,9 @@ namespace Res.Core.TcpTransport.Queues
             var queueId = message.Pop().ConvertToString();
             var subscriberId = message.Pop().ConvertToString();
             var filter = message.Pop().ConvertToString();
-            var utcStartTime = DateTime.FromBinary(long.Parse(message.Pop().ConvertToString()));
-            var allocationSize = int.Parse(message.Pop().ConvertToString());
-            var allocationTimeInMilliseconds = int.Parse(message.Pop().ConvertToString());
+            var utcStartTime = message.PopDateTime();
+            var allocationSize = message.PopInt32();
+            var allocationTimeInMilliseconds = message.PopInt32();
 
             var subscribe = new SubscribeToQueue(context,
                 queueId,
@@ -55,23 +55,19 @@ namespace Res.Core.TcpTransport.Queues
             msg.Append(context);
             msg.Append(queueId);
             msg.Append(subscriberId);
-            msg.Append(DateTime.UtcNow.ToBinary().ToString(CultureInfo.InvariantCulture));
-
-            if (queuedEvents.AllocationId.HasValue)
-                msg.Append(queuedEvents.AllocationId.Value.ToString(CultureInfo.InvariantCulture));
-            else
-                msg.AppendEmptyFrame();
-
+            msg.Append(DateTime.UtcNow.ToNetMqFrame());
+            msg.Append(queuedEvents.AllocationId.ToNetMqFrame());
+            
             var count = events.Length;
-            msg.Append(count.ToString(CultureInfo.InvariantCulture));
+            msg.Append(count.ToNetMqFrame());
 
             foreach (var e in events)
             {
                 msg.Append(e.EventId.ToByteArray());
                 msg.Append(e.Stream);
                 msg.Append(e.Context);
-                msg.Append(e.Sequence.ToString(CultureInfo.InvariantCulture));
-                msg.Append(e.Timestamp.ToBinary().ToString(CultureInfo.InvariantCulture));
+                msg.Append(e.Sequence.ToNetMqFrame());
+                msg.Append(e.Timestamp.ToNetMqFrame());
                 msg.Append(e.TypeKey ?? string.Empty);
                 msg.Append(e.Headers ?? string.Empty);
                 msg.Append(e.Body ?? string.Empty);
