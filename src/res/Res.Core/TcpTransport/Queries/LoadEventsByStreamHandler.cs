@@ -33,13 +33,9 @@ namespace Res.Core.TcpTransport.Queries
             var context = message.Pop().ConvertToString();
             var stream = message.Pop().ConvertToString();
 
-            var fromVersion = BitConverter.ToInt64(message.Pop().Buffer, 0);
+            var fromVersion = message.PopInt64();
 
-            long? maxVersion = null;
-            var maxVersionFrame = message.Pop();
-
-            if (maxVersionFrame.BufferSize != 0)
-                maxVersion = BitConverter.ToInt64(maxVersionFrame.Buffer, 0);
+            var maxVersion = message.PopNullableInt64();
 
             var events = _storage.LoadEventsForStream(context, stream, fromVersion, maxVersion);
 
@@ -52,15 +48,15 @@ namespace Res.Core.TcpTransport.Queries
 
             var count = events.Length;
 
-            msg.Append(BitConverter.GetBytes(count));
+            msg.Append(count.ToNetMqFrame());
 
             foreach (var e in events)
             {
                 msg.Append(e.EventId.ToByteArray());
                 msg.Append(e.Stream);
                 msg.Append(e.Context);
-                msg.Append(BitConverter.GetBytes(e.Sequence));
-                msg.Append(BitConverter.GetBytes(e.Timestamp.ToBinary()));
+                msg.Append(e.Sequence.ToNetMqFrame());
+                msg.Append(e.Timestamp.ToNetMqFrame());
                 msg.Append(e.TypeKey ?? string.Empty);
                 msg.Append(e.Headers ?? string.Empty);
                 msg.Append(e.Body ?? string.Empty);

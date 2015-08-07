@@ -41,9 +41,9 @@ namespace Res.Client.Internal.Queues.Messages
             msg.Append(_queueId);
             msg.Append(_subscriberId);
             msg.Append(_filter);
-            msg.Append(_utcStartTime.ToBinary().ToString(CultureInfo.InvariantCulture));
-            msg.Append(_allocationBatchSize.ToString(CultureInfo.InvariantCulture));
-            msg.Append(_allocationTimeInMilliseconds.ToString(CultureInfo.InvariantCulture));
+            msg.Append(BitConverter.GetBytes(_utcStartTime.ToBinary()));
+            msg.Append(BitConverter.GetBytes(_allocationBatchSize));
+            msg.Append(BitConverter.GetBytes(_allocationTimeInMilliseconds));
 
             socket.SendMessage(msg);
 
@@ -65,16 +65,16 @@ namespace Res.Client.Internal.Queues.Messages
                 var queuecontext = m.Pop().ConvertToString();
                 var queueId = m.Pop().ConvertToString();
                 var subscriberId = m.Pop().ConvertToString();
-                var time = DateTime.FromBinary(long.Parse(m.Pop().ConvertToString()));
+                var time = DateTime.FromBinary(BitConverter.ToInt64(m.Pop().Buffer, 0));
 
                 var allocationFrame = m.Pop();
 
                 long? allocationId = null;
 
                 if (allocationFrame.BufferSize != 0)
-                    allocationId = long.Parse(allocationFrame.ConvertToString());
+                    allocationId = BitConverter.ToInt64(allocationFrame.Buffer, 0);
 
-                var count = int.Parse(m.Pop().ConvertToString());
+                var count = BitConverter.ToInt32(m.Pop().Buffer, 0);
 
                 var events = new EventInStorage[count];
 
@@ -83,8 +83,8 @@ namespace Res.Client.Internal.Queues.Messages
                     var id = new Guid(m.Pop().ToByteArray());
                     var streamId = m.Pop().ConvertToString();
                     var context = m.Pop().ConvertToString();
-                    var sequence = long.Parse(m.Pop().ConvertToString());
-                    var timestamp = DateTime.FromBinary(long.Parse(m.Pop().ConvertToString()));
+                    var sequence = BitConverter.ToInt64(m.Pop().Buffer, 0);
+                    var timestamp = DateTime.FromBinary(BitConverter.ToInt64(m.Pop().Buffer, 0));
                     var type = m.Pop().ConvertToString();
                     var headers = m.Pop().ConvertToString();
                     var body = m.Pop().ConvertToString();

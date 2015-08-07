@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using NetMQ;
 
-namespace Res.Core.TcpTransport
+namespace Res.Client.Internal.NetMQ
 {
     public static class NetMqExtensions
     {
@@ -36,7 +36,7 @@ namespace Res.Core.TcpTransport
         {
             var buffer = msg.Pop().Buffer;
             if (buffer.Length == 0) return null;
-           
+
             return BitConverter.ToInt64(buffer, 0);
         }
 
@@ -73,6 +73,5 @@ namespace Res.Core.TcpTransport
         {
             return value.HasValue ? new NetMQFrame(BitConverter.GetBytes(value.Value)) : NetMQFrame.Empty;
         }
-
     }
 }

@@ -2,6 +2,7 @@
 using System.Globalization;
 using NetMQ;
 using Res.Client.Exceptions;
+using Res.Client.Internal.NetMQ;
 using Res.Protocol;
 
 namespace Res.Client.Internal.Commits.Messages
@@ -32,14 +33,13 @@ namespace Res.Client.Internal.Commits.Messages
             msg.Append(requestId);
             msg.Append(Context);
             msg.Append(Stream);
-            msg.Append(BitConverter.GetBytes(ExpectedVersion));
-            msg.Append(BitConverter.GetBytes(Events.Length));
+            msg.Append(ExpectedVersion.ToNetMqFrame());
+            msg.Append(Events.Length.ToNetMqFrame());
 
             foreach (var e in Events)
             {
                 msg.Append(e.EventId.ToByteArray());
-                var timestamp = BitConverter.GetBytes(e.Timestamp.ToBinary());
-                msg.Append(timestamp);
+                msg.Append(e.Timestamp.ToNetMqFrame());
                 msg.Append(e.TypeTag ?? string.Empty);
                 msg.Append(e.Headers ?? string.Empty);
                 msg.Append(e.Body ?? string.Empty);

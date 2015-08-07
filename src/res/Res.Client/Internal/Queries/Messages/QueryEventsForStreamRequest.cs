@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using NetMQ;
 using Res.Client.Exceptions;
+using Res.Client.Internal.NetMQ;
 using Res.Protocol;
 
 namespace Res.Client.Internal.Queries.Messages
@@ -32,11 +33,8 @@ namespace Res.Client.Internal.Queries.Messages
             msg.Append(requestId);
             msg.Append(_context);
             msg.Append(_stream);
-            msg.Append(BitConverter.GetBytes(_fromVersion));
-            if(_maxVersion.HasValue)
-                msg.Append(BitConverter.GetBytes(_maxVersion.Value));
-            else
-                msg.AppendEmptyFrame();
+            msg.Append(_fromVersion.ToNetMqFrame());
+            msg.Append(_maxVersion.ToNetMqFrame());
 
             socket.SendMessage(msg);
 
@@ -56,7 +54,7 @@ namespace Res.Client.Internal.Queries.Messages
                     pending.SetException(new UnsupportedCommandException(command));
 
 
-                var count = BitConverter.ToInt32(m.Pop().Buffer, 0);
+                var count = m.PopInt32();
 
                 var events = new EventInStorage[count];
 
@@ -65,8 +63,8 @@ namespace Res.Client.Internal.Queries.Messages
                     var id = new Guid(m.Pop().ToByteArray());
                     var streamId = m.Pop().ConvertToString();
                     var context = m.Pop().ConvertToString();
-                    var sequence = BitConverter.ToInt64(m.Pop().Buffer, 0);
-                    var timestamp = DateTime.FromBinary(BitConverter.ToInt64(m.Pop().Buffer, 0));
+                    var sequence = m.PopInt64();
+                    var timestamp = m.PopDateTime();;
                     var type = m.Pop().ConvertToString();
                     var headers = m.Pop().ConvertToString();
                     var body = m.Pop().ConvertToString();

@@ -52,15 +52,15 @@ namespace Res.Core.TcpTransport.Commits
         {
             var context = message.Pop().ConvertToString();
             var stream = message.Pop().ConvertToString();
-            var expectedVersion = BitConverter.ToInt64(message.Pop().Buffer, 0);
-            var eventCount = BitConverter.ToInt32(message.Pop().Buffer, 0);
+            var expectedVersion = message.PopInt64();
+            var eventCount = message.PopInt32();
 
             var events = new EventForStorage[eventCount];
 
             for (int i = 0; i < eventCount; i++)
             {
                 var eventId = new Guid(message.Pop().ToByteArray());
-                var timestamp = DateTime.FromBinary(BitConverter.ToInt64(message.Pop().Buffer, 0));
+                var timestamp = message.PopDateTime();
                 var typeKey = message.Pop().ConvertToString();
                 var headers = message.Pop().ConvertToString();
                 var body = message.Pop().ConvertToString();
