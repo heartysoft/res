@@ -16,7 +16,7 @@ namespace Res.Core.Tests.Storage
             {
                 sqlConnection.Open();
                 
-                using (var cmd = new SqlCommand("truncate table EventWrappers;", sqlConnection))
+                using (var cmd = new SqlCommand("truncate table Events;", sqlConnection))
                 {
                     cmd.ExecuteNonQuery();
                 }

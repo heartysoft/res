@@ -18,7 +18,7 @@ BEGIN
     -- Insert statements for procedure here
 	IF @ToVersion Is Not NULL
 	Begin
-		SELECT * from EventWrappers
+		SELECT * from [Events]
 			WHERE ContextName = @Context AND
 			StreamId = @Stream AND
 			Sequence BETWEEN @FromVersion AND @ToVersion
@@ -26,7 +26,7 @@ BEGIN
 	End
 	Else
 	Begin
-		SELECT * from EventWrappers
+		SELECT * from [Events]
 			WHERE ContextName = @Context AND
 			StreamId = @Stream AND
 			Sequence >= @FromVersion

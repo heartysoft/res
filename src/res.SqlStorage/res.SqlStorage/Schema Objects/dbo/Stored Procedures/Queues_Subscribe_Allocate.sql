@@ -40,7 +40,7 @@ AS
 			DECLARE @StartMark bigint, @EndMark bigint
 		
 			SELECT @StartMark = Min(T.GlobalSequence), @EndMark = Max(T.GlobalSequence) FROM 
-				(SELECT TOP (@Count) GlobalSequence FROM EventWrappers ew
+				(SELECT TOP (@Count) GlobalSequence FROM [Events] ew
 					INNER JOIN Queues qs
 						on ew.ContextName = qs.Context
 						AND (qs.Filter = '*' OR ew.StreamId LIKE (qs.Filter + '%'))

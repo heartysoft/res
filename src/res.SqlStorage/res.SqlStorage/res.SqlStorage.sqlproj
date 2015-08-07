@@ -82,7 +82,7 @@
   <ItemGroup>
     <Build Include="Schema Objects\dbo\User Defined Types\EventParameter.sql" />
     <Build Include="Schema Objects\dbo\User Defined Types\EventRequestParameter.sql" />
-    <Build Include="Schema Objects\dbo\Tables\EventWrappers.sql" />
+    <Build Include="Schema Objects\dbo\Tables\Events.sql" />
     <Build Include="Schema Objects\dbo\Tables\Streams.sql" />
     <Build Include="Schema Objects\dbo\Stored Procedures\AppendEvents.sql" />
     <Build Include="Schema Objects\dbo\Stored Procedures\FetchEvent.sql" />

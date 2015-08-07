@@ -6,7 +6,7 @@ AS
 			on 
             qa.Context = qs.Context
                 AND qa.QueueId = qs.QueueId 
-		inner join EventWrappers ew on	
+		inner join [Events] ew on	
 			ew.ContextName = qs.Context AND
 			(ew.GlobalSequence BETWEEN qa.StartMarker AND qa.EndMarker) AND
 			(qs.Filter = '*' OR ew.StreamId LIKE (qs.Filter + '%'))

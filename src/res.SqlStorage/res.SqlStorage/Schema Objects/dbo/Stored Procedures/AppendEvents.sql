@@ -61,8 +61,8 @@ BEGIN
 
 				IF @@ROWCOUNT > 0 
 				Begin
-					Insert Into EventWrappers (EventId, ContextName, StreamId, Sequence, Timestamp, EventType, Body)
-					SELECT e.EventId, e.ContextName, e.StreamId, case e.Sequence when -1 then (s.CurrentSequence - c.EventCount + e.SequenceInCommit) else e.Sequence end, e.TimeStamp, e.EventType, e.Body 
+					Insert Into [Events] (EventId, ContextName, StreamId, Sequence, Timestamp, EventType, Headers, Body)
+					SELECT e.EventId, e.ContextName, e.StreamId, case e.Sequence when -1 then (s.CurrentSequence - c.EventCount + e.SequenceInCommit) else e.Sequence end, e.TimeStamp, e.EventType, e.Headers, e.Body 
 					from @Events e inner join @Commits c
 						on e.CommitId = c.CommitId 
 						AND

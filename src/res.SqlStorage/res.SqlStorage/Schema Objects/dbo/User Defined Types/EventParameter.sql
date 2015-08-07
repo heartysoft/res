@@ -6,6 +6,7 @@
 	[SequenceInCommit] [int],
 	[TimeStamp] [datetime2](4) NULL,
 	[EventType] [nvarchar](500) NULL,
+    [Headers] [nvarchar](max) NULL,
 	[Body] [nvarchar](max) NULL,
 	[CommitId] [uniqueidentifier] NOT NULL,
 	PRIMARY KEY CLUSTERED 

@@ -13,7 +13,7 @@ BEGIN
 	SET NOCOUNT ON;
 
     -- Insert statements for procedure here
-	SELECT r.RequestId, e.* from EventWrappers e inner join @Events r on
+	SELECT r.RequestId, e.* from [Events] e inner join @Events r on
 		e.EventId = r.EventId
 		AND e.ContextName = r.ContextName
 		AND e.StreamId = r.StreamId

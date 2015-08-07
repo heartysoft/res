@@ -11,7 +11,7 @@ namespace Res.Core.Storage
         public string Body { get; private set; }
         public string Headers { get; private set; }
 
-        public EventForStorage(Guid eventId, long sequence, DateTime timestamp, string typeKey, string body, string headers)
+        public EventForStorage(Guid eventId, long sequence, DateTime timestamp, string typeKey, string headers, string body)
         {
             EventId = eventId;
             Sequence = sequence;

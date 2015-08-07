@@ -55,7 +55,7 @@ namespace Res.Core.Tests.Storage.Queues
                 Guid.NewGuid(),
                 "test",
                 "bar",
-                new EventForStorage(Guid.NewGuid(), 1, DateTime.UtcNow, "some-type", "body", "")
+                new EventForStorage(Guid.NewGuid(), 1, DateTime.UtcNow, "some-type", "", "body")
                 )));
 
             var queued = _queueStorage.Subscribe(new SubscribeToQueue("test", "foo", "test-subscriber1", "*", DateTime.UtcNow.AddMinutes(-5), 100, 60000));
@@ -74,8 +74,8 @@ namespace Res.Core.Tests.Storage.Queues
                 Guid.NewGuid(),
                 "test",
                 "bar",
-                new EventForStorage(event1Id, 1, DateTime.UtcNow, "some-type", "body", ""),
-                new EventForStorage(event2Id, 2, DateTime.UtcNow, "some-type", "body", "")
+                new EventForStorage(event1Id, 1, DateTime.UtcNow, "some-type", "", "body"),
+                new EventForStorage(event2Id, 2, DateTime.UtcNow, "some-type", "", "body")
                 )));
 
             var queued = _queueStorage.Subscribe(new SubscribeToQueue("test", "foo", "bar", "*", DateTime.UtcNow.AddMinutes(-5), 1, 60000));
@@ -94,8 +94,8 @@ namespace Res.Core.Tests.Storage.Queues
                 Guid.NewGuid(),
                 "test",
                 "bar",
-                new EventForStorage(event1Id, 1, DateTime.UtcNow, "some-type", "body", ""),
-                new EventForStorage(event2Id, 2, DateTime.UtcNow, "some-type", "body", "")
+                new EventForStorage(event1Id, 1, DateTime.UtcNow, "some-type", "", "body"),
+                new EventForStorage(event2Id, 2, DateTime.UtcNow, "some-type", "", "body")
                 )));
 
             var queued = _queueStorage.Subscribe(new SubscribeToQueue("test", "foo", "bar", "*", DateTime.UtcNow.AddMinutes(-5), 2, 60000));
@@ -115,7 +115,7 @@ namespace Res.Core.Tests.Storage.Queues
                 Guid.NewGuid(),
                 "test",
                 "bar",
-                new EventForStorage(event1Id, 1, DateTime.UtcNow, "some-type", "body", "")
+                new EventForStorage(event1Id, 1, DateTime.UtcNow, "some-type", "", "body")
                 )));
 
             var queued = _queueStorage.Subscribe(new SubscribeToQueue("test", "foo", "baz", "*", DateTime.UtcNow.AddMinutes(-5), 1, 1));
@@ -137,8 +137,8 @@ namespace Res.Core.Tests.Storage.Queues
                 Guid.NewGuid(),
                 "test",
                 "bar",
-                new EventForStorage(event1Id, 1, DateTime.UtcNow, "some-type", "body", ""),
-                new EventForStorage(event2Id, 2, DateTime.UtcNow, "some-type", "body", "")
+                new EventForStorage(event1Id, 1, DateTime.UtcNow, "some-type", "", "body"),
+                new EventForStorage(event2Id, 2, DateTime.UtcNow, "some-type", "", "body")
                 )));
 
             var queued = _queueStorage.Subscribe(new SubscribeToQueue("test", "foo", "baz", "*", DateTime.UtcNow.AddMinutes(-5), 1, 60000));
@@ -157,14 +157,14 @@ namespace Res.Core.Tests.Storage.Queues
                 Guid.NewGuid(),
                 "test",
                 "bar",
-                new EventForStorage(event1Id, 1, DateTime.UtcNow, "some-type", "body", "")
+                new EventForStorage(event1Id, 1, DateTime.UtcNow, "some-type", "", "body")
                 )));
 
             _eventStorage.Store(new CommitsForStorage(new CommitForStorage(
                 Guid.NewGuid(),
                 "test",
                 "baz",
-                new EventForStorage(event2Id, 1, DateTime.UtcNow, "some-type", "body", "")
+                new EventForStorage(event2Id, 1, DateTime.UtcNow, "some-type", "", "body")
                 )));
 
             var queued = _queueStorage.Subscribe(new SubscribeToQueue("test", "foo", "bazSub", "baz", DateTime.UtcNow.AddMinutes(-5), 10, 60000));
@@ -186,8 +186,8 @@ namespace Res.Core.Tests.Storage.Queues
                 Guid.NewGuid(),
                 "test",
                 "bar",
-                new EventForStorage(event1Id, 1, DateTime.UtcNow, "some-type", "body", ""),
-                new EventForStorage(event2Id, 2, DateTime.UtcNow, "some-type", "body", "")
+                new EventForStorage(event1Id, 1, DateTime.UtcNow, "some-type", "", "body"),
+                new EventForStorage(event2Id, 2, DateTime.UtcNow, "some-type", "", "body")
                 )));
 
             var queued = _queueStorage.Subscribe(new SubscribeToQueue("test", "foo", "bar", "*", DateTime.UtcNow.AddMinutes(-5), 1, 60000));
@@ -212,16 +212,16 @@ namespace Res.Core.Tests.Storage.Queues
                 Guid.NewGuid(),
                 "test",
                 "bar",
-                new EventForStorage(event1Id, 1, DateTime.UtcNow, "some-type", "body", ""),
-                new EventForStorage(event2Id, 2, DateTime.UtcNow, "some-type", "body", "")
+                new EventForStorage(event1Id, 1, DateTime.UtcNow, "some-type", "", "body"),
+                new EventForStorage(event2Id, 2, DateTime.UtcNow, "some-type", "", "body")
                 )));
 
             _eventStorage.Store(new CommitsForStorage(new CommitForStorage(
                 Guid.NewGuid(),
                 "test1",
                 "bar",
-                new EventForStorage(event3Id, 1, DateTime.UtcNow, "some-type", "body", ""),
-                new EventForStorage(event4Id, 2, DateTime.UtcNow, "some-type", "body", "")
+                new EventForStorage(event3Id, 1, DateTime.UtcNow, "some-type", "", "body"),
+                new EventForStorage(event4Id, 2, DateTime.UtcNow, "some-type", "", "body")
                 )));
 
             var queued = _queueStorage.Subscribe(new SubscribeToQueue("test", "foo", "bar", "*", DateTime.UtcNow.AddMinutes(-5), 2, 60000));
@@ -244,8 +244,8 @@ namespace Res.Core.Tests.Storage.Queues
                 Guid.NewGuid(),
                 "test",
                 "bar",
-                new EventForStorage(event1Id, 1, DateTime.UtcNow, "some-type", "body", ""),
-                new EventForStorage(event2Id, 2, DateTime.UtcNow, "some-type", "body", "")
+                new EventForStorage(event1Id, 1, DateTime.UtcNow, "some-type", "", "body"),
+                new EventForStorage(event2Id, 2, DateTime.UtcNow, "some-type", "", "body")
                 )));
 
             var queued = _queueStorage.Subscribe(new SubscribeToQueue("test", "foo", "sub1", "*", DateTime.UtcNow.AddMinutes(-5), 2, 60000));

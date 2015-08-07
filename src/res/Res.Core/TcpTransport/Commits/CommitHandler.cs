@@ -68,7 +68,7 @@ namespace Res.Core.TcpTransport.Commits
                 //-1 to override concurrency check. Being lazy and not using a constant.
                 var version = expectedVersion == -1 ? -1 : expectedVersion + i;
 
-                events[i] = new EventForStorage(eventId, version, timestamp, typeKey, body, headers);
+                events[i] = new EventForStorage(eventId, version, timestamp, typeKey, headers, body);
             }
 
             return new CommitForStorage(context, stream, events);

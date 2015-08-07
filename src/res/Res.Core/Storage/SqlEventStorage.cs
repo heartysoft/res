@@ -15,10 +15,10 @@ namespace Res.Core.Storage
         private readonly string _connectionString;
         private static readonly Dictionary<string, string> DatabaseChecks = new Dictionary<string, string> {
             {"SELECT 1","Could not connect to SQL Server instance with supplied configuration."},
-            {"SELECT isnull(has_perms_by_name('dbo.EventWrappers', 'OBJECT', 'SELECT'), 0)","Does not have SELECT permissions on the 'dbo.EventWrappers' table."},
-            {"SELECT isnull(has_perms_by_name('dbo.EventWrappers', 'OBJECT', 'INSERT'), 0)","Does not have INSERT permissions on the 'dbo.EventWrappers' table."},
-            {"SELECT isnull(has_perms_by_name('dbo.EventWrappers', 'OBJECT', 'UPDATE'), 0)","Does not have UPDATE permissions on the 'dbo.EventWrappers' table."},
-            {"SELECT isnull(has_perms_by_name('dbo.EventWrappers', 'OBJECT', 'DELETE'), 0)","Does not have DELETE permissions on the 'dbo.EventWrappers' table."},
+            {"SELECT isnull(has_perms_by_name('dbo.Events', 'OBJECT', 'SELECT'), 0)","Does not have SELECT permissions on the 'dbo.Events' table."},
+            {"SELECT isnull(has_perms_by_name('dbo.Events', 'OBJECT', 'INSERT'), 0)","Does not have INSERT permissions on the 'dbo.Events' table."},
+            {"SELECT isnull(has_perms_by_name('dbo.Events', 'OBJECT', 'UPDATE'), 0)","Does not have UPDATE permissions on the 'dbo.Events' table."},
+            {"SELECT isnull(has_perms_by_name('dbo.Events', 'OBJECT', 'DELETE'), 0)","Does not have DELETE permissions on the 'dbo.Events' table."},
             {"SELECT isnull(has_perms_by_name('dbo.Streams', 'OBJECT', 'SELECT'), 0)","Does not have SELECT permissions on the 'dbo.Streams' table."},
             {"SELECT isnull(has_perms_by_name('dbo.Streams', 'OBJECT', 'INSERT'), 0)","Does not have INSERT permissions on the 'dbo.Streams' table."},
             {"SELECT isnull(has_perms_by_name('dbo.Streams', 'OBJECT', 'UPDATE'), 0)","Does not have UPDATE permissions on the 'dbo.Streams' table."},
@@ -184,7 +184,8 @@ namespace Res.Core.Storage
             const int globalSequenceOrdinal = 4;
             const int timestampOrdinal = 5;
             const int eventTypeOrdinal = 6;
-            const int bodyOrdinal = 7;
+            const int headersOrdinal = 7;
+            const int bodyOrdinal = 8;
 
             var eventId = reader.GetGuid(eventIdOrdinal + startingOrdinal);
             var stream = reader.GetString(streamIdOrdinal + startingOrdinal);
@@ -193,12 +194,14 @@ namespace Res.Core.Storage
             var globalSequence = (long)reader.GetValue(globalSequenceOrdinal + startingOrdinal);
             var timestamp = reader.GetDateTime(timestampOrdinal + startingOrdinal);
             var typeKey = reader.GetString(eventTypeOrdinal + startingOrdinal);
+            
+            var headers = reader[headersOrdinal + startingOrdinal] as string;
             var body = reader.GetString(bodyOrdinal + startingOrdinal);
 
             var @event = new EventInStorage(eventId, contextName, stream, sequence, 
                 globalSequence,
-                timestamp, typeKey, body,
-                null);
+                timestamp, typeKey,
+                headers, body);
 
             return @event;
         }
@@ -237,7 +240,7 @@ namespace Res.Core.Storage
                 for (int index = 0; index < commit.Events.Length; index++)
                 {
                     var e = commit.Events[index];
-                    table.Rows.Add(e.EventId, commit.Stream, commit.Context, e.Sequence, index + 1, e.Timestamp, e.TypeKey, e.Body,
+                    table.Rows.Add(e.EventId, commit.Stream, commit.Context, e.Sequence, index + 1, e.Timestamp, e.TypeKey, e.Headers, e.Body,
                         commit.CommitId);
                 }
         }
@@ -266,6 +269,7 @@ namespace Res.Core.Storage
             table.Columns.Add("TimeStamp", typeof(DateTime));
             table.Columns.Add("EventType", typeof(string));
             table.Columns.Add("Body", typeof(string));
+            table.Columns.Add("Headers", typeof(string));
             table.Columns.Add("CommitId", typeof(Guid));
 
             return table;

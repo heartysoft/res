@@ -19,9 +19,9 @@ namespace Res.Core.Tests.StorageBuffering
         {
             var writer = new EventStorageWriter(1, TimeSpan.FromMinutes(1), new InMemoryEventStorage());
             writer.Store(new CommitForStorage("foo", "stream1",
-                                              new EventForStorage(Guid.NewGuid(), 1, DateTime.Now, "type", "body", null)));
+                                              new EventForStorage(Guid.NewGuid(), 1, DateTime.Now, "type", null, "body")));
             writer.Store(new CommitForStorage("foo", "stream2",
-                                              new EventForStorage(Guid.NewGuid(), 1, DateTime.Now, "type", "body", null)));
+                                              new EventForStorage(Guid.NewGuid(), 1, DateTime.Now, "type", null, "body")));
         }
 
         [Test]
@@ -33,9 +33,9 @@ namespace Res.Core.Tests.StorageBuffering
             writer.Start(_token.Token);
 
             var task1 = writer.Store(new CommitForStorage("foo", "stream1",
-                                              new EventForStorage(Guid.NewGuid(), 1, DateTime.Now, "type", "body", null)));
+                                              new EventForStorage(Guid.NewGuid(), 1, DateTime.Now, "type", null, "body")));
             var task2 = writer.Store(new CommitForStorage("foo", "stream2",
-                                              new EventForStorage(Guid.NewGuid(), 1, DateTime.Now, "type", "body", null)));
+                                              new EventForStorage(Guid.NewGuid(), 1, DateTime.Now, "type", null, "body")));
 
             Task.WhenAll(task1, task2).Wait(1000);
 
@@ -54,9 +54,9 @@ namespace Res.Core.Tests.StorageBuffering
 
 
             var task1 = writer.Store(new CommitForStorage("foo", "stream1",
-                                              new EventForStorage(Guid.NewGuid(), 1, DateTime.Now, "type", "body", null)));
+                                              new EventForStorage(Guid.NewGuid(), 1, DateTime.Now, "type", null, "body")));
             var task2 = writer.Store(new CommitForStorage("foo", "stream2",
-                                              new EventForStorage(Guid.NewGuid(), 1, DateTime.Now, "type", "body", null)));
+                                              new EventForStorage(Guid.NewGuid(), 1, DateTime.Now, "type", null, "body")));
             writer.Start(_token.Token);
 
             Task.WhenAll(task1, task2).Wait(1000);
@@ -71,13 +71,13 @@ namespace Res.Core.Tests.StorageBuffering
             var writer = new EventStorageWriter(10, TimeSpan.FromMinutes(1), storage, 2);
 
             var task1 = writer.Store(new CommitForStorage("foo", "stream1",
-                                              new EventForStorage(Guid.NewGuid(), 1, DateTime.Now, "type", "body", null)));
+                                              new EventForStorage(Guid.NewGuid(), 1, DateTime.Now, "type", null, "body")));
             var task2 = writer.Store(new CommitForStorage("foo", "stream2",
-                                              new EventForStorage(Guid.NewGuid(), 1, DateTime.Now, "type", "body", null)));
+                                              new EventForStorage(Guid.NewGuid(), 1, DateTime.Now, "type", null, "body")));
             var task3 = writer.Store(new CommitForStorage("foo", "stream1",
-                                              new EventForStorage(Guid.NewGuid(), 2, DateTime.Now, "type", "body", null)));
+                                              new EventForStorage(Guid.NewGuid(), 2, DateTime.Now, "type", null, "body")));
             var task4 = writer.Store(new CommitForStorage("foo", "stream2",
-                                              new EventForStorage(Guid.NewGuid(), 2, DateTime.Now, "type", "body", null)));
+                                              new EventForStorage(Guid.NewGuid(), 2, DateTime.Now, "type", null, "body")));
             writer.Start(_token.Token);
 
             Task.WhenAll(task1, task2, task3, task4).Wait(1000);
@@ -95,7 +95,7 @@ namespace Res.Core.Tests.StorageBuffering
             var writer = new EventStorageWriter(10, TimeSpan.FromMinutes(1), storage, 2);
 
             var task1 = writer.Store(new CommitForStorage("foo", "stream1",
-                                              new EventForStorage(Guid.NewGuid(), 1, DateTime.Now, "type", "body", null)));
+                                              new EventForStorage(Guid.NewGuid(), 1, DateTime.Now, "type", null, "body")));
             writer.Start(_token.Token);
 
             try
@@ -116,9 +116,9 @@ namespace Res.Core.Tests.StorageBuffering
             var writer = new EventStorageWriter(10, TimeSpan.FromMilliseconds(1), storage, 2);
 
             var task1 = writer.Store(new CommitForStorage("foo", "stream1",
-                                              new EventForStorage(Guid.NewGuid(), 1, DateTime.Now, "type", "body", null)));
+                                              new EventForStorage(Guid.NewGuid(), 1, DateTime.Now, "type", null, "body")));
             var task2 = writer.Store(new CommitForStorage("foo", "stream2",
-                                              new EventForStorage(Guid.NewGuid(), 1, DateTime.Now, "type", "body", null)));
+                                              new EventForStorage(Guid.NewGuid(), 1, DateTime.Now, "type", null, "body")));
 
             Task.Delay(1).Wait();
 
@@ -145,7 +145,7 @@ namespace Res.Core.Tests.StorageBuffering
             for(var i=0;i<3000;i++)
             {
                 listOfTasks.Add(writer.Store(new CommitForStorage("foo", "stream1",
-                                              new EventForStorage(Guid.NewGuid(), i+1, DateTime.Now, "type", "body", null))));
+                                              new EventForStorage(Guid.NewGuid(), i+1, DateTime.Now, "type", null, "body"))));
             }
 
             

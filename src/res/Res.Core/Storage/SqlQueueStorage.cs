@@ -167,8 +167,8 @@ namespace Res.Core.Storage
             var typeKey = reader.GetString(eventTypeOrdinal + startingOrdinal);
             var body = reader.GetString(bodyOrdinal + startingOrdinal);
 
-            var @event = new EventInStorage(eventId, contextName, stream, sequence, globalSequence, timestamp, typeKey, body,
-                null);
+            var @event = new EventInStorage(eventId, contextName, stream, sequence, globalSequence, timestamp, typeKey,
+                null, body);
 
             return @event;
         }

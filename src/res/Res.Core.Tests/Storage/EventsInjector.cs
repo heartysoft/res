@@ -36,15 +36,14 @@ namespace Res.Core.Tests.Storage
                 var newcommit = new CommitBuilder()
                     .NewCommit(commit.CommitId, commit.Context, commit.Stream);
                 var firstEvent = commit.Events[0];
-                var anotherCommitingEvent = newcommit.Event(new EventForStorage(firstEvent.EventId, firstEvent.Sequence, firstEvent.Timestamp, firstEvent.TypeKey, firstEvent.Body, null));
+                var anotherCommitingEvent = newcommit.Event(new EventForStorage(firstEvent.EventId, firstEvent.Sequence, firstEvent.Timestamp, firstEvent.TypeKey, null, firstEvent.Body));
                 if (commit.Events.Length > 1)
                 {
                     for (var e = 1; e < commit.Events.Length; e++)
                     {
                         anotherCommitingEvent =
                             anotherCommitingEvent.Event(new EventForStorage(commit.Events[e].EventId,
-                                commit.Events[e].Sequence, commit.Events[e].Timestamp, commit.Events[e].TypeKey,
-                                commit.Events[e].Body, null));
+                                commit.Events[e].Sequence, commit.Events[e].Timestamp, commit.Events[e].TypeKey, null, commit.Events[e].Body));
                     }
                 }
                 var builtCommit = anotherCommitingEvent.Build();

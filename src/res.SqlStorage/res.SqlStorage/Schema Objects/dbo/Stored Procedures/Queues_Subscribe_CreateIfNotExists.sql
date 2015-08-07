@@ -15,7 +15,7 @@ AS
 	INSERT INTO Queues (Context, QueueId, Filter, NextMarker)
 	VALUES (@Context, @QueueId, @Filter, 
 		COALESCE(
-			(SELECT Min(GlobalSequence) FROM EventWrappers WHERE
+			(SELECT Min(GlobalSequence) FROM [Events] WHERE
 				ContextName = @Context 
 					AND StreamId LIKE (@Filter + '%')
 					AND TimeStamp >= @StartTime

@@ -30,10 +30,10 @@ namespace Res.Core.Tests.Storage
         {
             var commits = new CommitBuilder()
                 .NewCommit(Guid.NewGuid(), "foo", "stream")
-                .Event(new EventForStorage(Guid.NewGuid(), 1, DateTime.UtcNow, "someType", "someBody", null))
-                .Event(new EventForStorage(Guid.NewGuid(), 2, DateTime.UtcNow, "someType", "someBody", null))
+                .Event(new EventForStorage(Guid.NewGuid(), 1, DateTime.UtcNow, "someType", null, "someBody"))
+                .Event(new EventForStorage(Guid.NewGuid(), 2, DateTime.UtcNow, "someType", null, "someBody"))
                 .NewCommit(Guid.NewGuid(), "foo", "anotherStream")
-                .Event(new EventForStorage(Guid.NewGuid(), 1, DateTime.UtcNow, "someType", "someBody", null))
+                .Event(new EventForStorage(Guid.NewGuid(), 1, DateTime.UtcNow, "someType", null, "someBody"))
                 .Build();
 
             _storage.Store(commits);
@@ -60,10 +60,10 @@ namespace Res.Core.Tests.Storage
             var commit2Id = Guid.NewGuid();
             var commits = new CommitBuilder()
                .NewCommit(commitId, "foo", "stream")
-               .Event(new EventForStorage(Guid.NewGuid(), 1, DateTime.UtcNow, "someType", "someBody", null))
-               .Event(new EventForStorage(Guid.NewGuid(), 2, DateTime.UtcNow, "someType", "someBody", null))
+               .Event(new EventForStorage(Guid.NewGuid(), 1, DateTime.UtcNow, "someType", null, "someBody"))
+               .Event(new EventForStorage(Guid.NewGuid(), 2, DateTime.UtcNow, "someType", null, "someBody"))
                .NewCommit(commit2Id, "foo", "anotherStream")
-               .Event(new EventForStorage(Guid.NewGuid(), 1, DateTime.UtcNow, "someType", "someBody", null))
+               .Event(new EventForStorage(Guid.NewGuid(), 1, DateTime.UtcNow, "someType", null, "someBody"))
                .Build();
 
             _storage.Store(commits);
@@ -72,10 +72,10 @@ namespace Res.Core.Tests.Storage
             var commit4Id = Guid.NewGuid();
             var newCommits = new CommitBuilder()
                .NewCommit(commit3Id, "foo", "stream")
-               .Event(new EventForStorage(Guid.NewGuid(), 2, DateTime.UtcNow, "someType", "someBody", null))
-               .Event(new EventForStorage(Guid.NewGuid(), 3, DateTime.UtcNow, "someType", "someBody", null))
+               .Event(new EventForStorage(Guid.NewGuid(), 2, DateTime.UtcNow, "someType", null, "someBody"))
+               .Event(new EventForStorage(Guid.NewGuid(), 3, DateTime.UtcNow, "someType", null, "someBody"))
                .NewCommit(commit4Id, "foo", "anotherStream")
-               .Event(new EventForStorage(Guid.NewGuid(), 2, DateTime.UtcNow, "someType", "someBody", null))
+               .Event(new EventForStorage(Guid.NewGuid(), 2, DateTime.UtcNow, "someType", null, "someBody"))
                .Build();
 
             var results = _storage.Store(newCommits);
@@ -93,10 +93,10 @@ namespace Res.Core.Tests.Storage
             var commit2Id = Guid.NewGuid();
             var commits = new CommitBuilder()
                .NewCommit(commitId, "foo", "stream")
-               .Event(new EventForStorage(Guid.NewGuid(), 1, DateTime.UtcNow, "someType", "someBody", null))
-               .Event(new EventForStorage(Guid.NewGuid(), 2, DateTime.UtcNow, "someType", "someBody", null))
+               .Event(new EventForStorage(Guid.NewGuid(), 1, DateTime.UtcNow, "someType", null, "someBody"))
+               .Event(new EventForStorage(Guid.NewGuid(), 2, DateTime.UtcNow, "someType", null, "someBody"))
                .NewCommit(commit2Id, "foo", "anotherStream")
-               .Event(new EventForStorage(Guid.NewGuid(), 1, DateTime.UtcNow, "someType", "someBody", null))
+               .Event(new EventForStorage(Guid.NewGuid(), 1, DateTime.UtcNow, "someType", null, "someBody"))
                .Build();
 
             var results=_storage.Store(commits);
@@ -106,10 +106,10 @@ namespace Res.Core.Tests.Storage
             var commit4Id = Guid.NewGuid();
             var newCommits = new CommitBuilder()
                .NewCommit(commit3Id, "foo", "stream")
-               .Event(new EventForStorage(Guid.NewGuid(), 2, DateTime.UtcNow, "someType", "someBody", null))
-               .Event(new EventForStorage(Guid.NewGuid(), 3, DateTime.UtcNow, "someType", "someBody", null))
+               .Event(new EventForStorage(Guid.NewGuid(), 2, DateTime.UtcNow, "someType", null, "someBody"))
+               .Event(new EventForStorage(Guid.NewGuid(), 3, DateTime.UtcNow, "someType", null, "someBody"))
                .NewCommit(commit4Id, "foo", "anotherStream")
-               .Event(new EventForStorage(Guid.NewGuid(), 2, DateTime.UtcNow, "someType", "someBody", null))
+               .Event(new EventForStorage(Guid.NewGuid(), 2, DateTime.UtcNow, "someType", null, "someBody"))
                .Build();
 
             var expectedListOfCommitIds = new List<Guid>();
@@ -151,11 +151,11 @@ namespace Res.Core.Tests.Storage
             var commit2Id = Guid.NewGuid();
             var commits = new CommitBuilder()
                 .NewCommit(commit1Id, "foo", "stream")
-                .Event(new EventForStorage(Guid.NewGuid(), 1, DateTime.UtcNow.AddDays(1), "someType", "someBody", null))
-                .Event(new EventForStorage(Guid.NewGuid(), 2, DateTime.UtcNow.AddDays(1), "someType", "someBody", null))
+                .Event(new EventForStorage(Guid.NewGuid(), 1, DateTime.UtcNow.AddDays(1), "someType", null, "someBody"))
+                .Event(new EventForStorage(Guid.NewGuid(), 2, DateTime.UtcNow.AddDays(1), "someType", null, "someBody"))
                 .NewCommit(commit2Id, "foo", "stream")
-                .Event(new EventForStorage(Guid.NewGuid(), 1, DateTime.UtcNow, "someType", "someBody", null))
-                .Event(new EventForStorage(Guid.NewGuid(), 2, DateTime.UtcNow, "someType", "someBody", null))
+                .Event(new EventForStorage(Guid.NewGuid(), 1, DateTime.UtcNow, "someType", null, "someBody"))
+                .Event(new EventForStorage(Guid.NewGuid(), 2, DateTime.UtcNow, "someType", null, "someBody"))
                 .Build();
 
 
@@ -183,11 +183,11 @@ namespace Res.Core.Tests.Storage
             var timeStamp = DateTime.UtcNow;
             var commits = new CommitBuilder()
                 .NewCommit(commit1Id, "foo", "stream")
-                .Event(new EventForStorage(Guid.NewGuid(), 1, timeStamp, "someType", "someBody", null))
-                .Event(new EventForStorage(Guid.NewGuid(), 2, timeStamp, "someType", "someBody", null))
+                .Event(new EventForStorage(Guid.NewGuid(), 1, timeStamp, "someType", null, "someBody"))
+                .Event(new EventForStorage(Guid.NewGuid(), 2, timeStamp, "someType", null, "someBody"))
                 .NewCommit(commit2Id, "foo", "stream")
-                .Event(new EventForStorage(Guid.NewGuid(), 1, timeStamp, "someType", "someBody", null))
-                .Event(new EventForStorage(Guid.NewGuid(), 2, timeStamp, "someType", "someBody", null))
+                .Event(new EventForStorage(Guid.NewGuid(), 1, timeStamp, "someType", null, "someBody"))
+                .Event(new EventForStorage(Guid.NewGuid(), 2, timeStamp, "someType", null, "someBody"))
                 .Build();
 
             var result = _storage.Store(commits);
@@ -201,10 +201,10 @@ namespace Res.Core.Tests.Storage
         {
             var commits = new CommitBuilder()
                 .NewCommit(Guid.NewGuid(), "foo", "stream")
-                .Event(new EventForStorage(Guid.NewGuid(), 1, DateTime.UtcNow, "someType", "someBody", null))
-                .Event(new EventForStorage(Guid.NewGuid(), 2, DateTime.UtcNow, "someType", "someBody", null))
+                .Event(new EventForStorage(Guid.NewGuid(), 1, DateTime.UtcNow, "someType", null, "someBody"))
+                .Event(new EventForStorage(Guid.NewGuid(), 2, DateTime.UtcNow, "someType", null, "someBody"))
                 .NewCommit(Guid.NewGuid(), "foo", "AnotherStream")
-                .Event(new EventForStorage(Guid.NewGuid(), 0, DateTime.UtcNow, "someType", "someBody", null))
+                .Event(new EventForStorage(Guid.NewGuid(), 0, DateTime.UtcNow, "someType", null, "someBody"))
                 .Build();
 
             var result=_storage.Store(commits);
@@ -218,10 +218,10 @@ namespace Res.Core.Tests.Storage
         {
             var commits = new CommitBuilder()
                 .NewCommit(Guid.NewGuid(), "foo", "stream")
-                .Event(new EventForStorage(Guid.NewGuid(), -1, DateTime.UtcNow, "someType", "someBody", null))
-                .Event(new EventForStorage(Guid.NewGuid(), -1, DateTime.UtcNow, "someType", "someBody", null))
+                .Event(new EventForStorage(Guid.NewGuid(), -1, DateTime.UtcNow, "someType", null, "someBody"))
+                .Event(new EventForStorage(Guid.NewGuid(), -1, DateTime.UtcNow, "someType", null, "someBody"))
                 .NewCommit(Guid.NewGuid(), "foo", "AnotherStream")
-                .Event(new EventForStorage(Guid.NewGuid(), -1, DateTime.UtcNow, "someType", "someBody", null))
+                .Event(new EventForStorage(Guid.NewGuid(), -1, DateTime.UtcNow, "someType", null, "someBody"))
                 .Build();
 
             var result = _storage.Store(commits);
@@ -234,16 +234,16 @@ namespace Res.Core.Tests.Storage
         {
             var commits = new CommitBuilder()
                 .NewCommit(Guid.NewGuid(), "foo", "stream")
-                .Event(new EventForStorage(Guid.NewGuid(), 1, DateTime.UtcNow, "someType", "someBody", null))
-                .Event(new EventForStorage(Guid.NewGuid(), 2, DateTime.UtcNow, "someType", "someBody", null))
+                .Event(new EventForStorage(Guid.NewGuid(), 1, DateTime.UtcNow, "someType", null, "someBody"))
+                .Event(new EventForStorage(Guid.NewGuid(), 2, DateTime.UtcNow, "someType", null, "someBody"))
                 .Build();
 
             _storage.Store(commits);
 
             commits = new CommitBuilder()
                 .NewCommit(Guid.NewGuid(), "foo", "stream")
-                .Event(new EventForStorage(Guid.NewGuid(), -1, DateTime.UtcNow, "someNewType", "someBody1", null))
-                .Event(new EventForStorage(Guid.NewGuid(), -1, DateTime.UtcNow, "someNewType2", "someBody2", null))
+                .Event(new EventForStorage(Guid.NewGuid(), -1, DateTime.UtcNow, "someNewType", null, "someBody1"))
+                .Event(new EventForStorage(Guid.NewGuid(), -1, DateTime.UtcNow, "someNewType2", null, "someBody2"))
                 .Build();
 
             var result = _storage.Store(commits);
@@ -260,10 +260,10 @@ namespace Res.Core.Tests.Storage
 
             var commits = new CommitBuilder()
                 .NewCommit(Guid.NewGuid(), "foo", "stream")
-                .Event(new EventForStorage(event1Id, 1, DateTime.UtcNow, "someType", "someBody", null))
-                .Event(new EventForStorage(event2Id, 2, DateTime.UtcNow, "someType", "someBody", null))
+                .Event(new EventForStorage(event1Id, 1, DateTime.UtcNow, "someType", null, "someBody"))
+                .Event(new EventForStorage(event2Id, 2, DateTime.UtcNow, "someType", "header1:foo", "someBody"))
                 .NewCommit(Guid.NewGuid(), "foo", "AnotherStream")
-                .Event(new EventForStorage(event3Id, 1, DateTime.UtcNow, "someType", "someBody", null))
+                .Event(new EventForStorage(event3Id, 1, DateTime.UtcNow, "someType", null, "someBody"))
                 .Build();
 
             _storage.Store(commits);
@@ -282,6 +282,10 @@ namespace Res.Core.Tests.Storage
             Assert.AreEqual(event2Id, results[requests[1].RequestId].EventId);
             Assert.AreEqual(event3Id, results[requests[2].RequestId].EventId);
             Assert.IsFalse(results.ContainsKey(requests[3].RequestId));
+
+            Assert.IsNull(results[requests[0].RequestId].Headers);
+            Assert.AreEqual("header1:foo", results[requests[1].RequestId].Headers);
+            Assert.IsNull(results[requests[2].RequestId].Headers);
         }
 
         [Test]
@@ -325,7 +329,7 @@ namespace Res.Core.Tests.Storage
 
         private string storeEvent(string context, string typeKey, string body, string stream)
         {
-            var @event = new EventForStorage(Guid.NewGuid(), 1, DateTime.UtcNow, typeKey, body, null);
+            var @event = new EventForStorage(Guid.NewGuid(), 1, DateTime.UtcNow, typeKey, null, body);
             var commit = new CommitForStorage(Guid.NewGuid(), context, stream, @event);
             var commits = new CommitsForStorage(commit);
             _storage.Store(commits);

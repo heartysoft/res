@@ -58,7 +58,7 @@ namespace Res.Core.Tests.Client
         }
 
         [Test]
-        public void ShouldStoreAnEvent()
+        public async Task ShouldStoreAnEvent()
         {
             var client = _harness.CreatePublisher();
             var commit = client.CommitAsync("test-context", Guid.NewGuid().ToString(), new[]
@@ -66,7 +66,7 @@ namespace Res.Core.Tests.Client
                 new EventData("test", Guid.NewGuid(), "", "some body", DateTime.Now) 
             }, ExpectedVersion.OnlyNew, TimeSpan.FromSeconds(1));
 
-            commit.Wait();
+            await commit;
         }
 
         [Test]
@@ -177,7 +177,7 @@ namespace Res.Core.Tests.Client
         }
 
         [Test]
-        public void ShouldLodEventsByStream()
+        public async Task ShouldLodEventsByStream()
         {
             var publisher = _harness.CreatePublisher();
             var query = _harness.CreateQueryClient();
@@ -192,10 +192,10 @@ namespace Res.Core.Tests.Client
             {
                 new EventData("test", event1Id, "", "some body", DateTime.Now),
                 new EventData("test1", event2Id, "", "something more", DateTime.Now),
-                new EventData("test", event3Id, "", "a bit more", DateTime.Now) 
+                new EventData("test", event3Id, "myHeader:foo", "a bit more", DateTime.Now) 
             }, ExpectedVersion.OnlyNew);
 
-            commit.Wait();
+            await commit;
 
             var events = query.LoadEvents("test-context", stream, 0, null, null)
                 .Result;
@@ -206,6 +206,9 @@ namespace Res.Core.Tests.Client
             Assert.AreEqual(event1Id, events.Events[0].EventId);
             Assert.AreEqual(event2Id, events.Events[1].EventId);
             Assert.AreEqual(event3Id, events.Events[2].EventId);
+
+            Assert.AreEqual("", events.Events[1].Headers);
+            Assert.AreEqual("myHeader:foo", events.Events[2].Headers);
         }
 
         [Test]

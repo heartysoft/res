@@ -15,8 +15,7 @@ namespace Res.Core.Storage
         public string Headers { get; private set; }
         public long GlobalSequence { get; private set; }
 
-        public EventInStorage(Guid eventId, string context, string stream, long sequence, long globalSequence, DateTime timestamp, string typeKey, string body,
-            string headers)
+        public EventInStorage(Guid eventId, string context, string stream, long sequence, long globalSequence, DateTime timestamp, string typeKey, string headers, string body)
         {
             EventId = eventId;
             Context = context;

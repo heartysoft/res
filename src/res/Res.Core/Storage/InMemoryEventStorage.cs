@@ -43,7 +43,7 @@ namespace Res.Core.Storage
                         version,
                         _globalSequence,
                         e.Timestamp,
-                        e.TypeKey, e.Body, e.Headers));
+                        e.TypeKey, e.Headers, e.Body));
                 }
             }
 
