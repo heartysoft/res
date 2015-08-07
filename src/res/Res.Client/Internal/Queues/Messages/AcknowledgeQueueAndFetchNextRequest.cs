@@ -2,6 +2,7 @@ using System;
 using System.Globalization;
 using NetMQ;
 using Res.Client.Exceptions;
+using Res.Client.Internal.NetMQ;
 using Res.Protocol;
 
 namespace Res.Client.Internal.Queues.Messages
@@ -38,14 +39,9 @@ namespace Res.Client.Internal.Queues.Messages
             msg.Append(_context);
             msg.Append(_queueId);
             msg.Append(_subscriberId);
-
-            if(_allocationId.HasValue)
-                msg.Append(_allocationId.Value.ToString(CultureInfo.InvariantCulture));
-            else
-                msg.AppendEmptyFrame();
-            
-            msg.Append(_allocationBatchSize.ToString(CultureInfo.InvariantCulture));
-            msg.Append(_allocationTimeoutInMilliseconds.ToString(CultureInfo.InvariantCulture));
+            msg.Append(_allocationId.ToNetMqFrame());
+            msg.Append(_allocationBatchSize.ToNetMqFrame());
+            msg.Append(_allocationTimeoutInMilliseconds.ToNetMqFrame());
 
             socket.SendMessage(msg);
 
@@ -67,15 +63,9 @@ namespace Res.Client.Internal.Queues.Messages
                 var queueContext = m.Pop().ConvertToString();
                 var queueId = m.Pop().ConvertToString();
                 var subscriberId = m.Pop().ConvertToString();
-                var time = DateTime.FromBinary(long.Parse(m.Pop().ConvertToString()));
-
-                long? allocationId = null;
-                var allocationFrame = m.Pop();
-
-                if (allocationFrame.BufferSize != 0)
-                    allocationId = long.Parse(allocationFrame.ConvertToString());
-
-                var count = int.Parse(m.Pop().ConvertToString());
+                var time = m.PopDateTime();
+                long? allocationId = m.PopNullableInt64();
+                var count = m.PopInt32();
 
                 var events = new EventInStorage[count];
 
@@ -84,8 +74,8 @@ namespace Res.Client.Internal.Queues.Messages
                     var id = new Guid(m.Pop().ToByteArray());
                     var streamId = m.Pop().ConvertToString();
                     var context = m.Pop().ConvertToString();
-                    var sequence = long.Parse(m.Pop().ConvertToString());
-                    var timestamp = DateTime.FromBinary(long.Parse(m.Pop().ConvertToString()));
+                    var sequence = m.PopInt64();
+                    var timestamp = m.PopDateTime();
                     var type = m.Pop().ConvertToString();
                     var headers = m.Pop().ConvertToString();
                     var body = m.Pop().ConvertToString();
