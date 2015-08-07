@@ -27,7 +27,7 @@ namespace Res.Client.Internal.Queues.Messages
             _allocationTimeInMilliseconds = allocationTimeInMilliseconds;
         }
 
-        public Action<NetMQMessage> Send(NetMQSocket socket, PendingResRequest pendingRequest, string requestId)
+        public Action<NetMQMessage> Send(NetMQSocket socket, PendingResRequest pendingRequest, Guid requestId)
         {
             var pending = (PendingResRequest<QueuedEventsResponse>) pendingRequest;
 
@@ -35,7 +35,7 @@ namespace Res.Client.Internal.Queues.Messages
             msg.AppendEmptyFrame();
             msg.Append(ResProtocol.ResClient01);
             msg.Append(ResCommands.SubscribeToQueue);
-            msg.Append(requestId);
+            msg.Append(requestId.ToByteArray());
 
             msg.Append(_context);
             msg.Append(_queueId);

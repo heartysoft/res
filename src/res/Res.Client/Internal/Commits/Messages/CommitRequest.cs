@@ -22,7 +22,7 @@ namespace Res.Client.Internal.Commits.Messages
             Events = events;
         }
 
-        public Action<NetMQMessage> Send(NetMQSocket socket, PendingResRequest pendingRequest, string requestId)
+        public Action<NetMQMessage> Send(NetMQSocket socket, PendingResRequest pendingRequest, Guid requestId)
         {
             var pending = (PendingResRequest<CommitResponse>) pendingRequest;
 
@@ -30,7 +30,7 @@ namespace Res.Client.Internal.Commits.Messages
             msg.AppendEmptyFrame();
             msg.Append(ResProtocol.ResClient01);
             msg.Append(ResCommands.AppendCommit);
-            msg.Append(requestId);
+            msg.Append(requestId.ToByteArray());
             msg.Append(Context);
             msg.Append(Stream);
             msg.Append(ExpectedVersion.ToNetMqFrame());

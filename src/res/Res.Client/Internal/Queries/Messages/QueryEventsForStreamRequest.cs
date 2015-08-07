@@ -23,14 +23,14 @@ namespace Res.Client.Internal.Queries.Messages
             _maxVersion = maxVersion;
         }
 
-        public Action<NetMQMessage> Send(NetMQSocket socket, PendingResRequest pendingRequest, string requestId)
+        public Action<NetMQMessage> Send(NetMQSocket socket, PendingResRequest pendingRequest, Guid requestId)
         {
             var pending = (PendingResRequest<QueryEventsForStreamResponse>) pendingRequest;
             var msg = new NetMQMessage();
             msg.AppendEmptyFrame();
             msg.Append(ResProtocol.ResClient01);
             msg.Append(ResCommands.QueryEventsByStream);
-            msg.Append(requestId);
+            msg.Append(requestId.ToByteArray());
             msg.Append(_context);
             msg.Append(_stream);
             msg.Append(_fromVersion.ToNetMqFrame());

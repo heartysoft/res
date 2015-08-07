@@ -41,7 +41,7 @@ namespace Res.Client.Internal
     {
         bool ShouldDrop();
         void Drop();
-        Action<NetMQMessage> Send(NetMQSocket socket, string requestId);
+        Action<NetMQMessage> Send(NetMQSocket socket, Guid requestId);
     }
 
     public class PendingResRequest<T> : PendingResRequest where T : ResResponse
@@ -67,7 +67,7 @@ namespace Res.Client.Internal
             SetException(new RequestTimedOutPendingSendException());
         }
 
-        public Action<NetMQMessage> Send(NetMQSocket socket, string requestId)
+        public Action<NetMQMessage> Send(NetMQSocket socket, Guid requestId)
         {
             return _request.Send(socket, this, requestId);
         }

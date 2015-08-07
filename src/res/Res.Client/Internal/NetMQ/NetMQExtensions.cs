@@ -45,6 +45,11 @@ namespace Res.Client.Internal.NetMQ
             return BitConverter.ToInt32(msg.Pop().Buffer, 0);
         }
 
+        public static Guid PopGuid(this NetMQMessage msg)
+        {
+            return new Guid(msg.Pop().Buffer);
+        }
+
         public static DateTime PopDateTime(this NetMQMessage msg)
         {
             return DateTime.FromBinary(PopInt64(msg));
