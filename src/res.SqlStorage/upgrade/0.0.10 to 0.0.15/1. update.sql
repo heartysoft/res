@@ -446,6 +446,18 @@ AS
 
 GO
 
+CREATE TABLE [dbo].[SchemaVersion]
+(
+    [Id] nvarchar(50) NOT NULL PRIMARY KEY,
+    [Timestamp] datetime2(4) NOT NULL
+);
+
+GO
+
+INSERT INTO [dbo].SchemaVersion ([Id], [Timestamp]) VALUES ('0.0.15', getdate());
+
+GO
+
 
 
 

@@ -78,6 +78,7 @@
     <Build Include="Schema Objects\dbo\Stored Procedures\Queues_Acknowledge_Acknowledge.sql" />
     <Build Include="Schema Objects\dbo\Stored Procedures\Queues_Acknowledge.sql" />
     <Build Include="Schema Objects\dbo\Stored Procedures\Queues_GetByDecreasingNextMarker.sql" />
+    <Build Include="Schema Objects\dbo\Tables\SchemaVersion.sql" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Schema Objects\dbo\User Defined Types\EventParameter.sql" />
@@ -87,5 +88,8 @@
     <Build Include="Schema Objects\dbo\Stored Procedures\AppendEvents.sql" />
     <Build Include="Schema Objects\dbo\Stored Procedures\FetchEvent.sql" />
     <Build Include="Schema Objects\dbo\Stored Procedures\LoadEvents.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <PostDeploy Include="Script.PostDeployment1.sql" />
   </ItemGroup>
 </Project>
