@@ -19,6 +19,7 @@ namespace Res.Client.Internal
         readonly ConcurrentDictionary<Guid, InflightEntry> _callbacks = new ConcurrentDictionary<Guid, InflightEntry>();
         private static readonly ILog Log = LogProvider.GetCurrentClassLogger();
         private DateTime _reapTime;
+        private volatile bool _running = true;
 
         public SingleThreadedZeroMqGateway(string endpoint, TimeSpan reaperInterval)
         {
@@ -33,7 +34,7 @@ namespace Res.Client.Internal
         public bool ProcessResponse()
         {
             bool processed = false;
-            while (_socket.Poll(TimeSpan.FromSeconds(0)))
+            while (_socket.Poll(TimeSpan.FromSeconds(0)) && _running)
             {
                 processed = true;
             }
@@ -103,7 +104,7 @@ namespace Res.Client.Internal
                 }
                 else
                 {
-                    Log.Debug(string.Format("Request Id {0} callback not found. This could be due to receiving a response after timeout has passed.", requestId));
+                    Log.Debug(string.Format("[STZMG] Request Id {0} callback not found. This could be due to receiving a response after timeout has passed.", requestId));
                 }
             }
             catch (Exception ex)
@@ -141,7 +142,7 @@ namespace Res.Client.Internal
 
             var spinner = new SpinWait();
 
-            while (true)
+            while (_running)
             {
                 Log.DebugFormat("[STZMG] Creating new socket. Thread Id: {0}", Thread.CurrentThread.ManagedThreadId);
                 var socket = _ctx.CreateDealerSocket();
@@ -160,20 +161,8 @@ namespace Res.Client.Internal
                     spinner.SpinOnce();
                 }
             }
-        }
 
-        public void Shutdown()
-        {
-            Log.InfoFormat("[STZMG] Shutting down. Thread Id: {0}", Thread.CurrentThread.ManagedThreadId);
-            if (_socket != null)
-            {
-                _socket.ReceiveReady -= socket_ReceiveReady;
-                _socket.Options.Linger = TimeSpan.FromSeconds(0);
-                _socket.Dispose();
-                Log.DebugFormat("[STZMG] Socket disposed. Thread Id: {0}", Thread.CurrentThread.ManagedThreadId);
-                _ctx.Dispose();
-                Log.DebugFormat("[STZMG] Context disposed. Thread Id: {0}", Thread.CurrentThread.ManagedThreadId);
-            }
+            return null; //terminating.
         }
 
 
@@ -203,6 +192,30 @@ namespace Res.Client.Internal
             public void ProcessResult(NetMQMessage m)
             {
                 _resultProcessor(m);
+            }
+        }
+
+        private bool _disposed = false;
+
+        public void Dispose()
+        {
+            if (_disposed) return;
+            _disposed = true;
+            _running = false;
+            shutdown();
+        }
+
+        private void shutdown()
+        {
+            Log.InfoFormat("[STZMG] Shutting down. Thread Id: {0}", Thread.CurrentThread.ManagedThreadId);
+            if (_socket != null)
+            {
+                _socket.ReceiveReady -= socket_ReceiveReady;
+                _socket.Options.Linger = TimeSpan.FromSeconds(0);
+                _socket.Dispose();
+                Log.DebugFormat("[STZMG] Socket disposed. Thread Id: {0}", Thread.CurrentThread.ManagedThreadId);
+                _ctx.Dispose();
+                Log.DebugFormat("[STZMG] Context disposed. Thread Id: {0}", Thread.CurrentThread.ManagedThreadId);
             }
         }
     }

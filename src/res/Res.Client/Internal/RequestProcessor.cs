@@ -81,7 +81,7 @@ namespace Res.Client.Internal
             finally
             {
                 Log.DebugFormat("[RequestProcessor] Shutting down gateway. Thread ID: {0}", Thread.CurrentThread.ManagedThreadId);
-                gateway.Shutdown();
+                gateway.Dispose();
                 Log.DebugFormat("[RequestProcessor] Gateway shutdown. Thread ID: {0}", Thread.CurrentThread.ManagedThreadId);
             }
         }

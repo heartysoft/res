@@ -2,5 +2,5 @@
     ProductName = 'Res';
     CompanyName = 'Heartysoft Solutions Limited';
     Copyright = "Copyright © 2015 Heartysoft Solutions Limited";
-    Version = "0.0.15";
+    Version = "0.0.16";
 }
