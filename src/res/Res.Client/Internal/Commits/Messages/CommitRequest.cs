@@ -45,7 +45,7 @@ namespace Res.Client.Internal.Commits.Messages
                 msg.Append(e.Body);
             }
 
-            socket.SendMessage(msg);
+            socket.SendMultipartMessage(msg);
 
             return m =>
             {

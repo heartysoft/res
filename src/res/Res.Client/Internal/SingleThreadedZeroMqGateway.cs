@@ -72,7 +72,7 @@ namespace Res.Client.Internal
         {
             try
             {
-                var msg = e.Socket.ReceiveMessage();
+                var msg = e.Socket.ReceiveMultipartMessage();
                 Log.DebugFormat("[STZMG] Received a message. Thread Id: {0}", Thread.CurrentThread.ManagedThreadId);
 
                 //address frames

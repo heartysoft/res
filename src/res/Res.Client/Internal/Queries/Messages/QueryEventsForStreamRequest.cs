@@ -36,7 +36,7 @@ namespace Res.Client.Internal.Queries.Messages
             msg.Append(_fromVersion.ToNetMqFrame());
             msg.Append(_maxVersion.ToNetMqFrame());
 
-            socket.SendMessage(msg);
+            socket.SendMultipartMessage(msg);
 
             return m =>
             {

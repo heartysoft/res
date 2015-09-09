@@ -36,7 +36,7 @@ namespace Res.Core.TcpTransport.Commits
                 msg.Append(_error.Message);
             }
 
-            socket.SendMessage(msg); 
+            socket.SendMultipartMessage(msg); 
         }
     }
 }

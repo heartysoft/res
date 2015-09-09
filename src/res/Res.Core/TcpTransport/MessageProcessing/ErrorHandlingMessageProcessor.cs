@@ -62,7 +62,7 @@ namespace Res.Core.TcpTransport.MessageProcessing
                     msg.Append(ResCommands.Error);
                     msg.Append(entry.ErrorCode.ToString(CultureInfo.InvariantCulture));
                     msg.Append(entry.Message);
-                    socket.SendMessage(msg);
+                    socket.SendMultipartMessage(msg);
                 }
             }
         }

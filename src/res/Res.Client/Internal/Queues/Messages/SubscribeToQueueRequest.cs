@@ -46,7 +46,7 @@ namespace Res.Client.Internal.Queues.Messages
             msg.Append(_allocationBatchSize.ToNetMqFrame());
             msg.Append(_allocationTimeInMilliseconds.ToNetMqFrame());
 
-            socket.SendMessage(msg);
+            socket.SendMultipartMessage(msg);
 
             return m =>
             {

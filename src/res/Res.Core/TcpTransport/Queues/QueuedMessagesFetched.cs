@@ -13,7 +13,7 @@ namespace Res.Core.TcpTransport.Queues
 
         public void Send(NetMQSocket socket)
         {
-            socket.SendMessage(_msg);
+            socket.SendMultipartMessage(_msg);
         }
     }
 }

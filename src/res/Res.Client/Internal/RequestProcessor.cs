@@ -2,7 +2,6 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Res.Client.Internal.Logging;
-using Logger = NLog.Logger;
 using Task = System.Threading.Tasks.Task;
 
 namespace Res.Client.Internal
@@ -41,48 +40,54 @@ namespace Res.Client.Internal
 
         private void run(CancellationToken token)
         {
-            var gateway = _gatewayFactory();
-
-            var spin = new SpinWait();
-
-            try
+            using (var gateway = _gatewayFactory())
             {
-                Log.DebugFormat("[RequestProcessor] Entering mainloop. Thread Id: {0}", Thread.CurrentThread.ManagedThreadId);
+                var spin = new SpinWait();
 
-                while (token.IsCancellationRequested == false)
+                try
                 {
-                    bool processed = gateway.ProcessResponse();
+                    Log.DebugFormat("[RequestProcessor] Entering mainloop. Thread Id: {0}",
+                        Thread.CurrentThread.ManagedThreadId);
 
-                    PendingResRequest pendingResRequest;
-
-                    while (_buffer.TryDequeue(out pendingResRequest))
+                    while (token.IsCancellationRequested == false)
                     {
-                        if (pendingResRequest.ShouldDrop())
+                        bool processed = gateway.ProcessResponse();
+
+                        PendingResRequest pendingResRequest;
+
+                        while (_buffer.TryDequeue(out pendingResRequest))
                         {
-                            pendingResRequest.Drop();
-                            continue;
+                            if (pendingResRequest.ShouldDrop())
+                            {
+                                pendingResRequest.Drop();
+                                continue;
+                            }
+
+                            gateway.SendRequest(pendingResRequest);
+                            processed = true;
+                            break;
                         }
-                        
-                        gateway.SendRequest(pendingResRequest);
-                        processed = true;
-                        break;
+
+                        if (!processed)
+                            spin.SpinOnce();
                     }
 
-                    if (!processed)
-                        spin.SpinOnce();
+                    Log.DebugFormat("[RequestProcessor] Exiting mainloop. Thread ID: {0}",
+                        Thread.CurrentThread.ManagedThreadId);
                 }
-
-                Log.DebugFormat("[RequestProcessor] Exiting mainloop. Thread ID: {0}", Thread.CurrentThread.ManagedThreadId);
-            }
-            catch (Exception e)
-            {
-                Log.DebugFormat("[RequestProcessor] Error in mainloop. Thread ID: {0}", e, Thread.CurrentThread.ManagedThreadId);
-            }
-            finally
-            {
-                Log.DebugFormat("[RequestProcessor] Shutting down gateway. Thread ID: {0}", Thread.CurrentThread.ManagedThreadId);
-                gateway.Dispose();
-                Log.DebugFormat("[RequestProcessor] Gateway shutdown. Thread ID: {0}", Thread.CurrentThread.ManagedThreadId);
+                catch (Exception e)
+                {
+                    Log.DebugFormat("[RequestProcessor] Error in mainloop. Thread ID: {0}", e,
+                        Thread.CurrentThread.ManagedThreadId);
+                }
+                finally
+                {
+                    Log.DebugFormat("[RequestProcessor] Shutting down gateway. Thread ID: {0}",
+                        Thread.CurrentThread.ManagedThreadId);
+                    gateway.Dispose();
+                    Log.DebugFormat("[RequestProcessor] Gateway shutdown. Thread ID: {0}",
+                        Thread.CurrentThread.ManagedThreadId);
+                }
             }
         }
 
