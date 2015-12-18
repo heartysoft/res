@@ -35,8 +35,19 @@ namespace Res.Core.TcpTransport.NetworkIO
             _socket = null;
         }
 
-
         private NetMQSocket connect()
+        {
+            try
+            {
+                return connect_raw();
+            }
+            catch (ObjectDisposedException)
+            {
+                return null;
+            }
+        }
+
+        private NetMQSocket connect_raw()
         {
             if (_socket != null)
             {

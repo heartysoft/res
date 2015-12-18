@@ -94,7 +94,8 @@ namespace Res.Client.Internal
         public void Stop()
         {
             _token.Cancel();
-            _task.Wait();
+            if(!_task.IsCanceled)
+                _task.Wait();
         }
     }
 }

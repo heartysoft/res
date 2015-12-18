@@ -54,7 +54,15 @@ namespace Res.Core.TcpTransport.NetworkIO
                 catch (Exception e)
                 {
                     Log.Warn("[Transceiver] Error from mainloop.", e);
-                    gateway.Reconnect();
+                    try
+                    {
+                        gateway.Reconnect();
+                    }
+                    catch (ObjectDisposedException)
+                    {
+                        Log.Warn("[Transceiver] Context already disposed. Likely shutting down.", e);
+                        break;
+                    }
                 }
             }
 

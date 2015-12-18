@@ -59,7 +59,6 @@ namespace Res.Core.Tests.Client
 
         public void Stop()
         {
-            Console.WriteLine("Disposing.");
             _queueEngine.Dispose();
             _queryEngine.Dispose();
             _publishEngine.Dispose();

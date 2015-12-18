@@ -81,8 +81,8 @@ namespace Res.Core
         {
             if (!_disposed)
             {
-                Dispose(true);
                 _disposed = true;
+                Dispose(true);
             }
 
             GC.SuppressFinalize(this);
